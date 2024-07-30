@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fullscreen Iframe</title>
+    <script src="https://ubghyper.github.io/GameList.github.io/ruffle/ruffle.js"></script>
+    <script>
+    window.RufflePlayer = window.RufflePlayer || {};
+
+    window.addEventListener("DOMContentLoaded", () => {
+        let ruffle = window.RufflePlayer.newest();
+        let player = ruffle.createPlayer();
+        let container = document.getElementById("container");
+        container.appendChild(player);
+        player.load("movie.swf");
+    });
+    </script>
     <style>
         /* Make the iframe take up the full viewport */
         iframe {
@@ -24,6 +36,6 @@
     </style>
 </head>
 <body>
-    <iframe src="https://tbg95.github.io/motox3m-3/game.html" frameborder="0" allowfullscreen></iframe>
+    <iframe src="https://ubghyper.github.io/GameList.github.io/Learn-To-Fly-2" frameborder="0" allowfullscreen></iframe>
 </body>
 </html>
