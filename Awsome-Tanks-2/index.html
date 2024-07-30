@@ -1,44 +1,44 @@
- <!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<html>
 <head>
-    <meta charset="utf-8">
-    <title>Awesome Tanks 2</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-    <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+    <meta charset='utf-8'>
     <style>
-        body {
-            background: #000000;
-            color: #cccccc;
+        html, body {
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            height: 100%;
             overflow: hidden;
         }
-        #flash-container {
-            width: 100%;
-            height: 100%;
-            max-width: 833px; /* Maximum width of your content */
-            max-height: 833px; /* Maximum height of your content */
-            margin: auto; /* Center the container horizontally */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        object {
-            width: 100%;
-            height: 100%;
+        #ruffle {
+            width: 100vw; /* Full viewport width */
+            height: 100vh; /* Full viewport height */
+            position: absolute; /* Allows for the full-screen effect */
+            top: 0;
+            left: 0;
         }
     </style>
 </head>
+
 <body>
-    <div id="flash-container">
-        <!-- Embed the SWF content with Ruffle emulator and set the scale to fit the container -->
-        <object data="https://ciscoha.github.io/unblocked-list/awesome-tanks-2/awesome-tanks-2.swf" type="application/x-shockwave-flash" width="100%" height="100%">
-            <!-- Provide a link to download the SWF if the browser doesn't support it -->
-        </object>
-    </div>
+    <script src="https://ubghyper.github.io/GameList.github.io/ruffle/ruffle.js"></script>
+    
+    <div id='ruffle'></div>
+    
+    <script>
+        window.RufflePlayer = window.RufflePlayer || {};
+        window.addEventListener("DOMContentLoaded", start_Ruffle, false);
+        
+        function start_Ruffle() {
+            let ruffle = window.RufflePlayer.newest();
+            let player = ruffle.createPlayer();
+            let container = document.getElementById("ruffle");
+            container.appendChild(player);
+            player.load("https://ubghyper.github.io/GameList.github.io/Awesome-Tanks-2/awesome-tanks-2.swf");
+            
+            // Resize player to fill container
+            player.style.width = '100%';
+            player.style.height = '100%';
+        }
+    </script>
 </body>
 </html>
