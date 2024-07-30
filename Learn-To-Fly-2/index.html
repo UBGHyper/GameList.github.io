@@ -1,41 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fullscreen Iframe</title>
-    <script src="https://ubghyper.github.io/GameList.github.io/ruffle/ruffle.js"></script>
-    <script>
-    window.RufflePlayer = window.RufflePlayer || {};
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset='utf8'>
+    </head>
+    <body>
+        <div id='ruffle'></div>
+        <script src='https://ubghyper.github.io/GameList.github.io/ruffle/ruffle.js'></script>
+        <script>
+var swfobject = {};
 
-    window.addEventListener("DOMContentLoaded", () => {
-        let ruffle = window.RufflePlayer.newest();
-        let player = ruffle.createPlayer();
-        let container = document.getElementById("container");
-        container.appendChild(player);
-        player.load("movie.swf");
-    });
-    </script>
-    <style>
-        /* Make the iframe take up the full viewport */
-        iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        
-        /* Optional: Hide any overflow to ensure the iframe is truly fullscreen */
-        body, html {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-    </style>
-</head>
-<body>
-    <iframe src="https://ubghyper.github.io/GameList.github.io/Learn-To-Fly-2" frameborder="0" allowfullscreen></iframe>
-</body>
+swfobject.embedSWF = function(url, cont, width, height){
+    var ruffle = window.RufflePlayer.newest(),
+        player = Object.assign(document.getElementById(cont).appendChild(ruffle.createPlayer()), {
+            width: width,
+            height: height,
+            style: 'width: ' + width + 'px; height: ' + height + 'px',
+        });
+    
+    player.load({ url: url });
+}
+
+swfobject.embedSWF('https://ubghyper.github.io/GameList.github.io/learn-To-Fly-2/Learn-To-Fly-2.swf', 'ruffle', 500, 500);
+        </script>
+    </body>
 </html>
