@@ -1,48 +1,32 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-    <meta charset='utf-8'>
-    <title>Flash Game</title>
-    <style>
-        #ruffle {
-            width: 500px;
-            height: 500px;
-        }
-    </style>
-</head>
-<body>
-    <div id='ruffle'></div>
-    <script src='https://ubghyper.github.io/GameList.github.io/ruffle/ruffle.js'></script>
+    <head> <meta charset='utf8'> </head>
+    
+    <body>
+    
+        <script src="https://ubghyper.github.io/GameList.github.io/ruffle/ruffle.js"></script>
+    
+        <div id='ruffle'></div>
+        
+        <p>This is a test page for Adobe Flash content</p>
+        
+    </body>
+    
     <script>
-        // Initialize Ruffle Player
-        (async function() {
-            // Ensure Ruffle is loaded
-            if (!window.RufflePlayer) {
-                console.error("RufflePlayer is not loaded.");
-                return;
-            }
-
-            // Create a new Ruffle Player instance
-            var ruffle = window.RufflePlayer.newest();
-            var player = ruffle.createPlayer();
-
-            // Set dimensions and style for the player
-            player.width = 500;
-            player.height = 500;
-            player.style.width = '500px';
-            player.style.height = '500px';
-
-            // Append the player to the div
-            document.getElementById('ruffle').appendChild(player);
-
-            // Load the SWF file
-            try {
-                await player.load('ubghyper.github.io/GameList.github.io/Learn-To-Fly-3/Learn-To-Fly-3.swf');
-                console.log('SWF file loaded successfully.');
-            } catch (e) {
-                console.error('Failed to load SWF file:', e);
-            }
-        })();
+    
+        window.RufflePlayer = window.RufflePlayer || {};
+        window.addEventListener("DOMContentLoaded", start_Ruffle, false );
+        
+        function start_Ruffle()
+        {
+            let ruffle = window.RufflePlayer.newest();
+            let player = ruffle.createPlayer();
+            let container = document.getElementById("ruffle");
+            container.appendChild(player);
+            player.load("https://ubghyper.github.io/GameList.github.io/Learn-To-Fly-3/Learn-To-Fly-3.swf");
+            
+        }
+        
     </script>
-</body>
+
 </html>
