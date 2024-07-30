@@ -1,27 +1,48 @@
 <!DOCTYPE HTML>
 <html>
-    <head>
-        <meta charset='utf8'>
+<head>
+    <meta charset='utf-8'>
+    <title>Flash Game</title>
+    <style>
+        #ruffle {
+            width: 500px;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <div id='ruffle'></div>
+    <script src='https://ubghyper.github.io/GameList.github.io/ruffle/ruffle.js'></script>
+    <script>
+        // Initialize Ruffle Player
+        (async function() {
+            // Ensure Ruffle is loaded
+            if (!window.RufflePlayer) {
+                console.error("RufflePlayer is not loaded.");
+                return;
+            }
 
-    </head>
-    <body>
-        <div id='ruffle'></div>
-        <script src='https://ubghyper.github.io/GameList.github.io/ruffle/ruffle.js'></script>
-        <script>
-var swfobject = {};
+            // Create a new Ruffle Player instance
+            var ruffle = window.RufflePlayer.newest();
+            var player = ruffle.createPlayer();
 
-swfobject.embedSWF = function(url, cont, width, height){
-    var ruffle = window.RufflePlayer.newest(),
-        player = Object.assign(document.getElementById(cont).appendChild(ruffle.createPlayer()), {
-            width: width,
-            height: height,
-            style: 'width: ' + width + 'px; height: ' + height + 'px',
-        });
-    
-    player.load({ url: url });
-}
+            // Set dimensions and style for the player
+            player.width = 500;
+            player.height = 500;
+            player.style.width = '500px';
+            player.style.height = '500px';
 
-swfobject.embedSWF('https://ubghyper.github.io/GameList.github.io/learn-To-Fly-3/Learn-To-Fly-3.swf', 'ruffle', 500, 500);
-        </script>
-    </body>
+            // Append the player to the div
+            document.getElementById('ruffle').appendChild(player);
+
+            // Load the SWF file
+            try {
+                await player.load('Learn-To-Fly-3.swf');
+                console.log('SWF file loaded successfully.');
+            } catch (e) {
+                console.error('Failed to load SWF file:', e);
+            }
+        })();
+    </script>
+</body>
 </html>
