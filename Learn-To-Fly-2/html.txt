@@ -1,0 +1,441 @@
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+
+	<meta name="viewport" content="width=device-width,  initial-scale=1.0">
+	
+	<link rel="icon" type="image/png" href="https://www.hoodamath.com/math-games/favicon.ico">		
+	<link rel="canonical" href="https://www.hoodamath.com/games/learntofly2.html" />
+	<link rel="image_src" href="https://jpg.hoodamath.com/large/learntofly2_300x225.jpg" />
+	
+	<meta property="og:image"  content="https://jpg.hoodamath.com/large/learntofly2_300x225.jpg" />	
+
+	<title>Learn to Fly 2 &#128377; Play Learn to Fly 2 at HoodaMath</title>
+	<link href="https://www.hoodamath.com/games/learntofly2.html" />
+    <script src="https://apis.google.com/js/platform.js" async defer>
+    </script>
+	
+	<meta name="description" content="Play Learn to Fly 2 for Free Now. No Pre-Roll Ads. Unblocked Learn to Fly 2 - Safe for School. No Downloads Required. No Pop-Ups. Nothing to Install.">	
+	
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"Learn to Fly 2","image":"https://jpg.hoodamath.com/large/learntofly2_300x225.jpg","applicationCategory":"Game","url":"https://www.hoodamath.com/games/learntofly2.html","applicationSubCategory":"Casual Game","operatingSystem":"Windows, Chrome OS, Linux, MacOS, Android, iOS","description":"The Best Free Learn to Fly 2 Online. No Downloads Required. Play Immediately for Free. More Than 1000 Games. No Pop-Ups. Nothing to Install.","aggregateRating":{"@type":"AggregateRating","ratingValue":4.9,"bestRating":5,"worstRating":1,"ratingCount":73946},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"InStock"},"screenshot":{"@type":"ImageObject","thumbnailUrl":"https://jpg.hoodamath.com/large/learntofly2_300x225.jpg"}}]	
+</script>	
+
+<style>div.twenty{
+	background-color:#FFF;
+	border: 0px;
+	margin: 10px 0px;
+	padding: 5px 0px;
+	color:#000;	
+	width:800px;	
+}
+div.twentygame{
+	background-color:#FFF;
+	border: 0px;
+	margin: 10px 0px;
+	padding: 5px 0px;
+	color:#000;
+width:800px;	
+}
+@media (max-width:767px){	
+	div.twenty{
+		width:380px;
+	}
+	div.twentytext{
+		width:380px;
+	}
+	div.twentyfoot{
+		width:380px;
+	}
+	div.textBox{
+		width:370px;
+	}
+	div.twentygame{width:800px;}	
+	div.gutter{
+		display:none;
+		width:0px;
+		border:0px;
+		margin:0px;
+		padding:0px;
+	}	
+	div.maincont{
+		width:100%;
+	}	
+}
+@media (min-width:800px) and (max-width:1279px){		
+	div.twenty{
+		width:800px;
+	}
+	div.twentytext{
+		width:800px;
+	}
+	div.twentyfoot{
+		width:800px;
+	}	
+	div.textBox{
+		width:790px;
+	}	
+	div.maincont{
+		width:800px;
+	}	
+}
+@media (min-width:1280px){
+	div.twenty{
+		width:800px;
+	}
+	div.twentytext{
+		width:800px;
+	}
+	div.twentyfoot{
+		width:800px;
+	}	
+	div.textBox{
+		width:790px;
+	}	
+	div.twentygame{
+		width:800px;
+	}
+#Games{
+			margin:0px 0px;	
+		}	
+	div.maincont{
+		width:800px;
+	}				
+}
+div.twentytext{
+	background-color:#44753c;
+	color:#fff;
+}
+div.twentybox{
+	width:300px;
+	display:inline-block;
+	margin:15px;
+	padding:10px;
+}
+div.twentyfoot{
+	background-color:#44753c;
+	height:50px;
+	font-size:1.5em;
+	border: 0px;
+	margin: 10px 0px;
+	padding: 5px 0px;	
+}		
+div.left {
+	background-color:#FFF;
+	margin:10px 10px 20px;
+	padding:10px;
+	color:#000;
+}
+div.button {
+	cursor:pointer;
+	display:inline-block;
+	margin:5px;
+	padding:5px;
+	text-align:center;
+	color:#FFF;
+	background-color: #19C614;
+}
+div.footer {
+	clear:both;
+	display:inline-block;
+	background-color:#44753C;
+	padding:10px 0px;
+	margin-top:0px;
+	color:#FFF;
+	text-align:center;
+	border-color:#FFF;
+	border-style:solid;
+	border-width:2px;
+}
+a, a:link, a:hover, a:visited, a:active {
+	color: black;
+}
+</style>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3BZ4H7DK1G"></script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	
+	gtag('config', 'G-3BZ4H7DK1G');
+</script>	
+
+<script>
+window.RufflePlayer.config = {
+    autoplay: "auto"
+};
+</script>
+
+<script src="https://www.hoodamath.com/ruffle-06-03/ruffle.js"></script>
+
+
+
+</head>
+
+<body style="min-width:640;margin:0px;border:0;padding:0px;background-color:#FFF;color:#000;font-family:sans-serif;">
+
+		<div class="gutter" id="leftgutter" style="background-color:white;width:0px;height:0px;position:fixed;top:50px;">
+			<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6495588245871342"
+				crossorigin="anonymous"></script>
+			<!-- Left Gutter ROS -->
+			<ins class="adsbygoogle"
+				style="display:block"
+				data-ad-client="ca-pub-6495588245871342"
+				data-ad-slot="5732881902"
+				data-ad-format="auto"
+				data-full-width-responsive="true"></ins>
+			<script>
+				(adsbygoogle = window.adsbygoogle || []).push({});
+			</script>
+		</div>
+		<div class="maincont" id ="maincontd">	
+			
+	<div class="twenty">
+		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6495588245871342"
+			crossorigin="anonymous"></script>
+		<!-- Below Page Header Logo ROS -->
+		<ins class="adsbygoogle"
+			style="display:block"
+			data-ad-client="ca-pub-6495588245871342"
+			data-ad-slot="4298331568"
+			data-ad-format="auto"
+			data-full-width-responsive="true"></ins>
+		<script>
+			(adsbygoogle = window.adsbygoogle || []).push({});
+		</script>
+	</div>				
+
+			
+		<div class="twenty" style="height:50px;padding:5px;">
+			<script async src="https://cse.google.com/cse.js?cx=a8b533bb0e5cc0f42"></script>
+			<div class="gcse-search"></div>
+		</div>			
+
+			<center>	
+		
+<h1 style="font-size:inherit;margin:0;padding:5px;"><span itemscope itemtype="https://schema.org/BreadcrumbList"><span itemprop="itemListElement" itemscope
+							itemtype="https://schema.org/ListItem"><a itemprop="item" href="https://www.hoodamath.com/index.html"><span itemprop="name" content="Hooda Math"><img src="https://jpg.hoodamath.com/large/hooda-math-385x70.jpg" style="width:192px;height:35px;vertical-align:middle;" alt="Hooda Math"></span></a><meta itemprop="position" content="1" /></span> &raquo; <span itemprop="itemListElement" itemscope
+							itemtype="https://schema.org/ListItem"><a itemprop="item" href="https://www.hoodamath.com/games/index.html"><span itemprop="name">MATH GAMES</span></a><meta itemprop="position" content="2" /></span>  &raquo; <span itemprop="itemListElement" itemscope
+							itemtype="https://schema.org/ListItem"><a itemprop="item" href="https://www.hoodamath.com/games/shop.html"><span itemprop="name">SHOP GAMES</span></a><meta itemprop="position" content="3" /></span>  &raquo; <span itemprop="itemListElement" itemscope
+							itemtype="https://schema.org/ListItem"><span itemprop="name">LEARN TO FLY 2</span><meta itemprop="position" content="4" /></span></span></h1>
+		
+			<div class="twenty" style="height:90px;">
+			<div style="width:24px;height:24px;"><g:sharetoclassroom size=24 url="https://www.hoodamath.com/games/learntofly2.html"></g:sharetoclassroom></div>Share to Google Classroom<br>
+			Or copy and share the URL<br>
+			<div style="display:inline-block;border:2px solid;padding:2px;">https://www.hoodamath.com/games/learntofly2.html</div></div>
+	
+<!-- content -->
+		<div class="twentygame" style="overflow:auto;text-align:center;">
+			
+			
+			
+			<center>
+									
+			<div id="Games" style="position:relative;width:640;display:inline;">
+					
+					
+					<div id="gameParent" style="display:inline;">
+						<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="640" height="480" id="https://www.hoodamath.com/flash/learntofly2.swf" align="middle">
+						<param name="movie" value="https://www.hoodamath.com/flash/learntofly2.swf" />
+						<param name="quality" value="high" />
+		
+						<param name="play" value="true" />
+						<param name="loop" value="true" />
+						<param name="wmode" value="window" />
+						<param name="scale" value="showall" />
+						<param name="menu" value="true" />
+						<param name="devicefont" value="false" />
+						<param name="salign" value="" />
+						<param name="allowScriptAccess" value="sameDomain" />
+						<!--[if !IE]>-->
+						<object type="application/x-shockwave-flash" data="https://www.hoodamath.com/flash/learntofly2.swf" width="640" height="480">
+							<param name="movie" value="https://www.hoodamath.com/flash/learntofly2.swf" />
+							<param name="quality" value="high" />
+		
+							<param name="play" value="true" />
+							<param name="loop" value="true" />
+							<param name="wmode" value="window" />
+							<param name="scale" value="showall" />
+							<param name="menu" value="true" />
+							<param name="devicefont" value="false" />
+							<param name="salign" value="" />
+							<param name="allowScriptAccess" value="sameDomain" />
+						<!--<![endif]-->
+							<div style="margin:auto;background-color:gray;width:640px;height:480px;">
+							<br><br>
+								Click to Enable or Download Adobe Flash<br>
+							<br><br>	
+								<a href="https://www.adobe.com/go/getflash">
+									<img src="https://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" />
+								</a><br>
+							<br><br>						
+								or Choose One of these Popular HTML5 Games to Play<br>
+							<br><br>						
+										<div style="background-color:#FFF;width:100px;display:inline-block;margin:5px;padding:3px;"><a href="https://www.hoodamath.com/games/2048.html"><img src="https://jpg.hoodamath.com/large/2048_300x225.jpg" style="width:100px;height:75px;" alt="2048">
+									<br><br>
+									2048
+									
+									</a>
+									</div><div style="background-color:#FFF;width:100px;display:inline-block;margin:5px;padding:3px;"><a href="https://www.hoodamath.com/games/lemonadestand.html"><img src="https://jpg.hoodamath.com/large/lemonadestand_300x225.jpg" style="width:100px;height:75px;" alt="Lemonade Stand">
+									<br><br>
+									Lemonade Stand
+									
+									</a>
+									</div><div style="background-color:#FFF;width:100px;display:inline-block;margin:5px;padding:3px;"><a href="https://www.hoodamath.com/games/mathtimedtests.html"><img src="https://jpg.hoodamath.com/large/mathtimedtests_300x225.jpg" style="width:100px;height:75px;" alt="Math Timed Tests">
+									<br><br>
+									Math Timed Tests
+									
+									</a>
+									</div><div style="background-color:#FFF;width:100px;display:inline-block;margin:5px;padding:3px;"><a href="https://www.hoodamath.com/games/minigolf.html"><img src="https://jpg.hoodamath.com/large/minigolf_300x225.jpg" style="width:100px;height:75px;" alt="Mini Golf">
+									<br><br>
+									Mini Golf
+									
+									</a>
+									</div><div style="background-color:#FFF;width:100px;display:inline-block;margin:5px;padding:3px;"><a href="https://www.hoodamath.com/games/oblong.html"><img src="https://jpg.hoodamath.com/large/oblong_300x225.jpg" style="width:100px;height:75px;" alt="Oblong">
+									<br><br>
+									Oblong
+									
+									</a>
+									</div><div style="background-color:#FFF;width:100px;display:inline-block;margin:5px;padding:3px;"><a href="https://www.hoodamath.com/games/connect4.html"><img src="https://jpg.hoodamath.com/large/connect4_300x225.jpg" style="width:100px;height:75px;" alt="Connect 4">
+									<br><br>
+									Connect 4
+									</a>
+									</div>
+									<div style="background-color:#FFF;width:100px;display:inline-block;margin:5px;padding:3px;"><a href="https://www.hoodamath.com/games/mousetrap.html"><img src="https://jpg.hoodamath.com/large/mousetrap_300x225.jpg" style="width:100px;height:75px;" alt="Mouse Trap">
+									<br><br>
+									Mouse Trap
+									
+									</a>
+									</div><div style="background-color:#FFF;width:100px;display:inline-block;margin:5px;padding:3px;"><a href="https://www.hoodamath.com/games/colorfill.html"><img src="https://jpg.hoodamath.com/large/colorfill_300x225.jpg" style="width:100px;height:75px;" alt="Color Fill">
+									<br><br>
+									Color Fill
+									
+									</a>
+									</div><div style="background-color:#FFF;width:100px;display:inline-block;margin:5px;padding:3px;"><a href="https://www.hoodamath.com/games/spillthesand.html"><img src="https://jpg.hoodamath.com/large/spillthesand_300x225.jpg" style="width:100px;height:75px;" alt="Spill The Sand">
+									<br><br>
+									Spill The Sand
+									
+									</a>
+									</div><div style="background-color:#FFF;width:100px;display:inline-block;margin:5px;padding:3px;"><a href="https://www.hoodamath.com/games/stickninja.html"><img src="https://jpg.hoodamath.com/large/stickninja_300x225.jpg" style="width:100px;height:75px;" alt="Stick Ninja">
+									<br><br>
+									Stick Ninja
+									
+									</a>
+									</div>														
+							</div>
+						<!--[if !IE]>-->
+						</object>
+						<!--<![endif]-->
+					</object>	
+		    </div>
+							
+										
+
+					
+					<br>
+			</div></div>
+			<div class="twenty">
+				<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6495588245871342"
+					crossorigin="anonymous"></script>
+				<!-- Above Math Games by Category ROS -->
+				<ins class="adsbygoogle"
+					style="display:block"
+					data-ad-client="ca-pub-6495588245871342"
+					data-ad-slot="9714309778"
+					data-ad-format="auto"
+					data-full-width-responsive="true"></ins>
+				<script>
+					(adsbygoogle = window.adsbygoogle || []).push({});
+				</script>
+			</div>	
+		<br><br>
+		<div id="timer">Full Screen Available in 30 seconds</div>
+					<script>
+						function openFullscreen() {
+							document.querySelector("ruffle-embed, ruffle-object, ruffle-player").enterFullscreen();
+						}
+					</script>
+		<a id="myLink" title="Click to open in full screen" href="#" onclick="openFullscreen();return false;" style="display:none;"><-- FULL SCREEN --></a>	
+		<script>
+			var timeleft = 30;
+			var downloadTimer = setInterval(function(){
+			  if(timeleft <= 1){
+				document.getElementById("timer").style.display = "none";
+				document.getElementById("myLink").style.display = "block";  
+			    clearInterval(downloadTimer);
+			  }
+			  document.getElementById("timer").innerHTML = "Full Screen Available in " + timeleft + " seconds";
+			  timeleft -= 1;
+			}, 1000);
+		</script>
+		<br><br>	
+			
+	<div id="instructions" style="position:relative;width:300px;display:inline;">
+					  	 <strong>Learn to Fly 2 Instructions</strong><br>
+					  	 <strong>WARNING: DO NOT SUBMIT SCORE OR GAME WILL NOT WORK</strong><br>
+					      Learn to Fly 2 is an engaging online game that puts you in control of a determined penguin with dreams of flight. Upon starting the game, you're presented with several modes to choose from: Story Mode, Classic Mode, and Arcade Mode. In Story Mode, you embark on a journey to conquer challenges and objectives, earning money based on your accomplishments. This hard-earned cash can be wisely invested in a variety of upgrades available in the Hangar. Upgrades range from improved gliders and rockets to more efficient boosters, each contributing to your penguin's flight capabilities.
+
+As you progress, you'll encounter in-game achievements, attainable by reaching specific milestones like distance, altitude, speed records, and even executing impressive tricks. These achievements not only boost your sense of accomplishment but also grant you extra funds to further enhance your flying prowess.
+
+Arcade Mode adds an extra layer of fun, featuring a selection of mini-games that present unique challenges and gameplay mechanics. By successfully navigating these mini-games, you'll earn additional money to bolster your resources.
+
+The ultimate objective of Learn to Fly 2 is to achieve remarkable distances and unprecedented altitudes. This entails honing your skills in timing the flaps of your penguin's wings to maintain altitude and gain speed. You must also take wind direction into consideration, as it can influence your flight trajectory. The game encourages experimentation, urging you to explore different upgrade combinations and flight angles to maximize your performance.
+
+Your journey in Learn to Fly 2 is a delightful blend of determination and strategy. Your penguin's aspirations of flight become your own as you persistently refine your techniques, optimize upgrades, and conquer challenges. Through patient practice and exploration, you'll witness your penguin soaring to new heights, achieving its dreams and securing your place as a skilled flying penguin pilot. Enjoy the adventure, and may your penguin's flights be ever triumphant!			      </div>	
+  <br><br>
+      	<div id="standards" style="position:relative;width:640px;">
+		<center><strong>Common Core State Standards</strong></center>
+		CCSS.Math.Practice.MP1 Make sense of problems and persevere in solving them.<br>CCSS.Math.Practice.MP4 Model with mathematics.      </div>			      				
+					<br>
+				<div id="walkthroughLink" style="background-color:#FFF;padding:10px;display:inline;">		
+										</div>
+			<br>
+
+<!-- end of content -->	
+		
+				<!-- footer -->
+		<div class="twenty">							
+			<a href="https://www.hoodamath.com/contact/" rel="nofollow"><div class="button">Contact</div></a>	
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;		
+			<a href="https://www.hoodamath.com/privacypolicy.html" rel="nofollow"  style="color:#FFF;"><div class="button">Privacy</div></a>							
+		</div>	
+							
+	</center>
+		</div>
+		
+		<div class="gutter" id="rightgutter" style="background-color:white;width:0px;height:0px;position:fixed;top:50px;">
+			<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6495588245871342"
+				crossorigin="anonymous"></script>
+			<!-- Right Gutter ROS -->
+			<ins class="adsbygoogle"
+				style="display:block"
+				data-ad-client="ca-pub-6495588245871342"
+				data-ad-slot="2768146527"
+				data-ad-format="auto"
+				data-full-width-responsive="true"></ins>
+			<script>
+				(adsbygoogle = window.adsbygoogle || []).push({});
+			</script>
+		</div>
+		<script>
+			var lgsize = 0;
+			var lghigh = 0;
+			if (window.innerWidth > 800){
+				lgsize = (window.innerWidth - 800)/2;
+				lghigh = window.innerHeight;
+				document.getElementById("leftgutter").style.width = lgsize + "px";
+				document.getElementById("leftgutter").style.height = lghigh + "px";
+				document.getElementById("rightgutter").style.width = lgsize + "px";
+				document.getElementById("rightgutter").style.height = lghigh + "px";
+				document.getElementById("maincontd").style.marginLeft = lgsize + "px";
+				lgsize+=800;
+				document.getElementById("rightgutter").style.marginLeft = lgsize + "px";
+			}
+		</script>
+
+</body>
+
+</html>
