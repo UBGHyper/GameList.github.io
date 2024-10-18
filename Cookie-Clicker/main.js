@@ -1622,7 +1622,7 @@ Game.Launch=function()
 		
 		Game.externalDataLoaded=false;
 		
-		Game.grandmaNames=['Granny','Gusher','Ethel','Edna','Doris','Maud','Hilda','Gladys','Michelle','Michele','Phyllis','Millicent','Muriel','Myrtle','Mildred','Mavis','Helen','Gloria','Sheila','Betty','Gertrude','Agatha','Beryl','Agnes','Pearl','Precious','Ruby','Vera','Bonnie','Ada','Bunny','Cookie','Darling','Gaga','GamGam','Memaw','Mimsy','Peanut','Nana','Nan','Tootsie','Warty','Stinky','Heinous'];
+		Game.grandmaNames=['Beau','Alex','Eirc','Caleb','Fatty Touch','Fatty Declan','Richard','Xavier','Pavlos','Micheal','Siphalis','Cleaveage/Cleave','Socrates','Soggy Cat','Kitler','Gnarp','Botos Binted?','Sheila','Chris Hemsworth','Lucas','Cisco','Mr Gilligan','MC Roberts','MC Lau','Samsung Smart TV','Washing Machine'];
 		Game.customGrandmaNames=[];
 		Game.heralds=0;
 		
@@ -7397,7 +7397,7 @@ Game.Launch=function()
 		});
 		
 		Game.SpecialGrandmaUnlock=15;
-		new Game.Object('Grandma','grandma|grandmas|baked|Grandmas are [X] year older|Grandmas are [X] years older','A nice grandma to bake more cookies.',1,1,{pic:function(i){
+		new Game.Object('Grandma','opp|opps|baked|The opps are [X] year older|The opps are [X] years older','A nice opp to bake more soggs.',1,1,{pic:function(i){
 			var list=['grandma'];
 			if (Game.Has('Farmer grandmas')) list.push('farmerGrandma');
 			if (Game.Has('Worker grandmas')) list.push('workerGrandma');
@@ -7473,7 +7473,7 @@ Game.Launch=function()
 			return me.baseCps*mult;
 		},function(){
 			Game.UnlockTiered(this);
-			if (this.amount>=Game.SpecialGrandmaUnlock && Game.Objects['Grandma'].amount>0) Game.Unlock(this.grandma.name);
+			if (this.amount>=Game.SpecialGrandmaUnlock && Game.Objects['The Opps'].amount>0) Game.Unlock(this.grandma.name);
 		});
 		Game.last.minigameUrl='minigameGarden.js';
 		Game.last.minigameName='Garden';
