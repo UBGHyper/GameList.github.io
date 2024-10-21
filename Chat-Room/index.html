@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Web Chat | Oskar Codes</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <div onclick="changeUser();" class="user"></div>
+        <h1 onclick="changeRoom();">Chat</h1>
+      </header>
+
+      <div class="chat" style="overflow-y: scroll; overflow-wrap: break-word;">
+        
+      </div>
+
+      <form onsubmit="send();" onkeypress="return event.keyCode!=13">
+        <!--<input type="file" id="file"></input>-->
+        <input maxlength="200" id="message" type="text" placeholder="Say something nice" />
+        <button type="button" onclick="send();">Send</button>
+      </form>
+    </main>
+    
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-database.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+         https://firebase.google.com/docs/web/setup#available-libraries -->
+
+    <script src="app.js"></script>
+    <script src="https://api.ipify.org?format=jsonp&callback=getIp"></script>
+  </body>
+</html>
