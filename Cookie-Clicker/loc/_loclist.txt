@@ -1,0 +1,13 @@
+https://orteil.dashnet.org/cookieclicker/beta/loc/CS.js
+https://orteil.dashnet.org/cookieclicker/beta/loc/DE.js
+https://orteil.dashnet.org/cookieclicker/beta/loc/EN.js
+https://orteil.dashnet.org/cookieclicker/beta/loc/ES.js
+https://orteil.dashnet.org/cookieclicker/beta/loc/FR.js
+https://orteil.dashnet.org/cookieclicker/beta/loc/IT.js
+https://orteil.dashnet.org/cookieclicker/beta/loc/JA.js
+https://orteil.dashnet.org/cookieclicker/beta/loc/KO.js
+https://orteil.dashnet.org/cookieclicker/beta/loc/NL.js
+https://orteil.dashnet.org/cookieclicker/beta/loc/PL.js
+https://orteil.dashnet.org/cookieclicker/beta/loc/PT-BR.js
+https://orteil.dashnet.org/cookieclicker/beta/loc/RU.js
+https://orteil.dashnet.org/cookieclicker/beta/loc/ZH-CN.js
