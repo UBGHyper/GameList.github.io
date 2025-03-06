@@ -1,4 +1,4 @@
-﻿/*
+/*
 All this code is copyright Orteil, 2013-2023.
 	-with some help, advice and fixes by Nicholas Laux, Debugbro, Opti, the folks at Playsaurus, and lots of people on reddit, Discord, and the DashNet forums
 	-also includes a bunch of snippets found on stackoverflow.com and others
@@ -316,6 +316,8 @@ var Langs={
 	'ZH-CN':{file:'ZH-CN',nameEN:'Chinese',name:'&#x4E2D;&#x6587;',changeLanguage:'&#35821;&#35328;',icon:0,w:1.5},
 	'KO':{file:'KO',nameEN:'Korean',name:'&#xD55C;&#xAE00;',changeLanguage:'&#xC5B8;&#xC5B4;',icon:0,w:1.5},
 	'RU':{file:'RU',nameEN:'Russian',name:'&#x420;&#x443;&#x441;&#x441;&#x43A;&#x438;&#x439;',changeLanguage:'&#1071;&#1079;&#1099;&#1082;',icon:0,w:1.2},
+    'DA':{file:'DA',nameEN:'Danish',name:'Dansk',changeLanguage:'Sprog',icon:0,w:1},
+	'NO':{file:'NO',nameEN:'Norwegian',name:'Norsk',changeLanguage:'Spr&#xE5;k',icon:0,w:1},
 };
 
 //note : baseline should be the original english text
@@ -1316,13 +1318,13 @@ Game.Launch=function()
 	(App?'<div class="listing">'+loc("Music by %1.",'<a href="https://twitter.com/C418" target="_blank">C418</a>')+'</div>':'')+
 	//'<div class="listing">We have an <a href="https://discordapp.com/invite/cookie" target="_blank">official Discord</a>, as well as a <a href="http://forum.dashnet.org" target="_blank">forum</a>; '+
 	'<div class="listing">'+(EN?
-		'We have an <a href="https://discordapp.com/invite/cookie" target="_blank">official Discord</a>; if you\'re looking for help, you may also want to visit the <a href="https://www.reddit.com/r/CookieClicker" target="_blank">subreddit</a> or the <a href="https://cookieclicker.wikia.com/wiki/Cookie_Clicker_Wiki" target="_blank">wiki</a>.<br>News and teasers are usually posted on Orteil\'s <a href="https://orteil42.tumblr.com/" target="_blank">tumblr</a> and <a href="https://twitter.com/orteil42" target="_blank">twitter</a>.'
+		'We have an <a href="https://discordapp.com/invite/cookie" target="_blank">official Discord</a>; if you\'re looking for help, you may also want to visit the <a href="https://www.reddit.com/r/CookieClicker" target="_blank">subreddit</a> or the <a href="https://cookieclicker.wikia.com/wiki/Cookie_Clicker_Wiki" target="_blank">wiki</a>.<br>News and teasers are usually posted on Orteil\'s <a href="https://orteil42.tumblr.com/" target="_blank">tumblr</a> and <a href="https://orteil42.bsky.social" target="_blank">bluesky</a>.'
 		:
 		loc("Useful links: %1, %2, %3, %4.",[
 		'<a href="https://discordapp.com/invite/cookie" target="_blank" class="highlightHover smallBlackButton">Discord</a>',
 		'<a href="https://cookieclicker.wikia.com/wiki/Cookie_Clicker_Wiki" target="_blank" class="highlightHover smallBlackButton">wiki</a>',
 		'<a href="https://orteil42.tumblr.com/" target="_blank" class="highlightHover smallBlackButton">tumblr</a>',
-		'<a href="https://twitter.com/orteil42" target="_blank" class="highlightHover smallBlackButton">twitter</a>',
+		'<a href="https://orteil42.bsky.social" target="_blank" class="highlightHover smallBlackButton">bluesky</a>',
 		]))
 	+'</div>'+
 	(!App?'<div class="listing block" style="margin:8px 32px;font-size:11px;line-height:110%;color:rgba(200,200,255,1);background:rgba(128,128,255,0.15);" id="supportSection">'+loc(
@@ -1353,26 +1355,17 @@ Game.Launch=function()
 	
 	Game.updateLog+=
 	
-	'</div><div class="subsection update small">'+
-	'<div class="title">22/03/2023 - beta patch</div>'+
-	'<div class="listing">&bull; buffed new dragon aura</div>'+
-	'<div class="listing">&bull; expanded the final building\'s customizer</div>'+
-	'<div class="listing">&bull; touched up old Santa sprites</div>'+
-	'<div class="listing">&bull; added some cursor upgrades and achievs</div>'+
-	
 	'</div><div class="subsection update">'+
-	'<div class="title">08/03/2023 - often imitated, never duplicated</div>'+
+	'<div class="title">07/05/2023 - often imitated, never duplicated</div>'+
 	'<div class="listing">&bull; added the final, 20th building</div>'+
 	'<div class="listing" style="font-size:80%;margin-left:20px;">-currently, no more buildings are planned beyond this one; there are still many more updates to come, but future patches will focus on adding minigames to the existing buildings along with other features!</div>'+
 	'<div class="listing">&bull; added another tier of upgrades and achievements</div>'+
 	'<div class="listing">&bull; updated flavored milk icons</div>'+
 	'<div class="listing">&bull; added visual cue for shimmering veil</div>'+
+	'<div class="listing">&bull; touched up old Santa sprites</div>'+
+	'<div class="listing">&bull; new heavenly upgrade that lets you trade presents with other players</div>'+
 	(App?'<div class="listing">&bull; removed Discord rich presence support (plugin currently broken)</div>':'')+
 	'<div class="listing">&bull; Cookie Clicker turns 10 years old this year. Thank you for clicking cookies with us!</div>'+
-	
-	'</div><div class="subsection update small">'+
-	'<div class="title">08/08/2022 - the baker with all the gifts</div>'+
-	'<div class="listing">&bull; Cookie Clicker turns 9, celebrate and send other players presents with the new heavenly upgrade!</div>'+
 	
 	'</div><div class="subsection update">'+
 	'<div class="title">31/05/2022 - a mind of its own</div>'+
@@ -1922,7 +1915,7 @@ Game.Launch=function()
 	;
 	
 	Game.ready=0;
-	
+
 	Game.Load=function(callback)
 	{
 		//l('offGameMessage').innerHTML='<div style="padding:64px 128px;"><div class="title">Loading...</div></div>';
@@ -1932,6 +1925,9 @@ Game.Launch=function()
 		else Game.Loader.loaded=callback;
 		Game.Loader.Load(['filler.png']);
 	}
+	
+	// Commented out the sitelock function
+	/*
 	Game.ErrorFrame=function()
 	{
 		l('offGameMessage').innerHTML=
@@ -1940,6 +1936,7 @@ Game.Launch=function()
 		'You can <a href="//orteil.dashnet.org/cookieclicker/" target="_blank">play Cookie Clicker over here</a>!<br>'+
 		'<small>(If for any reason, you are unable to access the game on the official URL, we are currently working on a second domain.)</small></div>';
 	}
+	*/
 	Game.timedout=false;
 	Game.Timeout=function()
 	{
@@ -2557,8 +2554,8 @@ Game.Launch=function()
 			Game.attachTooltip(l('topbarDiscord'),'<div style="padding:8px;width:250px;text-align:center;">Our official discord server.<br>You can share tips and questions about Cookie Clicker and all our other games!</div>','this');
 			Game.attachTooltip(l('topbarPatreon'),'<div style="padding:8px;width:250px;text-align:center;">Support us on Patreon and help us keep updating Cookie Clicker!<br>There\'s neat rewards for patrons too!</div>','this');
 			Game.attachTooltip(l('topbarMerch'),'<div style="padding:8px;width:250px;text-align:center;">Cookie Clicker shirts, hoodies and stickers!</div>','this');
-			Game.attachTooltip(l('topbarMobileCC'),'<div style="padding:8px;width:250px;text-align:center;">Play Cookie Clicker on your phone!<br>(Android only; iOS version will be released later)</div>','this');
-			Game.attachTooltip(l('topbarSteamCC'),'<div style="padding:8px;width:250px;text-align:center;">Get Cookie Clicker on Steam!<br>Featuring music by C418.</div>','this');
+			Game.attachTooltip(l('topbarMobileCC'),'<div style="padding:8px;width:250px;text-align:center;">Check out the creator of this downloadable version!<br>(Subscribe?)</div>','this');
+			Game.attachTooltip(l('topbarSteamCC'),'<div style="padding:8px;width:250px;text-align:center;">Check for Updates!<br>{Current Version: 1.2.0}</div>','this');
 			Game.attachTooltip(l('topbarRandomgen'),'<div style="padding:8px;width:250px;text-align:center;">A thing we made that lets you write random generators.</div>','this');
 			Game.attachTooltip(l('topbarIGM'),'<div style="padding:8px;width:250px;text-align:center;">A thing we made that lets you create your own idle games using a simple scripting language.</div>','this');
 			l('changeLanguage').innerHTML=loc("Change language");

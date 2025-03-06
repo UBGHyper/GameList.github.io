@@ -1,4 +1,4 @@
-﻿/*
+/*
 Orteil's sloppy Cookie Clicker dungeons
 
 Optimizations to do (not mentioning the dozens of missing features) :
