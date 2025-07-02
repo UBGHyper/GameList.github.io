@@ -7,7 +7,7 @@ Hello, and welcome to the joyous mess that is main.js. Code contained herein is 
 As Cookie Clicker is rife with puns and tricky wordplay, localization was never intended to be possible - but ended up happening anyway as part of the Steam port. As a result, usage of strings is somewhat unorthodox in some places.
 Have a nice trip, and stay safe.
 Spoilers ahead.
-http://orteil.dashnet.org
+http://ubghyper.github.io
 */
 
 /*=====================================================================================
@@ -1241,9 +1241,9 @@ if (App && new URL(window.location.href).searchParams.get('modless')) Game.modle
 Game.local=(!location.hostname || location.hostname==='localhost' || location.hostname==='127.0.0.1');
 if (App) Game.local=true;
 Game.resPath='';
-if (!App && !Game.local && window.location.href.indexOf('orteil.dashnet.org')!=-1)
+if (!App && !Game.local && window.location.href.indexOf('ubghyper.github.io')!=-1)
 {
-	Game.resPath=('//'+location.host+location.pathname).replace('orteil.dashnet.org','cdn.dashnet.org');
+	Game.resPath=('//'+location.host+location.pathname).replace('ubghyper.github.io','ubghyper.github.io');
 	if (Game.resPath.substr(-1)!='/') Game.resPath+='/';
 }
 
