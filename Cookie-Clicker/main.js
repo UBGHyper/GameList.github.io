@@ -1915,7 +1915,7 @@ Game.Launch=function()
 	;
 	
 	Game.ready=0;
-
+	
 	Game.Load=function(callback)
 	{
 		//l('offGameMessage').innerHTML='<div style="padding:64px 128px;"><div class="title">Loading...</div></div>';
@@ -1925,9 +1925,6 @@ Game.Launch=function()
 		else Game.Loader.loaded=callback;
 		Game.Loader.Load(['filler.png']);
 	}
-	
-	// Commented out the sitelock function
-	/*
 	Game.ErrorFrame=function()
 	{
 		l('offGameMessage').innerHTML=
@@ -1936,7 +1933,6 @@ Game.Launch=function()
 		'You can <a href="//orteil.dashnet.org/cookieclicker/" target="_blank">play Cookie Clicker over here</a>!<br>'+
 		'<small>(If for any reason, you are unable to access the game on the official URL, we are currently working on a second domain.)</small></div>';
 	}
-	*/
 	Game.timedout=false;
 	Game.Timeout=function()
 	{
