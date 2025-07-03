@@ -1,0 +1,90 @@
+element::-webkit-scrollbar {
+    display: none;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 1,
+  'opsz' 48
+}
+
+
+.BodyContainer {
+    display: flex;
+    flex-direction: column;
+    height: 74%;
+    width: 100%;
+    border-bottom: 5px solid;
+    box-sizing: border-box;
+    overflow: scroll;
+
+    background-color: #1B365C;
+    padding-bottom: 10px;;
+    cursor: pointer;
+}
+
+.BodyContainer::-webkit-scrollbar {
+    display: none;
+}
+
+
+.BodyContainerText {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+}
+.BodyContainerText p {
+
+    margin: 10px;
+    margin-bottom: 0;
+
+    font-family: 'Merriweather', serif;
+    font-family: 'Ubuntu', sans-serif;
+
+    color : #8CB4DB;
+    
+}
+
+.BodyContainerText span {
+
+    margin: 0 10px;
+    font-family: 'Dosis', sans-serif;
+
+    color : #8CB4DB;
+    font-size: 10px;
+    font-weight: 500;
+
+    text-align:justify;
+}
+
+
+.BodyButton {
+    height: fit-content;
+    background-color: rgb(3, 15, 38);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.BodyButton button {
+    height: 100%;
+    width: fit-content;
+    cursor: default;
+    display: flex;
+    align-items: center;
+
+}
+
+.BodyButton button img {
+  cursor: pointer;
+
+}
+
+#PlusButton {
+    margin: 0;
+}

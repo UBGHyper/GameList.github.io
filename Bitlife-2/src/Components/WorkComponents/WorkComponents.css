@@ -1,0 +1,90 @@
+.WorkContainers::-webkit-scrollbar {
+    display: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+.WorkContainers {
+    height: 85%;
+    width: 100%;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: #1B365C;
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Ubuntu', sans-serif;
+
+}
+
+.WorkContainerSelect {
+    min-height: 12%;
+    height: 70px;
+    background-color: #0C1829;
+    color: #FFB012;
+    display: flex;
+    
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    font-size: 17px;
+    padding: 0 10px;
+    border-bottom: 1px solid rgb(67, 92, 132);
+    cursor: pointer;
+}
+
+.WorkContainerSelect:hover {
+    background-color: #1B365C;
+    border-bottom: 1px solid rgb(67, 92, 132);
+}
+
+
+.WorkContainerHeader {
+    min-width: 12%;
+    position:sticky;
+    width: 100%;
+    color: white;
+    font-family: 'Ubuntu', sans-serif;
+    background-color: inherit;
+    flex-direction: row;
+
+    justify-content: flex-start;
+    align-items: center;
+
+}
+
+.WorkContainerHeader a {
+    position: absolute;
+
+}
+
+.Title {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.WorkContainerSelect span {
+    color: greenyellow;
+    
+
+    font-family: 'Dosis', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    text-align: justify;
+} 
+
+.JobDesciption {
+    
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    
+}
+
+.JobDesciption span {
+    font-size: 15px;
+    color: #FFB012;
+}

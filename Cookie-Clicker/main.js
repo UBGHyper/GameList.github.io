@@ -1933,7 +1933,7 @@ Game.Launch=function()
 		'You can <a href="//orteil.dashnet.org/cookieclicker/" target="_blank">play Cookie Clicker over here</a>!<br>'+
 		'<small>(If for any reason, you are unable to access the game on the official URL, we are currently working on a second domain.)</small></div>';
 	}
-	Game.timedout=false;
+	Game.timedout=true;
 	Game.Timeout=function()
 	{
 		Game.WriteSave();
