@@ -1,15 +1,46 @@
 <!DOCTYPE html>
-
 <html>
-	<head>
-		<link rel="manifest" href="manifest.json" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
-	</head>
-	<body>
-		<canvas id="screen"></canvas>
-		<div id="ui"></div>
-		<div id="transition-layer"></div>
-
-		<script type="module" src="main.bundle.js" defer></script>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link
+      rel="preload"
+      href="forced_square.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="images/pmllogo.svg"
+      as="image"
+      type="image/svg+xml"
+    />
+    <link
+      rel="preload"
+      href="images/discord.svg"
+      as="image"
+      type="image/svg+xml"
+    />
+    <link rel="manifest" href="manifest.json" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"
+    />
+    <script defer="defer" type="module" src="error_screen.bundle.js"></script>
+    <script defer="defer" type="module" src="main.bundle.js"></script>
+    <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('debug') === 'true') {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/eruda';
+      script.onload = () => eruda.init();
+      document.body.appendChild(script);
+    }
+  </script>
+  </head>
+  <body>
+    <canvas id="screen"></canvas>
+    <div id="ui"></div>
+    <div id="transition-layer"></div>
+  </body>
 </html>

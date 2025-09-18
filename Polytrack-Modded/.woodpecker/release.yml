@@ -1,0 +1,45 @@
+when:
+  event:
+    - tag
+
+steps:
+  - name: set version tag
+    image: alpine
+    commands:
+      - sed -i "3a const pmlversion = \"${CI_COMMIT_TAG:-UNKNOWN}\";" main.bundle.js
+      - sed -i "4a window.pmlversion = pmlversion;" main.bundle.js
+
+  - name: compile asar
+    image: node:20-alpine
+    commands:
+      - npm install -g asar
+      - asar p . app.asar
+
+  - name: get app files from remote and copy asar
+    image: node:20-alpine
+    commands:
+      - apk add --no-cache curl
+      - mkdir -p ../temp/resources
+      - curl -o ../temp/macos.zip https://fileserver.crjakob.com/PolyModLoader/macos.zip
+      - curl -o ../temp/linux.zip https://fileserver.crjakob.com/PolyModLoader/linux.zip
+      - curl -o ../temp/windows.zip https://fileserver.crjakob.com/PolyModLoader/windows.zip
+      - cp app.asar ../temp/resources/app.asar
+      - cd ../temp
+      - apk add zip
+      - zip -g windows.zip resources/app.asar
+      - zip -g linux.zip resources/app.asar
+      - rm -rf resources
+      - mkdir -p PolyTrack.app/Contents/resources
+      - cp ../PolyModLoader/app.asar PolyTrack.app/Contents/resources/app.asar
+      - zip -r macos.zip PolyTrack.app/Contents/resources/app.asar
+
+  - name: create release
+    image: woodpeckerci/plugin-release
+    settings:
+      files:
+        - app.asar
+        - ../temp/macos.zip
+        - ../temp/linux.zip
+        - ../temp/windows.zip
+      api_key:
+        from_secret: ACCESS_TOKEN
