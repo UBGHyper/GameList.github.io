@@ -11,7 +11,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="robots" content="all">
 	<meta name="contact" content="contact@R74n.com">
-	<link rel="canonical" href="https:/ubghyper.github.io	" id="canonicalLink"/>
+	<link rel="canonical" href="https://ubghyper.github.io/play.html" id="canonicalLink"/>
 	
 	<!--Favicons-->
 	<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=2">
@@ -112,7 +112,7 @@
 		if (typeof navigator !== 'undefined' && !standalone) {
 			if ('serviceWorker' in navigator) {
 				window.addEventListener('load', function() {
-					navigator.serviceWorker.register('service-worker.js', { scope: './' });
+					navigator.serviceWorker.register('/service-worker.js');
 				});
 			}
 		}
@@ -13618,7 +13618,7 @@ else if (window.initialData && window.initialData.langCode && window.initialData
 if (langCode) {
 	try {
 		var Httpreq = new XMLHttpRequest();
-		Httpreq.open("GET","lang/"+langCode+".json",false);
+		Httpreq.open("GET","https://sandboxels.r74n.com/lang/"+langCode+".json",false);
 		Httpreq.send(null);
 		try {
 			lang = JSON.parse(Httpreq.responseText.replace(/\\"/g,""));
@@ -20158,7 +20158,6 @@ if (document.referrer && document.referrer.indexOf("r74n.") === -1) {
 			window.addEventListener('load', function() {
 				if (standalone) return;
 				if (window.location.protocol === "file:") return;
-				if (!isOnSite) return; // Don't load ads when embedded on another domain
 				var adscript1 = document.createElement('script');
 				adscript1.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8485284630785740";
 				adscript1.crossorigin = "anonymous";
