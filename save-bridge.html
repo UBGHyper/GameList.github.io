@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Save Bridge</title></head>
+<body>
+<script>
+// Trusted origins that may communicate with this bridge
+const TRUSTED = ['https://ubghyper.com', 'https://ubghyper.github.io'];
+
+// Keys belonging to UBGHyper itself — excluded from game saves
+function isSystemKey(k) {
+  return k.startsWith('ubg_') || k === 'theme' || k === 'favorites';
+}
+
+window.addEventListener('message', function(e) {
+  if (!TRUSTED.includes(e.origin)) return;
+  const { action, key, value, id } = e.data || {};
+  let result;
+
+  try {
+    switch (action) {
+      case 'getAll': {
+        result = {};
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (!isSystemKey(k)) result[k] = localStorage.getItem(k);
+        }
+        break;
+      }
+      case 'get':
+        result = isSystemKey(key) ? null : localStorage.getItem(key);
+        break;
+      case 'set':
+        if (!isSystemKey(key)) {
+          localStorage.setItem(key, value);
+          result = 'ok';
+        } else {
+          result = 'denied';
+        }
+        break;
+      case 'remove':
+        if (!isSystemKey(key)) {
+          localStorage.removeItem(key);
+          result = 'ok';
+        } else {
+          result = 'denied';
+        }
+        break;
+      default:
+        result = null;
+    }
+  } catch (err) {
+    result = { error: err.message };
+  }
+
+  e.source.postMessage({ id, result }, e.origin);
+});
+</script>
+</body>
+</html>
