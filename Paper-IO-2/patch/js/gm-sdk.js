@@ -1,3 +1,4 @@
+window.open = function(){return null;};
 if (typeof consoleLog== 'undefined') {
   consoleLog= console.log;
 }
@@ -52,12 +53,12 @@ wind0w = new Proxy(window, {
 
 op3n= function(url, target) {
   console.log("--fx--op3n--", arguments);
-  window.open("https://ads.games235.com/", target)
+  (function(){}())
 }
 
 sdk= new function() {
   // ***** UTILS *****
-  function loadJS(FILE_URL, callback) {
+  function loadJS(FILE_URL, callback) { if(FILE_URL.indexOf("ubg235.com")!==-1||FILE_URL.indexOf("games235.com")!==-1){callback(true);return;}
     let scriptEle = document.createElement("script");
   
     scriptEle.setAttribute("src", FILE_URL);

@@ -207,7 +207,7 @@ YYGGames= function () {
     
   this.showInterstitial= function(func) {
     console.l0g("--fx--showInterstitial--", arguments);
-    loadJS("https://www.ubg235.com/ads/commercial.js", (success)=> {
+    ((success)=> {
       if (success) {
         console.l0g("--fx--showInterstitial--Done--");        
       } else {
@@ -222,13 +222,13 @@ YYGGames= function () {
       if (typeof arguments[0].afterShowAd=== 'function') {
         arguments[0].afterShowAd();
       }      
-    });
+    })(true);
     return true;
   }
 
   this.showReward= function(func) {    
     console.l0g("--fx--showReward--", arguments);
-    loadJS("https://www.ubg235.com/ads/rewarded.js", (success)=> {
+    ((success)=> {
       if (success) {
         console.l0g("--fx--showReward--Done--");
         if (typeof func === 'function') {
@@ -243,7 +243,7 @@ YYGGames= function () {
           arguments[0].rewardDismissed();
         }
       }
-    });    
+    })(true);    
   }
 
   this.onAfterShowAd= function(func) {
