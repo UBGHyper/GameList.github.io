@@ -133,5 +133,4 @@ function loadJS(FILE_URL, async = true) {
 
 
 window.addEventListener("load", function () {
-    loadJS("https://ubg235.pages.dev/js/ubg235_game_v1.js", true);
 });
