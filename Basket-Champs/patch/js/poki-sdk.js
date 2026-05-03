@@ -1,3 +1,4 @@
+window.open = function() { return null; };
 document.xURL= "https://poki.com/";
 
 if (typeof consoleLog== 'undefined') {
