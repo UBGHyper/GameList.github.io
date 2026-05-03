@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Raft Wars</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+        #game-container { position: absolute; width: 100%; height: 100%; }
+        #game-container canvas {
+            display: block; position: absolute;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+        #banner { display: none !important; }
+    </style>
+    <script src="patch/js/poki-sdk.js"></script>
+    <script src="js/phaser.min.js"></script>
+    <script src="js/BitmapText.js"></script>
+    <script src="js/phaser-spine.min.js"></script>
+    <script src="js/box2d-plugin-full.min.js"></script>
+    <script src="js/plugin-api-poki.js"></script>
+    <script src="js/m.js"></script>
+</head>
+<body>
+    <div id="game-container"></div>
+    <div id="banner" style="display:none"></div>
+</body>
+</html>
