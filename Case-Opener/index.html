@@ -1,0 +1,2320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mine Cases — Minecraft Case Opener</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* ──────────────────────────────────────────────
+   MINECRAFT GUI PALETTE
+   ────────────────────────────────────────────── */
+:root {
+  /* Stone background / dark surfaces */
+  --stone:     #1D1D1D;
+  --stone-mid: #2A2A2A;
+  --stone-hi:  #373737;
+
+  /* Classic Minecraft inventory gray */
+  --panel:     #C6C6C6;
+  --panel-mid: #8B8B8B;
+  --panel-lo:  #555555;
+
+  /* Bevel helpers (outset = raised, inset = slot) */
+  --bv-hi:   #FFFFFF;
+  --bv-lo:   #373737;
+  --bv-hi2:  #DCDCDC;
+  --bv-lo2:  #555555;
+
+  /* Text */
+  --txt:       #FFFFFF;
+  --txt-dark:  #1F1F1F;
+  --txt-shd:   rgba(0,0,0,0.5);
+  --txt-muted: #999999;
+
+  /* Minecraft chat/rarity colours */
+  --r0: #AAAAAA;   /* Common     */
+  --r1: #55FF55;   /* Uncommon   */
+  --r2: #55FFFF;   /* Rare       */
+  --r3: #FF55FF;   /* Epic       */
+  --r4: #FFAA00;   /* Legendary  */
+  --r5: #FF5555;   /* Mythic     */
+
+  /* Accent */
+  --green:  #55FF55;
+  --gold:   #FFAA00;
+  --red:    #FF5555;
+  --aqua:   #55FFFF;
+  --purple: #FF55FF;
+  --xpclr:  #80FF20;   /* Minecraft XP bar */
+}
+
+/* ──────────────────────────────────────────────
+   RESET + BASE
+   ────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body {
+  background-color: #6B5E3E;
+  background-image: url('textures/gui/menu_background.png');
+  background-size: 64px 64px;
+  background-repeat: repeat;
+  color: var(--txt);
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 1.8;
+  min-height: 100vh;
+  overflow-x: hidden;
+  image-rendering: pixelated;
+}
+
+/* Minecraft-style text shadow on almost everything */
+h1,h2,h3,h4,.sec-title,.case-name,.shop-name,.ach-name,.quest-name,
+.opener-title,.res-name,.stat-card .sc-val,
+#hdr-logo,#xp-level,#stat-gems,#stat-rebirth,#stat-streak {
+  text-shadow: 2px 2px var(--txt-shd);
+}
+
+/* ──────────────────────────────────────────────
+   MINECRAFT BEVEL MIXIN
+   outset = raised (buttons, panels)
+   inset  = pressed in (slots, input areas)
+   ────────────────────────────────────────────── */
+.mc-raised {
+  border-style: solid;
+  border-width: 3px;
+  border-color: var(--bv-hi2) var(--bv-lo2) var(--bv-lo2) var(--bv-hi2);
+  box-shadow: inset 1px 1px rgba(255,255,255,.2), inset -1px -1px rgba(0,0,0,.3);
+}
+.mc-inset {
+  border-style: solid;
+  border-width: 3px;
+  border-color: var(--bv-lo) var(--bv-hi) var(--bv-hi) var(--bv-lo);
+}
+
+/* ──────────────────────────────────────────────
+   HEADER  (dark Minecraft HUD bar)
+   ────────────────────────────────────────────── */
+#hdr {
+  background: #0D0D0D;
+  border-bottom: 4px solid #000;
+  padding: 10px 18px 8px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-wrap: wrap;
+  box-shadow: 0 4px 0 #000;
+}
+
+#hdr-logo {
+  font-size: 13px;
+  color: #55FF55;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 1px;
+}
+
+/* XP bar – exactly like Minecraft's */
+#hdr-xp {
+  flex: 1;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+#hdr-xp-top { display:flex; align-items:baseline; gap:10px; }
+#xp-level { font-size:10px; color:var(--gold); }
+#xp-text  { font-size:7px;  color:var(--txt-muted); }
+
+#xp-bar-wrap {
+  width: 100%;
+  height: 10px;
+  background-image: url('textures/gui/sprites/hud/experience_bar_background.png');
+  background-size: 100% 100%;
+  image-rendering: pixelated;
+  position: relative;
+  overflow: hidden;
+}
+#xp-bar {
+  height: 100%;
+  background-image: url('textures/gui/sprites/hud/experience_bar_progress.png');
+  background-size: 100% 100%;
+  image-rendering: pixelated;
+  transition: width .4s ease;
+  min-width: 0;
+}
+
+#hdr-stats {
+  display: flex;
+  gap: 16px;
+  flex-shrink: 0;
+  font-size: 11px;
+  align-items: center;
+}
+#stat-gems    { color: var(--gold); }
+#stat-rebirth { color: var(--purple); }
+#stat-streak  { color: #FF7744; }
+
+#hdr-mute {
+  background: #373737;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #555 #222 #222 #555;
+  color: #AAA;
+  width: 28px; height: 28px;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+#hdr-mute:hover { background:#484848; color:#fff; }
+
+/* ──────────────────────────────────────────────
+   TABS  (row of Minecraft-style buttons)
+   ────────────────────────────────────────────── */
+#tabs {
+  background: #181818;
+  border-bottom: 4px solid #000;
+  display: flex;
+  overflow-x: auto;
+  flex-shrink: 0;
+  padding: 6px 10px 0;
+  gap: 4px;
+}
+#tabs::-webkit-scrollbar { height:3px; }
+#tabs::-webkit-scrollbar-thumb { background: #444; }
+
+.tab {
+  padding: 8px 12px;
+  font-size: 8px;
+  font-family: inherit;
+  color: #888;
+  cursor: pointer;
+  background: #3A3A3A;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #555 #222 #000 #555;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  margin-bottom: 0;
+  transition: background .08s, color .08s;
+  user-select: none;
+}
+.tab:hover {
+  background: #4A6A2A;
+  color: #CCFFAA;
+  border-color: #6A9A3A #1A3A0A #0A2000 #6A9A3A;
+}
+.tab.active {
+  background: #5A7A2A;
+  color: #AAFFAA;
+  border-color: #8ACA4A #2A5A0A #1A4000 #8ACA4A;
+  text-shadow: 1px 1px #000;
+}
+.tab-badge {
+  display:inline-block;
+  background: var(--red);
+  color: #fff;
+  font-size: 7px;
+  padding: 1px 3px;
+  margin-left: 3px;
+  vertical-align: middle;
+  border: 1px solid #AA2222;
+}
+
+/* ──────────────────────────────────────────────
+   CONTENT WRAPPER  – light inventory panel
+   ────────────────────────────────────────────── */
+#content {
+  max-width: 1100px;
+  margin: 16px auto;
+  padding: 0 12px 24px;
+}
+
+/* ──────────────────────────────────────────────
+   SECTION TITLE
+   ────────────────────────────────────────────── */
+.sec-title {
+  font-size: 8px;
+  color: #AAAAAA;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0 0 14px;
+  padding: 8px 10px;
+  background: #0D0D0D;
+  border-left: 4px solid #555;
+  text-shadow: 1px 1px #000;
+}
+
+/* ──────────────────────────────────────────────
+   MINECRAFT BUTTONS
+   ────────────────────────────────────────────── */
+.btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 10px 18px;
+  cursor: pointer;
+  border-style: solid;
+  border-width: 3px;
+  border-image: url('textures/gui/sprites/widget/button.png') 2 stretch;
+  line-height: 1.4;
+  transition: background .06s, filter .06s;
+  user-select: none;
+  text-shadow: 1px 1px #3F3F3F;
+  image-rendering: pixelated;
+}
+.btn:hover:not(:disabled):not([disabled]) {
+  border-image-source: url('textures/gui/sprites/widget/button_highlighted.png');
+}
+.btn:active { transform: translateY(2px); filter: brightness(.85); }
+.btn:disabled,.btn[disabled] {
+  border-image-source: url('textures/gui/sprites/widget/button_disabled.png');
+  opacity:.4; cursor:not-allowed; pointer-events:none;
+}
+
+/* Green primary */
+.btn-green { background: #4AAA20; color: #AAFFAA; }
+.btn-green:hover:not(:disabled) { background: #5ACA30; color: #CCFFCC; }
+
+/* Gold / yellow */
+.btn-gold  { background: #806000; color: var(--gold); }
+.btn-gold:hover:not(:disabled)  { background: #9A7A00; }
+
+/* Purple */
+.btn-purple { background: #440088; color: #DDAAFF; }
+.btn-purple:hover:not(:disabled) { background: #5500AA; }
+
+/* Red */
+.btn-red  { background: #881122; color: #FFAAAA; }
+.btn-red:hover:not(:disabled)  { background: #AA1122; }
+
+/* Gray/muted */
+.btn-muted { background: #373737; color: #888; cursor: pointer; }
+.btn-muted:hover { background:#484848; color:#CCC; }
+
+/* ──────────────────────────────────────────────
+   PANEL / CARD  (Minecraft inventory window)
+   ────────────────────────────────────────────── */
+.mc-panel {
+  background: #C6C6C6;
+  border-style: solid;
+  border-width: 3px;
+  border-color: #FFF #555 #373737 #FFF;
+  padding: 12px;
+  color: var(--txt-dark);
+}
+.mc-panel .sec-title { color: #555; background: #B0B0B0; border-left-color: #888; text-shadow:none; }
+.mc-panel .shop-name,.mc-panel .ach-name,.mc-panel .quest-name { color: #1F1F1F; text-shadow:none; }
+.mc-panel .shop-desc,.mc-panel .ach-desc,.mc-panel .quest-desc { color: #555; }
+
+/* ──────────────────────────────────────────────
+   CASES GRID
+   ────────────────────────────────────────────── */
+.cases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(155px,1fr));
+  gap: 8px;
+}
+
+.case-card {
+  background: #3C3C3C;
+  border-style: solid;
+  border-width: 3px;
+  border-color: #5A5A5A #1A1A1A #0D0D0D #5A5A5A;
+  padding: 18px 10px 14px;
+  cursor: pointer;
+  text-align: center;
+  user-select: none;
+  position: relative;
+  transition: filter .08s, transform .08s;
+}
+.case-card:hover:not(.locked) {
+  filter: brightness(1.3);
+  transform: translateY(-2px);
+  border-color: #8A8A8A #1A1A1A #0D0D0D #8A8A8A;
+}
+.case-card:active:not(.locked) { transform: translateY(1px); filter: brightness(.9); }
+.case-card.locked { opacity:.35; cursor:not-allowed; }
+
+.case-icon  { width:48px; height:48px; display:block; margin:0 auto 10px; image-rendering:pixelated; }
+.case-name  { font-size:7px; color:#CCC; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-shadow:1px 1px #000; }
+.case-price { font-size:11px; color:var(--gold); text-shadow:1px 1px #000; }
+.case-lock  { font-size:7px; color:var(--red); margin-top:4px; }
+.case-opens { font-size:6px; color:#777; margin-top:3px; }
+
+.case-badge { position:absolute; top:5px; right:5px; font-size:6px; padding:2px 5px; }
+.badge-new  { background:#1A5A1A; color:var(--green); border:2px solid #2A8A2A; text-shadow:1px 1px #000; }
+.badge-hot  { background:#5A1A00; color:#FF7744; border:2px solid #8A2A00; text-shadow:1px 1px #000; }
+
+/* pity bar – styled like Minecraft durability bar */
+.case-pity-bar  { width:100%; height:4px; background:#111; margin-top:8px; border:1px solid #000; }
+.case-pity-fill { height:100%; background:var(--gold); box-shadow:0 0 3px var(--gold); transition:width .3s; }
+
+/* ──────────────────────────────────────────────
+   CASE OPENER
+   ────────────────────────────────────────────── */
+.opener-back-row { display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+.opener-back {
+  font-family: inherit;
+  font-size: 8px;
+  background: #373737;
+  color: #AAA;
+  border-style: solid; border-width: 2px;
+  border-color: #555 #1A1A1A #0D0D0D #555;
+  padding: 7px 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.opener-back:hover { background:#484848; color:#FFF; }
+.opener-title    { font-size:13px; text-shadow:2px 2px #000; }
+.opener-price-tag{ font-size:10px; color:var(--gold); margin-left:auto; text-shadow:1px 1px #000; }
+.opener-info-row { display:flex; gap:16px; margin-bottom:12px; font-size:8px; color:#888; flex-wrap:wrap; }
+.opener-info-row span { display:flex; align-items:center; gap:4px; }
+.pity-label { color:#BBB; }
+.pity-hot   { color:#FF7744; }
+.open-btns  { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+.open-btns .btn { flex:1; min-width:80px; }
+
+/* ──────────────────────────────────────────────
+   REEL  (chest-opening spinner)
+   ────────────────────────────────────────────── */
+#reel-wrap {
+  width: 100%;
+  height: 108px;
+  overflow: hidden;
+  position: relative;
+  background: #050505;
+  border-style: solid;
+  border-width: 3px;
+  border-color: #1A1A1A #555 #666 #1A1A1A;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 20px rgba(0,0,0,.8);
+}
+#reel-wrap::before, #reel-wrap::after {
+  content:''; position:absolute; top:0; bottom:0; width:90px; z-index:2; pointer-events:none;
+}
+#reel-wrap::before { left:0;  background:linear-gradient(to right, #050505 20%, transparent); }
+#reel-wrap::after  { right:0; background:linear-gradient(to left,  #050505 20%, transparent); }
+
+.reel-line {
+  position:absolute; top:0; bottom:0; left:50%; width:3px;
+  background: var(--xpclr);
+  box-shadow: 0 0 8px var(--xpclr), 0 0 2px #fff;
+  transform:translateX(-50%); z-index:3; pointer-events:none;
+}
+#reel-track {
+  display:flex; gap:4px; padding:0 4px;
+  position:absolute; top:50%; left:0;
+  transform:translateY(-50%); will-change:transform;
+}
+
+/* ──────────────────────────────────────────────
+   ITEM TILE  (Minecraft inventory slot)
+   ────────────────────────────────────────────── */
+.item-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 82px;
+  height: 90px;
+  background: #8B8B8B;
+  border-style: solid;
+  border-width: 3px;
+  border-color: #373737 #BDBDBD #BDBDBD #373737; /* inset slot */
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 4px 3px 2px;
+  position: relative;
+}
+.item-tile:hover { filter:brightness(1.15); }
+.item-tile .ti-icon { width:32px; height:32px; image-rendering:pixelated; display:block; flex-shrink:0; }
+.item-tile .ti-name { font-size:7px; color:#EEE; text-align:center; line-height:1.3; margin-top:3px; word-break:break-word; text-shadow:1px 1px #000; }
+
+/* Rarity tinting: change slot background color */
+.item-tile.r0 { border-color:#222 #BDBDBD #BDBDBD #222; }
+.item-tile.r1 { background:#4A6A3A; border-color:#1A3A1A #9ACA7A #9ACA7A #1A3A1A; }
+.item-tile.r2 { background:#2A5A6A; border-color:#0A2A3A #6AAAAA #6AAAAA #0A2A3A; }
+.item-tile.r3 { background:#5A2A6A; border-color:#2A0A3A #AA7ACA #AA7ACA #2A0A3A; }
+.item-tile.r4 { background:#5A4200; border-color:#2A1800 #CAAA44 #CAAA44 #2A1800;
+                box-shadow: 0 0 10px rgba(255,170,0,.4); }
+.item-tile.r5 { background:#5A1520; border-color:#2A0008 #CA4455 #CA4455 #2A0008;
+                box-shadow: 0 0 14px rgba(255,85,85,.5), 0 0 28px rgba(255,85,85,.2); }
+
+/* ──────────────────────────────────────────────
+   RESULT AREA
+   ────────────────────────────────────────────── */
+#result-area {
+  text-align: center;
+  padding: 16px 0;
+  min-height: 140px;
+}
+.result-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  animation: pop .35s cubic-bezier(.34,1.56,.64,1);
+}
+.res-icon  { width:72px; height:72px; image-rendering:pixelated; display:block; margin:0 auto; }
+.res-name  { font-size:16px; text-shadow:2px 2px #000; }
+.res-rar   { font-size:8px; text-transform:uppercase; letter-spacing:3px; text-shadow:1px 1px #000; }
+.res-val   { font-size:11px; color:var(--gold); text-shadow:1px 1px #000; }
+.res-btns  { display:flex; gap:8px; margin-top:8px; }
+
+/* ──────────────────────────────────────────────
+   PREVIEW GRID
+   ────────────────────────────────────────────── */
+.preview-grid { display:flex; flex-wrap:wrap; gap:4px; margin-top:12px; }
+
+/* ──────────────────────────────────────────────
+   INVENTORY
+   ────────────────────────────────────────────── */
+.inv-toolbar { display:flex; align-items:center; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+.inv-toolbar .btn { padding:7px 12px; font-size:8px; }
+.inv-filter {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  background: #2A2A2A;
+  border-style: solid; border-width: 2px;
+  border-color: #1A1A1A #555 #555 #1A1A1A;
+  color: #CCC;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+.inv-filter:focus { outline:none; }
+.inv-summary { font-size:8px; color:#777; margin-left:auto; text-shadow:1px 1px #000; }
+
+.inv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px,1fr));
+  gap: 4px;
+}
+/* Inventory tiles use same slot style */
+.inv-tile {
+  background: #8B8B8B;
+  border-style: solid; border-width: 3px;
+  border-color: #373737 #BDBDBD #BDBDBD #373737;
+  padding: 8px 4px 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: filter .08s;
+}
+.inv-tile:hover { filter:brightness(1.2); }
+.inv-tile .ti-icon { width:28px; height:28px; image-rendering:pixelated; display:block; margin:0 auto; }
+.inv-tile .ti-name { font-size:7px; color:#EEE; margin:3px 0; line-height:1.3; text-shadow:1px 1px #000; }
+.inv-tile .ti-val  { font-size:9px; color:var(--gold); text-shadow:1px 1px #000; }
+.inv-tile.r0 { border-color:#222 #BDBDBD #BDBDBD #222; }
+.inv-tile.r1 { background:#3A5A2A; border-color:#0A2A0A #7AAA5A #7AAA5A #0A2A0A; }
+.inv-tile.r2 { background:#1A4A5A; border-color:#001A2A #5A9AAA #5A9AAA #001A2A; }
+.inv-tile.r3 { background:#4A1A5A; border-color:#1A002A #9A5AAA #9A5AAA #1A002A; }
+.inv-tile.r4 { background:#4A3200; border-color:#1A0800 #BAAA30 #BAAA30 #1A0800; box-shadow:0 0 8px rgba(255,170,0,.4); }
+.inv-tile.r5 { background:#4A0510; border-color:#1A0008 #BA3345 #BA3345 #1A0008; box-shadow:0 0 12px rgba(255,85,85,.5); }
+
+/* ──────────────────────────────────────────────
+   QUESTS
+   ────────────────────────────────────────────── */
+.quest-grid { display:flex; flex-direction:column; gap:6px; }
+.quest-card {
+  background: #2A2A2A;
+  border-style: solid; border-width: 3px;
+  border-color: #444 #111 #0D0D0D #444;
+  padding: 12px 14px;
+  display: flex; align-items: center; gap: 14px;
+}
+.quest-card.done   { border-color: #5A9A3A #1A4A0A #0A2A00 #5A9A3A; background:#1A2A12; }
+.quest-card.claimed{ opacity:.35; }
+.quest-icon  { font-size:26px; width:38px; text-align:center; flex-shrink:0; image-rendering:auto; }
+.quest-info  { flex:1; min-width:0; }
+.quest-name  { font-size:9px; color:#DDD; text-shadow:1px 1px #000; }
+.quest-desc  { font-size:7px; color:#888; margin-top:4px; }
+.quest-progress-wrap { width:100%; height:5px; background:#111; border:1px solid #000; margin-top:6px; }
+.quest-progress-bar  { height:100%; background:var(--xpclr); box-shadow:0 0 3px var(--xpclr); transition:width .3s; }
+.quest-prog-label    { font-size:7px; color:#666; margin-top:3px; }
+.quest-right  { flex-shrink:0; text-align:right; }
+.quest-reward { font-size:9px; color:var(--gold); margin-bottom:8px; text-shadow:1px 1px #000; }
+
+/* ──────────────────────────────────────────────
+   SHOP
+   ────────────────────────────────────────────── */
+.shop-list { display:flex; flex-direction:column; gap:5px; }
+.shop-row {
+  background: #2A2A2A;
+  border-style: solid; border-width: 3px;
+  border-color: #444 #111 #0D0D0D #444;
+  padding: 10px 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.shop-row.owned  { border-color:#3A6A1A #0A2A00 #051500 #3A6A1A; background:#182210; opacity:.7; }
+.shop-row.blocked{ opacity:.25; }
+.shop-icon { font-size:24px; width:34px; text-align:center; flex-shrink:0; image-rendering:auto; }
+.shop-info { flex:1; min-width:0; }
+.shop-name { font-size:9px; color:#DDD; text-shadow:1px 1px #000; }
+.shop-desc { font-size:7px; color:#888; margin-top:4px; }
+.shop-cost { font-size:9px; color:var(--gold); text-shadow:1px 1px #000; white-space:nowrap; margin-right:8px; }
+.shop-buy button {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  background: #4AAA20;
+  color: #CCFFAA;
+  border-style: solid; border-width: 2px;
+  border-color: #7ADA40 #1A5A00 #0A3000 #7ADA40;
+  padding: 6px 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  text-shadow: 1px 1px #000;
+}
+.shop-buy button:hover:not(:disabled) { background:#5ACA30; }
+.shop-buy button:disabled { background:#2A2A2A; color:#444; border-color:#333 #111 #0D0D0D #333; cursor:not-allowed; }
+
+/* ──────────────────────────────────────────────
+   CRAFTING
+   ────────────────────────────────────────────── */
+.craft-wrap { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media(max-width:600px){ .craft-wrap{grid-template-columns:1fr;} }
+.craft-panel {
+  background: #222;
+  border-style: solid; border-width: 3px;
+  border-color: #444 #111 #0D0D0D #444;
+  padding: 14px;
+}
+.craft-slots { display:flex; gap:6px; margin-bottom:12px; justify-content:center; }
+.craft-slot {
+  width:76px; height:84px;
+  background: #373737;
+  border-style: solid; border-width: 3px;
+  border-color: #1A1A1A #555 #555 #1A1A1A; /* inset */
+  display: flex; align-items:center; justify-content:center;
+  cursor: pointer;
+  position: relative;
+}
+.craft-slot:hover { filter:brightness(1.2); }
+.craft-slot.filled { background:#2A3A2A; border-color:#0A1A0A #4A6A4A #4A6A4A #0A1A0A; }
+.craft-slot .slot-remove {
+  position:absolute; top:2px; right:2px;
+  width:14px; height:14px;
+  background:var(--red); color:#fff; font-size:8px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+}
+.craft-inventory {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(68px,1fr));
+  gap:3px; max-height:280px; overflow-y:auto;
+}
+.craft-inventory::-webkit-scrollbar { width:4px; }
+.craft-inventory::-webkit-scrollbar-thumb { background:#444; }
+.craft-pick-tile {
+  background: #8B8B8B;
+  border-style: solid; border-width: 2px;
+  border-color: #373737 #BDBDBD #BDBDBD #373737;
+  padding: 6px 3px 4px;
+  text-align: center;
+  cursor: pointer;
+  transition: filter .08s;
+}
+.craft-pick-tile:hover { filter:brightness(1.25); }
+.craft-pick-tile .ti-icon { width:24px; height:24px; image-rendering:pixelated; display:block; margin:0 auto; }
+.craft-pick-tile .ti-name { font-size:7px; color:#EEE; margin-top:2px; line-height:1.3; text-shadow:1px 1px #000; }
+.craft-pick-tile.r1 { background:#3A5A2A; border-color:#0A2A0A #7AAA5A #7AAA5A #0A2A0A; }
+.craft-pick-tile.r2 { background:#1A4A5A; border-color:#001A2A #5A9AAA #5A9AAA #001A2A; }
+.craft-pick-tile.r3 { background:#4A1A5A; border-color:#1A002A #9A5AAA #9A5AAA #1A002A; }
+.craft-pick-tile.r4 { background:#4A3200; border-color:#1A0800 #BAAA30 #BAAA30 #1A0800; }
+.craft-pick-tile.r5 { background:#4A0510; border-color:#1A0008 #BA3345 #BA3345 #1A0008; }
+.craft-result-preview {
+  text-align:center; padding:10px;
+  background:#1A1A1A;
+  border-style: solid; border-width: 3px;
+  border-color: #1A1A1A #555 #555 #1A1A1A;
+  margin-bottom:12px; font-size:8px; color:#888;
+}
+.rarity-tabs { display:flex; gap:3px; margin-bottom:8px; flex-wrap:wrap; }
+.rarity-tab {
+  padding: 5px 9px; font-size:7px; font-family:inherit;
+  text-transform:uppercase; letter-spacing:1px;
+  background:#2A2A2A; cursor:pointer; color:#666;
+  border-style:solid; border-width:2px;
+  border-color:#444 #111 #0D0D0D #444;
+}
+.rarity-tab.active { filter:brightness(1.4); color:#FFF; }
+.rarity-tab.rt0 { color:var(--r0); }.rarity-tab.rt1 { color:var(--r1); }
+.rarity-tab.rt2 { color:var(--r2); }.rarity-tab.rt3 { color:var(--r3); }
+.rarity-tab.rt4 { color:var(--r4); }.rarity-tab.rt5 { color:var(--r5); }
+
+/* ──────────────────────────────────────────────
+   SEASON PASS
+   ────────────────────────────────────────────── */
+.season-header {
+  background: #1A0A2A;
+  border-style: solid; border-width: 3px;
+  border-color: #6633AA #1A0044 #0A0022 #6633AA;
+  padding: 18px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.season-header h3 { font-size:12px; color:var(--purple); margin-bottom:6px; text-shadow:2px 2px #000; }
+.season-xp-wrap {
+  width:100%; height:12px;
+  background:#050505;
+  border-style: solid; border-width: 2px;
+  border-color: #1A0044 #6633AA #6633AA #1A0044;
+  overflow:hidden; margin:10px 0;
+}
+.season-xp-bar { height:100%; background:var(--purple); box-shadow:0 0 6px var(--purple); transition:width .4s; }
+.season-tiers { display:grid; grid-template-columns:repeat(auto-fill,minmax(82px,1fr)); gap:4px; }
+.season-tier {
+  background:#1A1A2A;
+  border-style:solid; border-width:2px;
+  border-color:#333 #0D0D0D #0A0A0A #333;
+  padding:8px 4px;
+  text-align:center;
+}
+.season-tier.active-tier { border-color:#6633AA #1A0044 #0A0022 #6633AA; background:#220A3A; }
+.season-tier.unlocked    { border-color:#5A8A2A #1A3A00 #0A1800 #5A8A2A; opacity:.6; background:#151A0A; }
+.season-tier .st-num  { font-size:6px; color:#666; text-transform:uppercase; margin-bottom:2px; }
+.season-tier .st-icon { font-size:18px; margin-bottom:3px; image-rendering:auto; }
+.season-tier .st-val  { font-size:8px; color:var(--gold); text-shadow:1px 1px #000; }
+
+/* ──────────────────────────────────────────────
+   REBIRTH
+   ────────────────────────────────────────────── */
+.rebirth-card {
+  background: #180028;
+  border-style: solid; border-width: 3px;
+  border-color: #7733CC #1A0044 #0A0022 #7733CC;
+  padding: 22px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.rebirth-card h3 { font-size:12px; color:var(--purple); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; text-shadow:2px 2px #000; }
+.rebirth-card .rcount { font-size:32px; color:var(--purple); text-shadow:3px 3px #000; }
+.rebirth-card p { font-size:8px; color:#888; margin:8px 0; }
+.prog-bar-wrap {
+  width:100%; height:20px;
+  background:#050505;
+  border-style:solid; border-width:3px;
+  border-color:#1A1A1A #555 #555 #1A1A1A;
+  margin:12px 0; overflow:hidden;
+}
+.prog-bar { height:100%; background:var(--purple); box-shadow:0 0 6px var(--purple); transition:width .5s; min-width:2px; }
+.prog-label { font-size:8px; color:#777; margin-bottom:12px; }
+.rebirth-bonuses { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:14px; }
+.bonus-tag {
+  background:#100020;
+  border:2px solid #6633AA;
+  padding:5px 10px; font-size:7px; color:#CC88FF;
+  text-shadow:1px 1px #000; letter-spacing:1px;
+}
+.rebirth-warn { font-size:8px; color:#FF6666; margin-bottom:14px; text-shadow:1px 1px #000; }
+
+/* ──────────────────────────────────────────────
+   ACHIEVEMENTS
+   ────────────────────────────────────────────── */
+.ach-list { display:flex; flex-direction:column; gap:5px; }
+.ach-row {
+  background: #222;
+  border-style:solid; border-width:3px;
+  border-color:#333 #0D0D0D #080808 #333;
+  padding:10px 13px;
+  display:flex; align-items:center; gap:12px;
+  opacity:.3;
+  transition:opacity .2s;
+}
+.ach-row.done { opacity:1; border-color:#7A6A00 #2A2000 #141000 #7A6A00; background:#1A1500; }
+.ach-icon  { font-size:24px; width:34px; text-align:center; flex-shrink:0; image-rendering:auto; }
+.ach-info  { flex:1; }
+.ach-name  { font-size:9px; color:#DDD; text-shadow:1px 1px #000; }
+.ach-desc  { font-size:7px; color:#777; margin-top:4px; }
+.ach-reward{ font-size:8px; color:var(--gold); margin-top:4px; text-shadow:1px 1px #000; }
+
+/* ──────────────────────────────────────────────
+   DAILY BONUS
+   ────────────────────────────────────────────── */
+.daily-grid {
+  display:grid; grid-template-columns:repeat(7,1fr);
+  gap:4px; margin-bottom:14px;
+}
+.daily-day {
+  background:#2A2A2A;
+  border-style:solid; border-width:2px;
+  border-color:#444 #111 #0D0D0D #444;
+  padding:8px 3px; text-align:center;
+}
+.daily-day.today  { border-color:#5A9A3A #1A4A0A #0A2A00 #5A9A3A; background:#1A2A10; }
+.daily-day.claimed{ opacity:.3; background:#111; }
+.daily-day .d-lbl { font-size:6px; color:#666; text-transform:uppercase; margin-bottom:3px; }
+.daily-day .d-icon{ font-size:16px; margin-bottom:3px; image-rendering:auto; }
+.daily-day .d-val { font-size:9px; color:var(--gold); text-shadow:1px 1px #000; }
+.daily-info { font-size:8px; color:#777; margin-bottom:12px; text-shadow:1px 1px #000; }
+.daily-info strong { color:#CCC; }
+
+/* ──────────────────────────────────────────────
+   STATS
+   ────────────────────────────────────────────── */
+.stats-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr));
+  gap:6px; margin-bottom:18px;
+}
+.stat-card {
+  background: #1A1A1A;
+  border-style:solid; border-width:3px;
+  border-color:#333 #0D0D0D #080808 #333;
+  padding:14px; text-align:center;
+}
+.stat-card .sc-val { font-size:18px; color:var(--green); display:block; text-shadow:2px 2px #000; }
+.stat-card .sc-lbl { font-size:7px; color:#666; text-transform:uppercase; letter-spacing:1px; margin-top:6px; }
+
+/* ──────────────────────────────────────────────
+   TOASTS  (Minecraft achievement notification)
+   ────────────────────────────────────────────── */
+#toasts {
+  position:fixed; top:12px; right:12px;
+  z-index:9000; display:flex; flex-direction:column; gap:6px;
+  pointer-events:none;
+}
+.toast {
+  background: #0D0D0D;
+  border-style:solid; border-width:3px;
+  border-color:#5A9A3A #1A4A0A #0A2A00 #5A9A3A;
+  padding: 10px 14px;
+  max-width: 260px;
+  animation: slide-in .25s steps(4), fade-out .25s steps(4) 3.7s forwards;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: #EEE;
+  box-shadow: 4px 4px 0 #000;
+}
+.toast.toast-gold { border-color:#9A7A00 #3A2A00 #1A1200 #9A7A00; background:#120D00; }
+.toast.toast-red  { border-color:#AA2233 #440011 #220008 #AA2233; background:#120008; }
+.toast-badge  { font-size:7px; text-transform:uppercase; letter-spacing:1px; color:var(--green); margin-bottom:4px; text-shadow:1px 1px #000; }
+.toast-gold .toast-badge { color:var(--gold); }
+.toast-red  .toast-badge { color:var(--red); }
+.toast-name   { font-size:9px; text-shadow:1px 1px #000; }
+.toast-reward { font-size:8px; color:var(--gold); margin-top:3px; text-shadow:1px 1px #000; }
+
+/* ──────────────────────────────────────────────
+   EMPTY STATE
+   ────────────────────────────────────────────── */
+.empty { text-align:center; padding:36px 16px; color:#555; font-size:9px; }
+.empty-icon { font-size:36px; display:block; margin-bottom:12px; image-rendering:auto; }
+
+/* ──────────────────────────────────────────────
+   PARTICLES
+   ────────────────────────────────────────────── */
+#particle-layer { position:fixed; inset:0; pointer-events:none; z-index:8000; overflow:hidden; }
+.particle {
+  position:absolute;
+  width:16px; height:16px;
+  image-rendering:pixelated;
+  animation:particle-fly var(--dur,1.2s) ease-out forwards;
+  transform-origin:center;
+}
+@keyframes particle-fly {
+  0%   { transform:translate(-50%,-50%) translate(0,0) scale(1); opacity:1; }
+  100% { transform:translate(-50%,-50%) translate(var(--px),var(--py)) scale(0.3); opacity:0; }
+}
+
+/* ──────────────────────────────────────────────
+   LEVEL UP FLASH
+   ────────────────────────────────────────────── */
+#lvlup-flash {
+  position:fixed; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  z-index:7000; pointer-events:none; opacity:0;
+}
+#lvlup-flash.show { animation:lvlup-anim 1.6s steps(8) forwards; }
+.lvlup-inner {
+  background:#0A1A0A;
+  border-style:solid; border-width:4px;
+  border-color:#7ADA40 #1A5A00 #0A3000 #7ADA40;
+  padding:22px 44px; text-align:center;
+  box-shadow: 6px 6px 0 #000, 0 0 40px rgba(122,218,64,.4);
+}
+.lvlup-title { font-size:22px; color:var(--green); text-transform:uppercase; letter-spacing:3px; text-shadow:3px 3px #000; }
+.lvlup-sub   { font-size:11px; color:var(--gold); margin-top:10px; text-shadow:2px 2px #000; }
+
+/* ──────────────────────────────────────────────
+   ANIMATIONS
+   ────────────────────────────────────────────── */
+@keyframes pop {
+  from { opacity:0; transform:scale(.4); }
+  to   { opacity:1; transform:scale(1); }
+}
+@keyframes slide-in {
+  from { transform:translateX(110%); opacity:0; }
+  to   { transform:translateX(0);    opacity:1; }
+}
+@keyframes fade-out { to { transform:translateX(110%); opacity:0; } }
+@keyframes lvlup-anim {
+  0%  { opacity:0; transform:scale(.6); }
+  15% { opacity:1; transform:scale(1.05); }
+  20% { transform:scale(1); }
+  80% { opacity:1; }
+  100%{ opacity:0; }
+}
+@keyframes leg-glow {
+  0%,100% { box-shadow:0 0 8px var(--r4), 2px 2px 0 #000; }
+  50%     { box-shadow:0 0 24px var(--r4), 0 0 48px rgba(255,170,0,.25), 2px 2px 0 #000; }
+}
+@keyframes myth-glow {
+  0%,100% { box-shadow:0 0 12px var(--r5), 2px 2px 0 #000; }
+  50%     { box-shadow:0 0 32px var(--r5), 0 0 64px rgba(255,85,85,.3), 2px 2px 0 #000; }
+}
+.legendary-glow { animation:leg-glow  1.4s ease-in-out infinite; }
+.mythic-glow    { animation:myth-glow 1s   ease-in-out infinite; }
+
+/* ──────────────────────────────────────────────
+   MISC
+   ────────────────────────────────────────────── */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media(max-width:580px){ .two-col{grid-template-columns:1fr;} }
+hr.divider { border:none; border-top:3px solid #2A2A2A; margin:14px 0; }
+::-webkit-scrollbar       { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:#111; }
+::-webkit-scrollbar-thumb { background:#444; border:1px solid #222; }
+</style>
+</head>
+<body>
+<div id="game">
+  <header id="hdr">
+    <div id="hdr-logo">⚒ Mine Cases</div>
+    <div id="hdr-xp">
+      <div id="hdr-xp-top"><span id="xp-level">LVL 1</span><span id="xp-text">0 / 100 XP</span></div>
+      <div id="xp-bar-wrap"><div id="xp-bar" style="width:0%"></div></div>
+    </div>
+    <div id="hdr-stats">
+      <span id="stat-gems">💎 50</span>
+      <span id="stat-rebirth">♻ 0</span>
+      <span id="stat-streak">🔥 0</span>
+      <button id="hdr-mute" title="Toggle sound">🔊</button>
+    </div>
+  </header>
+  <nav id="tabs">
+    <button class="tab active" data-tab="cases">Cases</button>
+    <button class="tab" data-tab="inventory">Inventory</button>
+    <button class="tab" data-tab="daily">Daily</button>
+    <button class="tab" data-tab="quests">Quests</button>
+    <button class="tab" data-tab="shop">Shop</button>
+    <button class="tab" data-tab="crafting">Crafting</button>
+    <button class="tab" data-tab="season">Season</button>
+    <button class="tab" data-tab="rebirth">Rebirth</button>
+    <button class="tab" data-tab="achievements">Achievements</button>
+    <button class="tab" data-tab="stats">Stats</button>
+  </nav>
+  <main id="content"></main>
+</div>
+<div id="toasts"></div>
+<div id="particle-layer"></div>
+<div id="lvlup-flash"><div class="lvlup-inner"><div class="lvlup-title" id="lvlup-title">Level Up!</div><div class="lvlup-sub" id="lvlup-sub"></div></div></div>
+
+<script>
+'use strict';
+// ═══════════════════════════════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════════════════════════════
+const SAVE_KEY = 'minecases_v1';
+const R_COLOR  = ['#AAAAAA','#55FF55','#55FFFF','#FF55FF','#FFAA00','#FF5555'];
+const R_NAME   = ['Common','Uncommon','Rare','Epic','Legendary','Mythic'];
+const DAILY_GEMS = [5,8,12,15,20,25,50];
+const REBIRTH_REQ = [500,1500,3500,7000,14000,28000,56000,110000,220000,500000];
+const SEASON_XP_PER_TIER = 500;
+const SEASON_TIERS = 30;
+const XP_TABLE = [
+  100,200,350,500,700,1000,1400,1900,2500,3200,
+  4000,5000,6200,7500,9000,11000,13000,15500,18000,21000,
+  24500,28500,33000,38000,44000,51000,59000,68000,78000,90000,
+  103000,117000,133000,150000,170000,192000,216000,242000,270000,300000,
+  335000,373000,415000,461000,512000,568000,630000,700000,778000,Infinity
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  CRAFT POOL  (items created by crafting)
+// ═══════════════════════════════════════════════════════════════
+const CRAFT_POOL = {
+  1:[{id:'c_iron_block',   name:'Iron Block',      img:'textures/block/iron_block.png',         v:[80,150]},
+     {id:'c_stone_brick',  name:'Stone Bricks',    img:'textures/block/stone_bricks.png',        v:[60,120]},
+     {id:'c_bread_loaf',   name:'Bread',           img:'textures/item/bread.png',                v:[70,130]}],
+  2:[{id:'c_gold_block',   name:'Gold Block',      img:'textures/block/gold_block.png',          v:[300,500]},
+     {id:'c_lapis_block',  name:'Lapis Block',     img:'textures/block/lapis_block.png',         v:[280,480]},
+     {id:'c_redstone_blk', name:'Redstone Block',  img:'textures/block/redstone_block.png',      v:[320,520]}],
+  3:[{id:'c_diamond_blk',  name:'Diamond Block',   img:'textures/block/diamond_block.png',       v:[1200,2000]},
+     {id:'c_emerald_blk',  name:'Emerald Block',   img:'textures/block/emerald_block.png',       v:[1000,1800]},
+     {id:'c_obsidian',     name:'Obsidian',        img:'textures/block/obsidian.png',            v:[900,1600]}],
+  4:[{id:'c_beacon',       name:'Beacon',          img:'textures/block/beacon.png',              v:[5000,9000]},
+     {id:'c_nether_star2', name:'Nether Star',     img:'textures/item/nether_star.png',          v:[4000,7500]},
+     {id:'c_elytra2',      name:'Elytra',          img:'textures/item/elytra.png',               v:[4500,8000]}],
+  5:[{id:'c_cosmic_frag',  name:'Amethyst Cluster',img:'textures/block/amethyst_cluster.png',    v:[18000,35000]},
+     {id:'c_void_essence', name:'Crying Obsidian', img:'textures/block/crying_obsidian.png',     v:[20000,40000]},
+     {id:'c_ancient_relic',name:'Ancient Debris',  img:'textures/block/ancient_debris_side.png', v:[22000,45000]}],
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  SEASON REWARDS (30 tiers)
+// ═══════════════════════════════════════════════════════════════
+const SEASON_REWARDS = [
+  {t:1,icon:'💎',gems:20},{t:2,icon:'💎',gems:25},{t:3,icon:'💎',gems:30},
+  {t:4,icon:'⚡',gems:40},{t:5,icon:'💎',gems:50},{t:6,icon:'💎',gems:60},
+  {t:7,icon:'🍀',gems:75},{t:8,icon:'💎',gems:90},{t:9,icon:'💎',gems:100},
+  {t:10,icon:'🌟',gems:150},{t:11,icon:'💎',gems:120},{t:12,icon:'💎',gems:140},
+  {t:13,icon:'⭐',gems:200},{t:14,icon:'💎',gems:160},{t:15,icon:'💎',gems:200},
+  {t:16,icon:'👑',gems:300},{t:17,icon:'💎',gems:220},{t:18,icon:'💎',gems:250},
+  {t:19,icon:'🔮',gems:400},{t:20,icon:'💎',gems:350},{t:21,icon:'💎',gems:400},
+  {t:22,icon:'🌈',gems:600},{t:23,icon:'💎',gems:450},{t:24,icon:'💎',gems:500},
+  {t:25,icon:'💠',gems:800},{t:26,icon:'💎',gems:600},{t:27,icon:'💎',gems:700},
+  {t:28,icon:'🔱',gems:1000},{t:29,icon:'💎',gems:900},{t:30,icon:'🏆',gems:2000},
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  QUEST POOL
+// ═══════════════════════════════════════════════════════════════
+const QUEST_POOL = [
+  {id:'q_open5',    icon:'📦',name:'Case Hunter',    desc:'Open 5 cases',                  type:'open',    target:5,   reward:40},
+  {id:'q_open15',   icon:'📦',name:'Case Addict',    desc:'Open 15 cases',                 type:'open',    target:15,  reward:100},
+  {id:'q_open25',   icon:'📦',name:'Opener Pro',     desc:'Open 25 cases',                 type:'open',    target:25,  reward:180},
+  {id:'q_rare3',    icon:'💙',name:'Rare Finder',    desc:'Find 3 Rare+ items',            type:'rarity',  target:3,   rarity:2, reward:65},
+  {id:'q_epic2',    icon:'💜',name:'Epic Hunter',    desc:'Find 2 Epic+ items',            type:'rarity',  target:2,   rarity:3, reward:95},
+  {id:'q_legend1',  icon:'⭐',name:'Golden Touch',   desc:'Find 1 Legendary+ item',        type:'rarity',  target:1,   rarity:4, reward:160},
+  {id:'q_spend150', icon:'💸',name:'Big Spender',    desc:'Spend 150 gems',                type:'spend',   target:150, reward:30},
+  {id:'q_spend500', icon:'💸',name:'Gem Burner',     desc:'Spend 500 gems',                type:'spend',   target:500, reward:75},
+  {id:'q_sell10',   icon:'💰',name:'Merchant',       desc:'Sell 10 items',                 type:'sell',    target:10,  reward:45},
+  {id:'q_sell25',   icon:'💰',name:'Trader',         desc:'Sell 25 items',                 type:'sell',    target:25,  reward:110},
+  {id:'q_nether5',  icon:'🔥',name:'Nether Dive',    desc:'Open Nether Case 5×',           type:'case',    target:5,   caseId:'nether',  reward:70},
+  {id:'q_end3',     icon:'🌌',name:'End Walker',     desc:'Open End Case 3×',              type:'case',    target:3,   caseId:'end',     reward:90},
+  {id:'q_ocean5',   icon:'🌊',name:'Ocean Diver',    desc:'Open Ocean Case 5×',            type:'case',    target:5,   caseId:'ocean',   reward:75},
+  {id:'q_mine5',    icon:'⛏️',name:'Miner',          desc:'Open Mine Case 5×',             type:'case',    target:5,   caseId:'mine',    reward:80},
+  {id:'q_earn500',  icon:'📈',name:'Earner',         desc:'Earn 500 gems from sells',      type:'earn',    target:500, reward:55},
+  {id:'q_earn2k',   icon:'📈',name:'Big Earner',     desc:'Earn 2,000 gems from sells',    type:'earn',    target:2000,reward:130},
+  {id:'q_daily',    icon:'📅',name:'Daily Check',    desc:'Claim daily bonus',             type:'daily',   target:1,   reward:20},
+  {id:'q_craft3',   icon:'🔨',name:'Craftsman',      desc:'Complete 3 crafts',             type:'craft',   target:3,   reward:90},
+  {id:'q_inv20',    icon:'🎒',name:'Hoarder',        desc:'Have 20 items in inventory',    type:'inv',     target:20,  reward:35},
+  {id:'q_shop1',    icon:'⬆️',name:'Upgrade Time',   desc:'Buy any upgrade',               type:'upgrade', target:1,   reward:50},
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  UPGRADES
+// ═══════════════════════════════════════════════════════════════
+const UPGRADES = [
+  {id:'luck1',    icon:'🍀',name:'Lucky Clover I',    desc:'+4% Rare+ item chance',           cost:50,   req:null,       effect:'luck',    val:4},
+  {id:'luck2',    icon:'🍀',name:'Lucky Clover II',   desc:'+4% Rare+ chance (total +8%)',    cost:150,  req:'luck1',    effect:'luck',    val:4},
+  {id:'luck3',    icon:'🍀',name:'Lucky Clover III',  desc:'+4% Rare+ chance (total +12%)',   cost:350,  req:'luck2',    effect:'luck',    val:4},
+  {id:'luck4',    icon:'🍀',name:'Lucky Clover IV',   desc:'+4% Rare+ chance (total +16%)',   cost:700,  req:'luck3',    effect:'luck',    val:4},
+  {id:'luck5',    icon:'🍀',name:'Lucky Clover V',    desc:'+4% Rare+ chance (total +20%)',   cost:1200, req:'luck4',    effect:'luck',    val:4},
+  {id:'bulk',     icon:'📦',name:'Bulk Opener',       desc:'Unlocks Open ×3',                 cost:200,  req:null,       effect:'bulk',    val:0},
+  {id:'megabulk', icon:'⚡',name:'Mega Opener',       desc:'Unlocks Open ×10',                cost:3000, req:'bulk',     effect:'megabulk',val:0},
+  {id:'gemboost', icon:'🧲',name:'Gem Magnet',        desc:'All gem rewards +20%',            cost:350,  req:null,       effect:'gemboost',val:20},
+  {id:'gemboost2',icon:'🧲',name:'Gem Magnet II',     desc:'All gem rewards +20% (total +40%)',cost:900, req:'gemboost', effect:'gemboost',val:20},
+  {id:'discount', icon:'🏷️',name:'Case Discount',     desc:'All case prices -15%',            cost:800,  req:null,       effect:'discount',val:15},
+  {id:'pityred',  icon:'⏳',name:'Pity Reducer',      desc:'Pity threshold -8 per case',      cost:600,  req:null,       effect:'pity',    val:8},
+  {id:'xpboost',  icon:'📚',name:'XP Booster',        desc:'+30% XP from case opens',         cost:400,  req:null,       effect:'xpboost', val:30},
+  {id:'seasonbst',icon:'🌟',name:'Season Booster',    desc:'+50% Season Pass XP',             cost:750,  req:null,       effect:'seasonxp',val:50},
+  {id:'autoopen', icon:'🤖',name:'Auto Opener',       desc:'Opens a case every 30s (passive)',cost:2000, req:'bulk',     effect:'auto',    val:0, lockRebirth:1},
+  {id:'gemfind',  icon:'🔍',name:'Gem Finder',        desc:'Common items have 20% chance to drop bonus gems', cost:650, req:null, effect:'gemfind',val:0},
+  {id:'doubledrop',icon:'🎲',name:'Double Drop',      desc:'10% chance to receive 2 items from one open', cost:1800, req:'luck3', effect:'double', val:0},
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  ACHIEVEMENTS
+// ═══════════════════════════════════════════════════════════════
+const ACH = [
+  // opens
+  {id:'first_open',  icon:'🎰',name:'First Try',        desc:'Open your first case',              reward:5,   check:s=>s.stats.opened>=1},
+  {id:'ten_opens',   icon:'📦',name:'Getting Started',  desc:'Open 10 cases',                     reward:10,  check:s=>s.stats.opened>=10},
+  {id:'hun_opens',   icon:'🏆',name:'Dedicated Opener', desc:'Open 100 cases',                    reward:50,  check:s=>s.stats.opened>=100},
+  {id:'fivehun',     icon:'🌟',name:'Case Addict',      desc:'Open 500 cases',                    reward:200, check:s=>s.stats.opened>=500},
+  {id:'thou_opens',  icon:'👑',name:'Case Obsessed',    desc:'Open 1,000 cases',                  reward:1000,check:s=>s.stats.opened>=1000},
+  // rarity
+  {id:'first_rare',  icon:'💙',name:'Something Rare',   desc:'Find your first Rare item',         reward:15,  check:s=>s.stats.rares>=1},
+  {id:'first_epic',  icon:'💜',name:'Epic Find!',       desc:'Find your first Epic item',         reward:30,  check:s=>s.stats.epics>=1},
+  {id:'first_leg',   icon:'⭐',name:'Lucky!',           desc:'Find your first Legendary item',    reward:75,  check:s=>s.stats.legendaries>=1},
+  {id:'five_leg',    icon:'👑',name:'Golden Hoard',     desc:'Find 5 Legendary items',            reward:150, check:s=>s.stats.legendaries>=5},
+  {id:'first_myth',  icon:'💠',name:'Mythic!',          desc:'Find your first Mythic item',       reward:500, check:s=>s.stats.mythics>=1},
+  // case specific
+  {id:'nether_10',   icon:'🔥',name:'Nether Explorer',  desc:'Open Nether Case 10×',              reward:25,  check:s=>(s.opened.nether||0)>=10},
+  {id:'end_10',      icon:'🌌',name:'End Traveler',     desc:'Open End Case 10×',                 reward:40,  check:s=>(s.opened.end||0)>=10},
+  {id:'ocean_10',    icon:'🌊',name:'Deep Diver',       desc:'Open Ocean Case 10×',               reward:35,  check:s=>(s.opened.ocean||0)>=10},
+  {id:'combat_10',   icon:'⚔️',name:'Warrior',          desc:'Open Combat Case 10×',              reward:50,  check:s=>(s.opened.combat||0)>=10},
+  {id:'prestige_1',  icon:'🌠',name:'Elite',            desc:'Open Prestige Case once',           reward:150, check:s=>(s.opened.prestige||0)>=1},
+  {id:'mythic_1',    icon:'💠',name:'Beyond Legendary', desc:'Open Mythic Case once',             reward:500, check:s=>(s.opened.mythiccase||0)>=1},
+  // wealth
+  {id:'earn_1k',     icon:'💎',name:'Rich',             desc:'Earn 1,000 gems total',             reward:25,  check:s=>s.stats.gemsEarned>=1000},
+  {id:'earn_10k',    icon:'💰',name:'Wealthy',          desc:'Earn 10,000 gems total',            reward:100, check:s=>s.stats.gemsEarned>=10000},
+  {id:'earn_100k',   icon:'🏦',name:'Millionaire',      desc:'Earn 100,000 gems total',           reward:1000,check:s=>s.stats.gemsEarned>=100000},
+  {id:'high_val',    icon:'💸',name:'Jackpot',          desc:'Find an item worth 5,000+ gems',    reward:200, check:s=>s.stats.highestValue>=5000},
+  // progression
+  {id:'rebirth_1',   icon:'🔄',name:'Rebirth!',         desc:'Complete your first rebirth',       reward:100, check:s=>s.rebirths>=1},
+  {id:'rebirth_5',   icon:'♾️',name:'Born Again',        desc:'Complete 5 rebirths',               reward:500, check:s=>s.rebirths>=5},
+  {id:'level_10',    icon:'📈',name:'Getting Stronger',  desc:'Reach Level 10',                    reward:50,  check:s=>s.level>=10},
+  {id:'level_25',    icon:'📊',name:'Veteran',           desc:'Reach Level 25',                    reward:150, check:s=>s.level>=25},
+  {id:'level_50',    icon:'🏅',name:'Max Level',         desc:'Reach Level 50 (max)',              reward:1000,check:s=>s.level>=50},
+  // upgrades/shop
+  {id:'buy_upg',     icon:'⬆️',name:'Power Up',          desc:'Buy any upgrade',                   reward:10,  check:s=>s.stats.upgsBought>=1},
+  {id:'max_upgrades',icon:'💪',name:'Fully Upgraded',    desc:'Buy all upgrades',                  reward:2000,check:s=>UPGRADES.filter(u=>!u.lockRebirth||s.rebirths>=u.lockRebirth).every(u=>s.upgrades[u.id])},
+  // daily
+  {id:'daily_7',     icon:'📅',name:'Daily Devotee',     desc:'Claim daily bonus 7 days in a row', reward:50,  check:s=>s.daily.maxStreak>=7},
+  {id:'daily_30',    icon:'🗓️',name:'Dedicated',         desc:'Claim daily 30 days in a row',      reward:300, check:s=>s.daily.maxStreak>=30},
+  // season
+  {id:'season_15',   icon:'🌟',name:'Season Halfway',    desc:'Reach Season Tier 15',              reward:200, check:s=>s.season.tier>=15},
+  {id:'season_30',   icon:'🏆',name:'Season Complete!',  desc:'Reach Season Tier 30',              reward:1000,check:s=>s.season.tier>=30},
+  // crafting
+  {id:'first_craft', icon:'🔨',name:'Craftsman',         desc:'Complete your first craft',         reward:20,  check:s=>s.stats.craftsDone>=1},
+  {id:'crafter_50',  icon:'⚒️',name:'Master Crafter',    desc:'Complete 50 crafts',                reward:500, check:s=>s.stats.craftsDone>=50},
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════
+function defState() {
+  return {
+    gems:50, level:1, xp:0,
+    inventory:[], opened:{}, pity:{}, found:{},
+    upgrades:{}, rebirths:0, progress:0,
+    daily:{lastClaim:null,streak:0,maxStreak:0,dayIdx:0},
+    quests:{date:null,active:[],claimed:[]},
+    season:{xp:0,tier:0,claimed:[]},
+    achievements:{},
+    autoOpen:{caseId:'starter'},
+    stats:{opened:0,rares:0,epics:0,legendaries:0,mythics:0,
+           gemsEarned:50,gemsSpent:0,itemsSold:0,craftsDone:0,
+           upgsBought:0,highestValue:0,seasonXpEarned:0},
+  };
+}
+let S = defState();
+let muted = false;
+let autoTimer = null;
+
+function save() { try { localStorage.setItem(SAVE_KEY,JSON.stringify({s:S,muted})); } catch(_){} }
+function load() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    S = deepMerge(defState(), d.s || d);
+    muted = !!d.muted;
+  } catch(_){}
+}
+function deepMerge(base, over) {
+  if (!over || typeof over !== 'object') return base;
+  const out = Object.assign({}, base);
+  for (const k of Object.keys(over)) {
+    if (Array.isArray(over[k])) out[k] = over[k];
+    else if (over[k] !== null && typeof over[k] === 'object') out[k] = deepMerge(base[k]||{}, over[k]);
+    else out[k] = over[k];
+  }
+  return out;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  CALCULATIONS
+// ═══════════════════════════════════════════════════════════════
+function luckBonus() {
+  let pct = 0;
+  UPGRADES.forEach(u => { if (u.effect==='luck' && S.upgrades[u.id]) pct += u.val; });
+  return pct / 100;
+}
+function gemMult() {
+  let m = 1;
+  let boost = 0;
+  UPGRADES.forEach(u => { if (u.effect==='gemboost' && S.upgrades[u.id]) boost += u.val; });
+  m += boost / 100;
+  m += S.rebirths * 0.10;
+  return m;
+}
+function casePrice(base) {
+  let disc = 0;
+  if (S.upgrades['discount']) disc += 15;
+  disc += Math.min(S.rebirths * 5, 40);
+  return Math.max(1, Math.floor(base * (1 - disc/100)));
+}
+function pityCap(c) {
+  const red = S.upgrades['pityred'] ? 8 : 0;
+  return Math.max(5, c.pity - red);
+}
+function xpNeeded(level) { return XP_TABLE[Math.min(level-1, XP_TABLE.length-1)]; }
+function seasonXpMult() { return S.upgrades['seasonbst'] ? 1.5 : 1; }
+function xpMult() { return S.upgrades['xpboost'] ? 1.3 : 1; }
+
+function fmt(n) {
+  n = Math.round(n);
+  if (n>=1e9) return (n/1e9).toFixed(1)+'B';
+  if (n>=1e6) return (n/1e6).toFixed(1)+'M';
+  if (n>=1e4) return (n/1e3).toFixed(1)+'k';
+  return n.toLocaleString();
+}
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function isCaseLocked(c) {
+  if (c.lockRebirth > 0 && S.rebirths < c.lockRebirth) return true;
+  if (c.lockLevel  > 0 && S.level    < c.lockLevel)    return true;
+  return false;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  GAME LOGIC
+// ═══════════════════════════════════════════════════════════════
+function pickItem(items, caseId) {
+  const luck = luckBonus();
+  const pityCount = S.pity[caseId] || 0;
+  const cd = CASES.find(c=>c.id===caseId);
+  const cap = pityCap(cd);
+
+  // Force legendary+ if pity maxed
+  let pool = items;
+  if (pityCount >= cap) {
+    const legItems = items.filter(i=>i.r>=4);
+    if (legItems.length) pool = legItems;
+  }
+
+  const weighted = pool.map(it => ({
+    item: it,
+    w: it.r>=2 ? it.w*(1+luck*(it.r-1)) : it.w,
+  }));
+  let total = weighted.reduce((s,x)=>s+x.w,0);
+  let rand = Math.random()*total;
+  for (const x of weighted) { rand -= x.w; if (rand<=0) return x.item; }
+  return weighted[weighted.length-1].item;
+}
+
+function earnGems(amount) {
+  const actual = Math.round(amount * gemMult());
+  S.gems += actual;
+  S.stats.gemsEarned += actual;
+  return actual;
+}
+
+function addXP(amount) {
+  if (S.level >= 50) return;
+  const actual = Math.round(amount * xpMult());
+  S.xp += actual;
+  while (S.level < 50 && S.xp >= xpNeeded(S.level)) {
+    S.xp -= xpNeeded(S.level);
+    S.level++;
+    onLevelUp(S.level);
+  }
+  if (S.level >= 50) S.xp = 0;
+}
+
+function addSeasonXP(amount) {
+  if (S.season.tier >= SEASON_TIERS) return;
+  const actual = Math.round(amount * seasonXpMult());
+  S.stats.seasonXpEarned += actual;
+  S.season.xp += actual;
+  while (S.season.tier < SEASON_TIERS && S.season.xp >= SEASON_XP_PER_TIER) {
+    S.season.xp -= SEASON_XP_PER_TIER;
+    S.season.tier++;
+  }
+  if (S.season.tier >= SEASON_TIERS) S.season.xp = 0;
+}
+
+function onLevelUp(lvl) {
+  const bonus = lvl * 5;
+  S.gems += bonus;
+  S.stats.gemsEarned += bonus;
+  showLevelUpFlash(lvl, bonus);
+  playSound('levelup');
+}
+
+function openCaseSingle(id) {
+  const cd = CASES.find(c=>c.id===id);
+  if (!cd || isCaseLocked(cd)) return null;
+  const price = casePrice(cd.price);
+  if (S.gems < price) return null;
+  S.gems -= price;
+  S.stats.gemsSpent += price;
+  S.progress += price;
+  S.opened[id] = (S.opened[id]||0)+1;
+  S.stats.opened++;
+
+  const item = pickItem(cd.items, id);
+  const value = Math.round(item.v[0] + Math.random()*(item.v[1]-item.v[0]));
+  const drop = {...item, value, caseId:id};
+
+  // pity tracking
+  if (item.r >= 4) {
+    S.pity[id] = 0;
+    if (item.r===4) S.stats.legendaries++;
+    if (item.r===5) { S.stats.mythics++; S.stats.legendaries++; }
+  } else {
+    S.pity[id] = (S.pity[id]||0) + 1;
+  }
+  if (item.r>=2) S.stats.rares++;
+  if (item.r>=3) S.stats.epics++;
+  if (value > S.stats.highestValue) S.stats.highestValue = value;
+
+  // collection
+  if (!S.found[id]) S.found[id] = [];
+  if (!S.found[id].includes(item.id)) S.found[id].push(item.id);
+
+  S.inventory.unshift(drop);
+  if (S.inventory.length > 400) S.inventory.length = 400;
+
+  // XP + season XP (1 XP per gem spent on case base price)
+  addXP(Math.ceil(cd.price * 0.5));
+  addSeasonXP(Math.ceil(cd.price * 0.3));
+
+  // gem finder upgrade
+  if (item.r===0 && S.upgrades['gemfind'] && Math.random()<0.2) {
+    const bonus = earnGems(Math.round(price * 0.5));
+    showGemToast('Gem Finder!', bonus);
+  }
+
+  trackQuestProgress('open',   1,    {caseId:id});
+  trackQuestProgress('spend',  price,{});
+  return drop;
+}
+
+function sellItem(idx) {
+  if (idx<0||idx>=S.inventory.length) return 0;
+  const item = S.inventory.splice(idx,1)[0];
+  const earned = earnGems(item.value);
+  S.stats.itemsSold++;
+  trackQuestProgress('sell', 1, {});
+  trackQuestProgress('earn', item.value, {});
+  return earned;
+}
+
+function sellAll(minRarity=0) {
+  let total=0, count=0;
+  const keep=[];
+  S.inventory.forEach(it=>{
+    if(it.r>=minRarity){ total+=it.value; count++; }
+    else keep.push(it);
+  });
+  S.inventory=keep;
+  const earned = earnGems(total);
+  S.stats.itemsSold+=count;
+  trackQuestProgress('sell',count,{});
+  trackQuestProgress('earn',total,{});
+  return earned;
+}
+
+function craftItems(slots) {
+  if (slots.some(s=>!s)) return null;
+  const r = slots[0].r;
+  if (!slots.every(s=>s.r===r)) return null;
+  if (r>=5) return null;
+  const pool = CRAFT_POOL[r+1];
+  if (!pool) return null;
+  // Remove from inventory (by object reference)
+  const idxs = [];
+  for (const slot of slots) {
+    const i = S.inventory.findIndex((it,idx)=>it===slot && !idxs.includes(idx));
+    if (i===-1) return null;
+    idxs.push(i);
+  }
+  idxs.sort((a,b)=>b-a).forEach(i=>S.inventory.splice(i,1));
+  const template = pool[Math.floor(Math.random()*pool.length)];
+  const value = Math.round(template.v[0]+Math.random()*(template.v[1]-template.v[0]));
+  const result = {...template, r:r+1, value};
+  S.inventory.unshift(result);
+  S.stats.craftsDone++;
+  if (result.r>=4) S.stats.legendaries++;
+  if (result.r>=5) S.stats.mythics++;
+  trackQuestProgress('craft',1,{});
+  return result;
+}
+
+function nextRebirthReq() { return REBIRTH_REQ[Math.min(S.rebirths, REBIRTH_REQ.length-1)]; }
+function canRebirth() { return S.rebirths < REBIRTH_REQ.length && S.progress >= nextRebirthReq(); }
+function doRebirth() {
+  if (!canRebirth()) return false;
+  S.rebirths++;
+  S.progress=0; S.inventory=[]; S.opened={}; S.pity={}; S.found={};
+  S.gems=Math.round(50*(1+S.rebirths*0.5));
+  checkAch(); save(); return true;
+}
+
+function canClaimDaily() {
+  if (!S.daily.lastClaim) return true;
+  return new Date(S.daily.lastClaim).toDateString() !== new Date().toDateString();
+}
+function claimDaily() {
+  if (!canClaimDaily()) return null;
+  const now=new Date(); const last=S.daily.lastClaim?new Date(S.daily.lastClaim):null;
+  let streak=S.daily.streak;
+  if (last) { const days=Math.round((now-last)/86400000); streak=days===1?streak+1:1; }
+  else streak=1;
+  S.daily.streak=streak; S.daily.maxStreak=Math.max(S.daily.maxStreak,streak);
+  S.daily.lastClaim=now.toISOString();
+  S.daily.dayIdx=(S.daily.dayIdx%7)+1;
+  const base=DAILY_GEMS[(streak-1)%7];
+  const earned=earnGems(base);
+  trackQuestProgress('daily',1,{});
+  checkAch(); save(); return earned;
+}
+
+function buyUpgrade(id) {
+  const u=UPGRADES.find(x=>x.id===id);
+  if (!u||S.upgrades[id]) return false;
+  if (u.req && !S.upgrades[u.req]) return false;
+  if (u.lockRebirth && S.rebirths<u.lockRebirth) return false;
+  if (S.gems<u.cost) return false;
+  S.gems-=u.cost; S.upgrades[id]=true; S.stats.upgsBought++;
+  trackQuestProgress('upgrade',1,{});
+  if (id==='autoopen') startAutoOpener();
+  checkAch(); save(); return true;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DAILY QUESTS
+// ═══════════════════════════════════════════════════════════════
+function getTodayStr() { return new Date().toDateString(); }
+function ensureDailyQuests() {
+  const today = getTodayStr();
+  if (S.quests.date === today && S.quests.active.length===3) return;
+  // pick 3 random quests
+  const pool = [...QUEST_POOL];
+  const chosen=[];
+  while(chosen.length<3&&pool.length){ const i=Math.floor(Math.random()*pool.length); chosen.push(pool.splice(i,1)[0]); }
+  S.quests = {date:today, active:chosen.map(q=>({...q,progress:0,done:false})), claimed:[]};
+}
+function trackQuestProgress(type, amount, extra) {
+  ensureDailyQuests();
+  let changed=false;
+  S.quests.active.forEach((q,i)=>{
+    if(S.quests.claimed.includes(i)||q.done) return;
+    let hit=false;
+    if(q.type===type){
+      if(type==='rarity'){ if(extra.rarity===undefined||amount>=q.rarity) hit=true; }
+      else if(type==='case'){ if(q.caseId===extra.caseId) hit=true; }
+      else hit=true;
+    }
+    if(type==='open' && q.type==='rarity'){ /* handled via separate call */ }
+    if(hit){ q.progress+=amount; if(q.progress>=q.target){q.progress=q.target;q.done=true;} changed=true; }
+  });
+  if(changed) save();
+}
+function trackRarityQuest(rarity) {
+  ensureDailyQuests();
+  S.quests.active.forEach((q,i)=>{
+    if(S.quests.claimed.includes(i)||q.done) return;
+    if(q.type==='rarity' && rarity>=q.rarity){ q.progress++; if(q.progress>=q.target){q.progress=q.target;q.done=true;} }
+  });
+  save();
+}
+function claimQuestReward(idx) {
+  const q=S.quests.active[idx];
+  if(!q||!q.done||S.quests.claimed.includes(idx)) return null;
+  S.quests.claimed.push(idx);
+  const earned=earnGems(q.reward);
+  addSeasonXP(50);
+  checkAch(); save(); return earned;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SEASON PASS
+// ═══════════════════════════════════════════════════════════════
+function claimSeasonTier(idx) {
+  if (idx>=S.season.tier||S.season.claimed.includes(idx)) return null;
+  S.season.claimed.push(idx);
+  const r=SEASON_REWARDS[idx];
+  if(!r) return null;
+  const earned=earnGems(r.gems);
+  checkAch(); save(); return earned;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ACHIEVEMENTS
+// ═══════════════════════════════════════════════════════════════
+function checkAch() {
+  const unlocked=[];
+  ACH.forEach(a=>{
+    if(!S.achievements[a.id]&&a.check(S)){
+      S.achievements[a.id]=true;
+      const earned=earnGems(a.reward);
+      unlocked.push({...a,earned});
+    }
+  });
+  if(unlocked.length){save();unlocked.forEach((a,i)=>setTimeout(()=>showAchToast(a),i*700));}
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  AUTO OPENER
+// ═══════════════════════════════════════════════════════════════
+function startAutoOpener() {
+  if (autoTimer) clearInterval(autoTimer);
+  autoTimer = setInterval(()=>{
+    if(!S.upgrades['autoopen']) return;
+    const id=S.autoOpen.caseId||'starter';
+    const cd=CASES.find(c=>c.id===id);
+    if(!cd||isCaseLocked(cd)) return;
+    if(S.gems<casePrice(cd.price)) return;
+    const drop=openCaseSingle(id);
+    if(drop){ save(); checkAch(); updateHeader(); }
+  },30000);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SOUND (Web Audio API)
+// ═══════════════════════════════════════════════════════════════
+let audioCtx = null;
+function getAudio() { if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+function beep(freq,dur,type='square',vol=0.15) {
+  if(muted) return;
+  try {
+    const ctx=getAudio(); const o=ctx.createOscillator(); const g=ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type=type; o.frequency.setValueAtTime(freq,ctx.currentTime);
+    g.gain.setValueAtTime(vol,ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+    o.start(ctx.currentTime); o.stop(ctx.currentTime+dur);
+  } catch(_){}
+}
+function playSound(type) {
+  if(muted) return;
+  const t={
+    r0:()=>beep(220,.08,'square',.08),
+    r1:()=>beep(330,.12,'square',.10),
+    r2:()=>{beep(440,.1,'square',.12);setTimeout(()=>beep(550,.1,'square',.12),100);},
+    r3:()=>{beep(523,.1,'square',.14);setTimeout(()=>beep(659,.1,'square',.14),100);setTimeout(()=>beep(784,.15,'square',.14),200);},
+    r4:()=>{[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.18,'sine',.18),i*100));},
+    r5:()=>{[262,330,392,523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.22,'sine',.22),i*80));},
+    levelup:()=>{[523,659,784,1047,1318].forEach((f,i)=>setTimeout(()=>beep(f,.15,'sine',.16),i*90));},
+    sell:()=>beep(392,.08,'square',.08),
+    click:()=>beep(300,.05,'square',.06),
+  };
+  if(t[type]) t[type]();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PARTICLES
+// ═══════════════════════════════════════════════════════════════
+function spawnParticles(r) {
+  const layer=document.getElementById('particle-layer');
+  if(!layer) return;
+  const sparks = r>=5
+    ? ['textures/particle/glitter_0.png','textures/particle/glitter_1.png','textures/particle/glitter_2.png','textures/particle/glitter_3.png','textures/particle/glitter_4.png','textures/particle/glitter_5.png']
+    : ['textures/particle/spark_0.png','textures/particle/spark_1.png','textures/particle/spark_2.png','textures/particle/spark_3.png','textures/particle/spark_4.png','textures/particle/spark_5.png'];
+  const count=r>=5?40:22;
+  const cx=window.innerWidth/2; const cy=window.innerHeight/2;
+  for(let i=0;i<count;i++){
+    const el=document.createElement('img');
+    el.className='particle';
+    el.src=sparks[i%sparks.length];
+    const angle=Math.random()*Math.PI*2; const dist=80+Math.random()*200;
+    const px=Math.round(Math.cos(angle)*dist); const py=Math.round(Math.sin(angle)*dist-100);
+    const dur=(0.8+Math.random()*0.9).toFixed(2);
+    el.style.cssText=`left:${cx}px;top:${cy}px;--px:${px}px;--py:${py}px;--dur:${dur}s;`;
+    layer.appendChild(el);
+    setTimeout(()=>el.remove(),(parseFloat(dur)+0.1)*1000);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TOASTS
+// ═══════════════════════════════════════════════════════════════
+function showToast(badge,name,rewardText,cls='') {
+  const wrap=document.getElementById('toasts'); if(!wrap) return;
+  const el=document.createElement('div'); el.className='toast'+(cls?' '+cls:'');
+  el.innerHTML=`<div class="toast-badge">${esc(badge)}</div><div class="toast-name">${esc(name)}</div>${rewardText?'<div class="toast-reward">'+esc(rewardText)+'</div>':''}`;
+  wrap.appendChild(el); setTimeout(()=>el.remove(),4200);
+}
+function showAchToast(a) { showToast('Achievement Unlocked',a.icon+' '+a.name,'+'+fmt(a.earned)+' 💎',a.r>=4?'toast-gold':''); }
+function showGemToast(msg,amount) { showToast('Gems Earned',msg,'+'+fmt(amount)+' 💎'); }
+function showItemToast(drop) {
+  const cls=drop.r>=5?'toast-red':drop.r>=4?'toast-gold':'';
+  showToast(R_NAME[drop.r]+' Item!',drop.icon+' '+drop.name,'Value: '+fmt(drop.value)+' 💎',cls);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  LEVEL UP FLASH
+// ═══════════════════════════════════════════════════════════════
+function showLevelUpFlash(lvl,bonus) {
+  const el=document.getElementById('lvlup-flash');
+  const title=document.getElementById('lvlup-title');
+  const sub=document.getElementById('lvlup-sub');
+  if(!el) return;
+  title.textContent='Level '+lvl+'!';
+  sub.textContent='Reward: +'+fmt(bonus)+' 💎';
+  el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),1800);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  HEADER UPDATE
+// ═══════════════════════════════════════════════════════════════
+function updateHeader() {
+  const g=document.getElementById('stat-gems');
+  const r=document.getElementById('stat-rebirth');
+  const str=document.getElementById('stat-streak');
+  const lvl=document.getElementById('xp-level');
+  const xt=document.getElementById('xp-text');
+  const xb=document.getElementById('xp-bar');
+  if(g)  g.textContent='💎 '+fmt(S.gems);
+  if(r)  r.textContent='♻ '+S.rebirths;
+  if(str) str.textContent='🔥 '+S.daily.streak;
+  if(lvl) lvl.textContent='LVL '+S.level;
+  if(S.level>=50){ if(xt) xt.textContent='MAX LEVEL'; if(xb) xb.style.width='100%'; }
+  else {
+    const need=xpNeeded(S.level); const pct=Math.min(100,Math.round(S.xp/need*100));
+    if(xt) xt.textContent=fmt(S.xp)+' / '+fmt(need)+' XP';
+    if(xb) xb.style.width=pct+'%';
+  }
+  const mBtn=document.getElementById('hdr-mute');
+  if(mBtn) mBtn.textContent=muted?'🔇':'🔊';
+  // quest badge
+  ensureDailyQuests();
+  const pendingClaim=S.quests.active.filter((q,i)=>q.done&&!S.quests.claimed.includes(i)).length;
+  document.querySelectorAll('.tab[data-tab="quests"] .tab-badge').forEach(b=>b.remove());
+  const qTab=document.querySelector('.tab[data-tab="quests"]');
+  if(qTab&&pendingClaim>0){const b=document.createElement('span');b.className='tab-badge';b.textContent=pendingClaim;qTab.appendChild(b);}
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: CASES
+// ═══════════════════════════════════════════════════════════════
+function renderCases() {
+  let html='<p class="sec-title">Cases — spend Gems to open</p><div class="cases-grid">';
+  CASES.forEach(c=>{
+    const locked=isCaseLocked(c);
+    const price=casePrice(c.price);
+    const opens=S.opened[c.id]||0;
+    const pityCount=S.pity[c.id]||0;
+    const cap=pityCap(c);
+    const pityPct=Math.min(100,Math.round(pityCount/cap*100));
+    const isHot=pityCount>=cap-8&&pityCount>0;
+    const isNew=opens===0;
+    let badge='';
+    if(isNew) badge='<span class="case-badge badge-new">NEW</span>';
+    else if(isHot) badge='<span class="case-badge badge-hot">🔥 HOT</span>';
+    let lockMsg='';
+    if(locked){
+      if(c.lockRebirth>0) lockMsg='🔒 Rebirth '+c.lockRebirth+' required';
+      else lockMsg='🔒 Level '+c.lockLevel+' required';
+    }
+    const found=(S.found[c.id]||[]).length;
+    html+=`<div class="case-card${locked?' locked':''}" data-case="${c.id}">
+      ${badge}
+      <img src="${c.img}" class="case-icon" alt="${esc(c.name)}">
+      <div class="case-name">${esc(c.name)}</div>
+      <div class="case-price">${fmt(price)} 💎</div>
+      ${locked?`<div class="case-lock">${esc(lockMsg)}</div>`:`<div class="case-opens">${opens>0?opens+' opens · '+found+'/'+c.items.length+' found':''}</div>`}
+      ${!locked&&opens>0?`<div class="case-pity-bar"><div class="case-pity-fill" style="width:${pityPct}%"></div></div>`:''}
+    </div>`;
+  });
+  html+='</div>';
+  return html;
+}
+function bindCases() {
+  document.querySelectorAll('.case-card:not(.locked)').forEach(el=>{
+    el.addEventListener('click',()=>{activeCaseId=el.dataset.case;render();});
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: OPENER
+// ═══════════════════════════════════════════════════════════════
+function renderOpener(id) {
+  const cd=CASES.find(c=>c.id===id); if(!cd) return '';
+  const price=casePrice(cd.price);
+  const can=S.gems>=price;
+  const can3=S.upgrades['bulk']&&S.gems>=price*3;
+  const can10=S.upgrades['megabulk']&&S.gems>=price*10;
+  const pityCount=S.pity[id]||0;
+  const cap=pityCap(cd);
+  const pityLeft=cap-pityCount;
+  const isHot=pityLeft<=8;
+
+  const previewItems=cd.items.map(it=>
+    `<div class="item-tile r${it.r}" title="${R_NAME[it.r]}: ${esc(it.name)}\nValue: ${it.v[0]}–${it.v[1]} 💎">
+      <img src="${it.img}" class="ti-icon" alt="${esc(it.name)}"><span class="ti-name">${esc(it.name)}</span>
+    </div>`
+  ).join('');
+
+  return `
+    <div class="opener-back-row">
+      <button class="opener-back" id="op-back">← Back</button>
+      <span class="opener-title"><img src="${cd.img}" style="width:20px;height:20px;vertical-align:middle;image-rendering:pixelated;margin-right:6px">${esc(cd.name)}</span>
+      <span class="opener-price-tag">${fmt(price)} 💎</span>
+    </div>
+    <div class="opener-info-row">
+      <span>📦 Opened: <strong>${S.opened[id]||0}</strong></span>
+      <span class="${isHot?'pity-hot':''}">⏳ <span class="pity-label">Guaranteed Leg. in: ${pityLeft} opens</span>${isHot?' 🔥':''}</span>
+      <span>📚 Found: ${(S.found[id]||[]).length}/${cd.items.length}</span>
+    </div>
+    <div class="open-btns">
+      <button class="btn btn-green" id="op-open1" ${can?'':'disabled'}>Open (${fmt(price)} 💎)</button>
+      ${S.upgrades['bulk']?`<button class="btn btn-gold" id="op-open3" ${can3?'':'disabled'}>×3 (${fmt(price*3)} 💎)</button>`:''}
+      ${S.upgrades['megabulk']?`<button class="btn btn-purple" id="op-open10" ${can10?'':'disabled'}>×10 (${fmt(price*10)} 💎)</button>`:''}
+    </div>
+    <div id="reel-wrap"><div class="reel-line"></div><div id="reel-track"></div></div>
+    <div id="result-area"></div>
+    <p class="sec-title" style="margin-top:14px">Possible Items</p>
+    <div class="preview-grid">${previewItems}</div>`;
+}
+function bindOpener() {
+  const back=document.getElementById('op-back');
+  if(back) back.addEventListener('click',()=>{activeCaseId=null;render();});
+  const o1=document.getElementById('op-open1');
+  const o3=document.getElementById('op-open3');
+  const o10=document.getElementById('op-open10');
+  if(o1) o1.addEventListener('click',()=>doOpen(1));
+  if(o3) o3.addEventListener('click',()=>doOpen(3));
+  if(o10) o10.addEventListener('click',()=>doOpen(10));
+}
+
+function doOpen(times) {
+  if(reelBusy) return;
+  const id=activeCaseId; if(!id) return;
+  reelBusy=true; setOpenBtns(true);
+  const drop=openCaseSingle(id);
+  if(!drop){ reelBusy=false; setOpenBtns(false); showToast('Not Enough Gems','Need '+fmt(casePrice(CASES.find(c=>c.id===id).price))+' 💎','','toast-red'); return; }
+  const extra=[];
+  for(let i=1;i<times;i++){const d=openCaseSingle(id);if(d)extra.push(d);}
+  save(); checkAch();
+  trackRarityQuest(drop.r);
+  extra.forEach(d=>trackRarityQuest(d.r));
+  const cd=CASES.find(c=>c.id===id);
+  runReel(cd,drop,()=>{
+    reelBusy=false; updateHeader();
+    renderResult(drop);
+    playSound('r'+drop.r);
+    if(drop.r>=4) spawnParticles(drop.r);
+    extra.forEach((it,i)=>setTimeout(()=>showItemToast(it),i*600+300));
+    updateHeader();
+  });
+}
+function setOpenBtns(disabled) {
+  ['op-open1','op-open3','op-open10'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=disabled;});
+}
+function renderResult(drop) {
+  const area=document.getElementById('result-area'); if(!area) return;
+  const soldAlready=drop._sold;
+  const gemVal=Math.round(drop.value*gemMult());
+  area.innerHTML=`<div class="result-wrap">
+    <img src="${drop.img}" class="res-icon${drop.r>=5?' mythic-glow':drop.r>=4?' legendary-glow':''}" alt="${esc(drop.name)}">
+    <div class="res-name" style="color:${R_COLOR[drop.r]}">${esc(drop.name)}</div>
+    <div class="res-rar" style="color:${R_COLOR[drop.r]}">${R_NAME[drop.r]}</div>
+    <div class="res-val">Value: ${fmt(drop.value)} 💎</div>
+    ${!soldAlready?`<div class="res-btns">
+      <button class="btn btn-gold" id="res-sell">Sell (${fmt(gemVal)} 💎)</button>
+      <button class="btn btn-muted" id="res-keep">Keep</button>
+    </div>`:'<div style="color:#888;font-size:12px;margin-top:8px">Item Sold</div>'}
+  </div>`;
+  if(!soldAlready){
+    document.getElementById('res-sell').addEventListener('click',()=>{
+      const idx=S.inventory.indexOf(drop);
+      if(idx!==-1){const earned=sellItem(idx);save();updateHeader();showGemToast('Sold: '+drop.name,earned);renderResult({...drop,_sold:true});}
+    });
+    document.getElementById('res-keep').addEventListener('click',()=>{area.innerHTML='';});
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  REEL ANIMATION
+// ═══════════════════════════════════════════════════════════════
+function makeReelTile(item) {
+  const el=document.createElement('div');
+  el.className='item-tile r'+item.r;
+  el.innerHTML=`<img src="${item.img}" class="ti-icon" alt="${esc(item.name)}"><span class="ti-name">${esc(item.name)}</span>`;
+  return el;
+}
+function runReel(cd, winner, onDone) {
+  const track=document.getElementById('reel-track');
+  const wrap=document.getElementById('reel-wrap');
+  if(!track||!wrap){onDone();return;}
+  const TOTAL=35, WIN=26;
+  const items=[];
+  for(let i=0;i<TOTAL;i++) items.push(i===WIN?winner:pickItem(cd.items,cd.id));
+  track.innerHTML=''; track.style.transition='none'; track.style.transform='translateY(-50%)';
+  items.forEach(it=>track.appendChild(makeReelTile(it)));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const TILE=82, GAP=4, PAD=4; const cx=wrap.clientWidth/2;
+    const winnerCenter=PAD+WIN*(TILE+GAP)+TILE/2;
+    const scrollTo=winnerCenter-cx;
+    track.style.transition='transform 3.8s cubic-bezier(.04,.82,.06,1)';
+    track.style.transform=`translateX(-${scrollTo}px) translateY(-50%)`;
+  }));
+  setTimeout(onDone,4000);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: INVENTORY
+// ═══════════════════════════════════════════════════════════════
+let invFilterRarity='-1'; let invSort='newest';
+function renderInventory() {
+  if(!S.inventory.length) return '<div class="empty"><span class="empty-icon">🎒</span>No items yet — open some cases!</div>';
+  let items=[...S.inventory];
+  const filterR=parseInt(invFilterRarity);
+  if(filterR>=0) items=items.filter(it=>it.r===filterR);
+  if(invSort==='value')  items.sort((a,b)=>b.value-a.value);
+  if(invSort==='rarity') items.sort((a,b)=>b.r-a.r);
+  const totalVal=S.inventory.reduce((s,it)=>s+it.value,0);
+  const filteredVal=items.reduce((s,it)=>s+it.value,0);
+  let html=`<div class="inv-toolbar">
+    <select class="inv-filter" id="inv-filter-sel">
+      <option value="-1"${invFilterRarity==='-1'?' selected':''}>All Rarities</option>
+      ${R_NAME.map((n,i)=>`<option value="${i}"${invFilterRarity===String(i)?' selected':''}>${n}</option>`).join('')}
+    </select>
+    <select class="inv-filter" id="inv-sort-sel">
+      <option value="newest"${invSort==='newest'?' selected':''}>Newest</option>
+      <option value="value"${invSort==='value'?' selected':''}>By Value</option>
+      <option value="rarity"${invSort==='rarity'?' selected':''}>By Rarity</option>
+    </select>
+    <button class="btn btn-gold" id="inv-sell-all">Sell All (${fmt(Math.round(totalVal*gemMult()))} 💎)</button>
+    <button class="btn btn-muted" id="inv-sell-common">Sell Common</button>
+    <span class="inv-summary">${S.inventory.length} items · ${fmt(totalVal)} 💎 total</span>
+  </div>
+  <div class="inv-grid">`;
+  items.forEach(it=>{
+    const origIdx=S.inventory.indexOf(it);
+    html+=`<div class="inv-tile r${it.r}" data-idx="${origIdx}" title="${R_NAME[it.r]}: ${esc(it.name)}\nClick to sell">
+      <img src="${it.img}" class="ti-icon" alt="${esc(it.name)}">
+      <div class="ti-name">${esc(it.name)}</div>
+      <div class="ti-val">${fmt(it.value)} 💎</div>
+    </div>`;
+  });
+  html+='</div>';
+  return html;
+}
+function bindInventory() {
+  const fsel=document.getElementById('inv-filter-sel');
+  const ssel=document.getElementById('inv-sort-sel');
+  if(fsel) fsel.addEventListener('change',e=>{invFilterRarity=e.target.value;render();});
+  if(ssel) ssel.addEventListener('change',e=>{invSort=e.target.value;render();});
+  const sa=document.getElementById('inv-sell-all');
+  if(sa) sa.addEventListener('click',()=>{const e=sellAll(0);save();updateHeader();showGemToast('Sold all items',e);render();});
+  const sc=document.getElementById('inv-sell-common');
+  if(sc) sc.addEventListener('click',()=>{
+    let total=0,count=0; const keep=[];
+    S.inventory.forEach(it=>{ if(it.r===0){total+=it.value;count++;} else keep.push(it); });
+    S.inventory=keep; const earned=earnGems(total); S.stats.itemsSold+=count;
+    save();updateHeader();showGemToast(`Sold ${count} commons`,earned);render();
+  });
+  document.querySelectorAll('.inv-tile').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const idx=parseInt(el.dataset.idx);
+      const earned=sellItem(idx);save();updateHeader();playSound('sell');showGemToast('Item sold',earned);render();
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: DAILY
+// ═══════════════════════════════════════════════════════════════
+function renderDaily() {
+  const canClaim=canClaimDaily(); const dayIdx=S.daily.dayIdx; const streak=S.daily.streak;
+  const icons=['🌱','⭐','🌿','💫','🍀','✨','🌟'];
+  let html='<p class="sec-title">Daily Gem Bonus</p>';
+  html+=`<div class="daily-info">Streak: <strong>${streak} day${streak!==1?'s':''}</strong> &nbsp;·&nbsp; Best: <strong>${S.daily.maxStreak} day${S.daily.maxStreak!==1?'s':''}</strong></div>`;
+  html+='<div class="daily-grid">';
+  DAILY_GEMS.forEach((gems,i)=>{
+    const claimed=!canClaim&&i<dayIdx;
+    const today=canClaim&&i===dayIdx%7;
+    html+=`<div class="daily-day${claimed?' claimed':''}${today?' today':''}">
+      <div class="d-lbl">Day ${i+1}</div>
+      <div class="d-icon">${icons[i]}</div>
+      <div class="d-val">${gems} 💎</div>
+    </div>`;
+  });
+  html+=`</div><button class="btn btn-green" id="daily-claim-btn" style="width:100%;padding:13px;" ${canClaim?'':'disabled'}>${canClaim?'🎁 Claim Daily Bonus':'✅ Already Claimed Today'}</button>`;
+  return html;
+}
+function bindDaily() {
+  const btn=document.getElementById('daily-claim-btn');
+  if(btn) btn.addEventListener('click',()=>{
+    const e=claimDaily();
+    if(e!==null){showGemToast('Daily bonus!',e);updateHeader();render();}
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: QUESTS
+// ═══════════════════════════════════════════════════════════════
+function renderQuests() {
+  ensureDailyQuests();
+  let html='<p class="sec-title">Daily Quests — resets at midnight</p><div class="quest-grid">';
+  S.quests.active.forEach((q,i)=>{
+    const claimed=S.quests.claimed.includes(i);
+    const done=q.done;
+    const pct=Math.min(100,Math.round(q.progress/q.target*100));
+    html+=`<div class="quest-card${done?' done':''}${claimed?' claimed':''}">
+      <div class="quest-icon">${q.icon}</div>
+      <div class="quest-info">
+        <div class="quest-name">${esc(q.name)}</div>
+        <div class="quest-desc">${esc(q.desc)}</div>
+        <div class="quest-progress-wrap"><div class="quest-progress-bar" style="width:${pct}%"></div></div>
+        <div class="quest-prog-label">${q.progress} / ${q.target}${claimed?' — Claimed':''}</div>
+      </div>
+      <div class="quest-right">
+        <div class="quest-reward">+${fmt(q.reward)} 💎</div>
+        <button class="btn btn-gold" data-qi="${i}" ${done&&!claimed?'':'disabled'}>${claimed?'✅ Done':done?'Claim!':'Locked'}</button>
+      </div>
+    </div>`;
+  });
+  html+='</div>';
+  return html;
+}
+function bindQuests() {
+  document.querySelectorAll('[data-qi]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const i=parseInt(btn.dataset.qi);
+      const e=claimQuestReward(i);
+      if(e!==null){showGemToast('Quest complete!',e);updateHeader();render();}
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: SHOP
+// ═══════════════════════════════════════════════════════════════
+function renderShop() {
+  let html='<p class="sec-title">Upgrade Shop — permanent boosts</p><div class="shop-list">';
+  UPGRADES.forEach(u=>{
+    const owned=!!S.upgrades[u.id];
+    const blocked=!owned&&((u.req&&!S.upgrades[u.req])||(u.lockRebirth&&S.rebirths<u.lockRebirth));
+    const canBuy=!owned&&!blocked&&S.gems>=u.cost;
+    let extra=''; if(u.lockRebirth) extra=` (Rebirth ${u.lockRebirth}+)`;
+    html+=`<div class="shop-row${owned?' owned':''}${blocked?' blocked':''}">
+      <div class="shop-icon">${u.icon}</div>
+      <div class="shop-info">
+        <div class="shop-name">${esc(u.name)}${extra?`<span style="color:#888;font-size:10px"> ${esc(extra)}</span>`:''}</div>
+        <div class="shop-desc">${esc(u.desc)}</div>
+      </div>
+      <div class="shop-cost">${owned?'✅':fmt(u.cost)+' 💎'}</div>
+      <div class="shop-buy"><button data-upg="${u.id}" ${canBuy?'':'disabled'}>${owned?'Owned':'Buy'}</button></div>
+    </div>`;
+  });
+  html+='</div>';
+  return html;
+}
+function bindShop() {
+  document.querySelectorAll('[data-upg]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(buyUpgrade(btn.dataset.upg)){save();updateHeader();showGemToast('Upgrade purchased!',0);render();}
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: CRAFTING
+// ═══════════════════════════════════════════════════════════════
+let craftSlots=[null,null,null]; let craftRarityFilter=0;
+function renderCrafting() {
+  const slotHtml=craftSlots.map((s,i)=>{
+    if(!s) return `<div class="craft-slot" data-slot="${i}"><span style="color:#444;font-size:22px">+</span></div>`;
+    return `<div class="craft-slot filled r${s.r}" data-slot="${i}" style="border-color:${R_COLOR[s.r]}">
+      <div class="slot-remove" data-slot-rm="${i}">✕</div>
+      <img src="${s.img}" style="width:32px;height:32px;image-rendering:pixelated;display:block;margin:0 auto;" alt="${esc(s.name)}">
+      <div style="font-size:8px;color:#aaa;text-align:center;margin-top:2px">${esc(s.name)}</div>
+    </div>`;
+  }).join('');
+  const allFilled=craftSlots.every(Boolean);
+  const sameRarity=allFilled&&craftSlots[0].r===craftSlots[1].r&&craftSlots[1].r===craftSlots[2].r;
+  const canCraft=sameRarity&&craftSlots[0].r<5;
+  const resultR=canCraft?craftSlots[0].r+1:null;
+  const invByRarity=S.inventory.filter(it=>it.r===craftRarityFilter);
+  const rarityTabsHtml=R_NAME.map((n,i)=>{
+    const count=S.inventory.filter(it=>it.r===i).length;
+    return `<button class="rarity-tab rt${i}${craftRarityFilter===i?' active':''}" data-rt="${i}">${n} (${count})</button>`;
+  }).join('');
+  return `<p class="sec-title">Crafting — combine 3 of the same rarity for a higher tier item</p>
+  <div class="craft-wrap">
+    <div class="craft-panel">
+      <p class="sec-title">Slots (select 3 of same rarity)</p>
+      <div class="craft-slots">${slotHtml}</div>
+      <div class="craft-result-preview">
+        ${canCraft?`<div style="font-size:13px;color:#aaa">Result: <strong style="color:${R_COLOR[resultR]}">${R_NAME[resultR]}</strong> item</div>
+        <div style="font-size:11px;color:#666;margin-top:4px">A random crafted item at this rarity</div>`
+        :'<div style="color:#555;font-size:12px">Select 3 items of the same rarity</div>'}
+      </div>
+      <button class="btn btn-green" id="craft-btn" style="width:100%" ${canCraft?'':'disabled'}>⚒ Craft!</button>
+    </div>
+    <div class="craft-panel">
+      <p class="sec-title">Inventory (click to add to slot)</p>
+      <div class="rarity-tabs">${rarityTabsHtml}</div>
+      <div class="craft-inventory">
+        ${invByRarity.length===0?'<div style="color:#555;font-size:12px;padding:10px">No items at this rarity</div>':
+          invByRarity.map(it=>`<div class="craft-pick-tile r${it.r}" data-iref="${S.inventory.indexOf(it)}">
+            <img src="${it.img}" class="ti-icon" alt="${esc(it.name)}">
+            <div class="ti-name">${esc(it.name)}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+function bindCrafting() {
+  document.querySelectorAll('[data-rt]').forEach(b=>b.addEventListener('click',()=>{craftRarityFilter=parseInt(b.dataset.rt);render();}));
+  document.querySelectorAll('[data-slot-rm]').forEach(b=>b.addEventListener('click',e=>{
+    e.stopPropagation();craftSlots[parseInt(b.dataset.slotRm)]=null;render();
+  }));
+  document.querySelectorAll('.craft-pick-tile').forEach(el=>el.addEventListener('click',()=>{
+    const item=S.inventory[parseInt(el.dataset.iref)];
+    if(!item) return;
+    const emptySlot=craftSlots.findIndex(s=>!s);
+    if(emptySlot===-1) return;
+    craftSlots[emptySlot]=item; render();
+  }));
+  const cb=document.getElementById('craft-btn');
+  if(cb) cb.addEventListener('click',()=>{
+    const result=craftItems(craftSlots);
+    if(result){
+      craftSlots=[null,null,null];
+      save();updateHeader();
+      playSound('r'+result.r);
+      if(result.r>=4) spawnParticles(result.r);
+      showToast('Crafted!',result.icon+' '+result.name,'Value: '+fmt(result.value)+' 💎',result.r>=4?'toast-gold':'');
+      checkAch();render();
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: SEASON PASS
+// ═══════════════════════════════════════════════════════════════
+function renderSeason() {
+  const tier=S.season.tier; const xp=S.season.xp;
+  const pct=tier>=SEASON_TIERS?100:Math.round(xp/SEASON_XP_PER_TIER*100);
+  let html=`<div class="season-header">
+    <h3>🌟 Season Pass</h3>
+    <div>Tier ${tier} / ${SEASON_TIERS}</div>
+    <div class="season-xp-wrap"><div class="season-xp-bar" style="width:${pct}%"></div></div>
+    <div style="font-size:11px;color:#888">${tier>=SEASON_TIERS?'Season Complete! 🏆':fmt(xp)+' / '+fmt(SEASON_XP_PER_TIER)+' XP to next tier'}</div>
+    <div style="font-size:11px;color:#666;margin-top:6px">Earn Season XP by opening cases. Claim rewards each tier.</div>
+  </div>
+  <div class="season-tiers">`;
+  SEASON_REWARDS.forEach((r,i)=>{
+    const unlocked=i<tier;
+    const claimed=S.season.claimed.includes(i);
+    const active=i===tier;
+    html+=`<div class="season-tier${active?' active-tier':''}${claimed?' unlocked':''}">
+      <div class="st-num">Tier ${r.t}</div>
+      <div class="st-icon">${r.icon}</div>
+      <div class="st-val">${fmt(r.gems)} 💎</div>
+      ${unlocked&&!claimed?`<button class="btn btn-gold" data-stier="${i}" style="width:100%;padding:4px;font-size:10px;margin-top:4px">Claim</button>`:
+        claimed?`<div style="font-size:10px;color:#555;margin-top:4px">✅</div>`:''}
+    </div>`;
+  });
+  html+='</div>';
+  return html;
+}
+function bindSeason() {
+  document.querySelectorAll('[data-stier]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const i=parseInt(btn.dataset.stier);
+      const e=claimSeasonTier(i);
+      if(e!==null){showGemToast('Season reward!',e);updateHeader();render();}
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: REBIRTH
+// ═══════════════════════════════════════════════════════════════
+function renderRebirth() {
+  const req=nextRebirthReq(); const prog=Math.min(S.progress,req);
+  const pct=Math.round(prog/req*100); const ready=canRebirth(); const maxed=S.rebirths>=REBIRTH_REQ.length;
+  let bonuses='';
+  if(S.rebirths>0){
+    bonuses='<div class="rebirth-bonuses">';
+    bonuses+=`<span class="bonus-tag">+${S.rebirths*10}% Gem Rewards</span>`;
+    bonuses+=`<span class="bonus-tag">-${Math.min(S.rebirths*5,40)}% Case Prices</span>`;
+    if(S.rebirths>=1) bonuses+=`<span class="bonus-tag">⭐ Prestige Case</span>`;
+    if(S.rebirths>=3) bonuses+=`<span class="bonus-tag">💠 Mythic Case</span>`;
+    bonuses+='</div>';
+  }
+  return `<div class="rebirth-card">
+    <h3>♻ Rebirths</h3>
+    <div class="rcount">${S.rebirths}</div>
+    <p>Each rebirth resets gems &amp; inventory but grants permanent bonuses that stack.</p>
+    ${bonuses}
+    ${!maxed?`<div class="prog-bar-wrap"><div class="prog-bar" style="width:${pct}%"></div></div>
+    <div class="prog-label">Gems spent: ${fmt(prog)} / ${fmt(req)} (${pct}%)</div>`:''}
+    ${!maxed?`<p class="rebirth-warn">⚠ Rebirth resets gems, inventory, and case opens — upgrades &amp; achievements are kept.</p>`:''}
+    <button class="btn btn-purple" id="rebirth-btn" style="width:100%;padding:13px;font-size:14px;" ${ready&&!maxed?'':'disabled'}>
+      ${maxed?'MAX REBIRTHS REACHED':ready?'♻ REBIRTH NOW':'Need '+fmt(req-prog)+' more gems spent'}
+    </button>
+  </div>
+  <p class="sec-title">Rebirth Perks (per rebirth)</p>
+  <div class="shop-list">
+    <div class="shop-row"><div class="shop-icon">💎</div><div class="shop-info"><div class="shop-name">+10% Gem Rewards</div><div class="shop-desc">All gem income multiplied, stacks with each rebirth</div></div></div>
+    <div class="shop-row"><div class="shop-icon">🏷️</div><div class="shop-info"><div class="shop-name">-5% Case Prices</div><div class="shop-desc">Stacks up to -40% across 8 rebirths</div></div></div>
+    <div class="shop-row"><div class="shop-icon">⭐</div><div class="shop-info"><div class="shop-name">Prestige Case (Rebirth 1)</div><div class="shop-desc">High-value case with Mythic tier items</div></div></div>
+    <div class="shop-row"><div class="shop-icon">💠</div><div class="shop-info"><div class="shop-name">Mythic Case (Rebirth 3)</div><div class="shop-desc">Endgame case with incredible rewards</div></div></div>
+    <div class="shop-row"><div class="shop-icon">🤖</div><div class="shop-info"><div class="shop-name">Auto Opener (Rebirth 1, shop unlock)</div><div class="shop-desc">Passive case opening every 30 seconds</div></div></div>
+    <div class="shop-row"><div class="shop-icon">🌱</div><div class="shop-info"><div class="shop-name">Starter Gems</div><div class="shop-desc">Begin each rebirth with more gems (50 × 1.5 per rebirth)</div></div></div>
+  </div>`;
+}
+function bindRebirth() {
+  const btn=document.getElementById('rebirth-btn');
+  if(btn) btn.addEventListener('click',()=>{
+    if(!canRebirth()) return;
+    if(!confirm('Rebirth? Gems and inventory will be reset, upgrades and achievements are kept.')) return;
+    const rb=S.rebirths;
+    if(doRebirth()){updateHeader();showGemToast('Rebirth '+(rb+1)+' complete! Bonuses applied.',S.gems);render();}
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: ACHIEVEMENTS
+// ═══════════════════════════════════════════════════════════════
+function renderAchievements() {
+  const done=ACH.filter(a=>S.achievements[a.id]).length;
+  let html=`<p class="sec-title">Achievements — ${done}/${ACH.length} unlocked</p><div class="ach-list">`;
+  ACH.forEach(a=>{
+    const unlocked=!!S.achievements[a.id];
+    html+=`<div class="ach-row${unlocked?' done':''}">
+      <div class="ach-icon">${a.icon}</div>
+      <div class="ach-info">
+        <div class="ach-name">${esc(a.name)}</div>
+        <div class="ach-desc">${esc(a.desc)}</div>
+        <div class="ach-reward">${unlocked?'✅ ':''} +${a.reward} 💎 reward</div>
+      </div>
+    </div>`;
+  });
+  html+='</div>';
+  return html;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: STATS
+// ═══════════════════════════════════════════════════════════════
+function renderStats() {
+  const st=S.stats;
+  const topCase=Object.entries(S.opened).sort((a,b)=>b[1]-a[1])[0];
+  const topCaseName=topCase?CASES.find(c=>c.id===topCase[0])?.name||topCase[0]:'None';
+  return `<p class="sec-title">Statistics</p>
+  <div class="stats-grid">
+    <div class="stat-card"><span class="sc-val">${fmt(st.opened)}</span><div class="sc-lbl">Cases Opened</div></div>
+    <div class="stat-card"><span class="sc-val">${fmt(st.legendaries)}</span><div class="sc-lbl">Legendaries Found</div></div>
+    <div class="stat-card"><span class="sc-val">${fmt(st.mythics)}</span><div class="sc-lbl">Mythics Found</div></div>
+    <div class="stat-card"><span class="sc-val">${fmt(st.gemsEarned)}</span><div class="sc-lbl">Gems Earned</div></div>
+    <div class="stat-card"><span class="sc-val">${fmt(st.gemsSpent)}</span><div class="sc-lbl">Gems Spent</div></div>
+    <div class="stat-card"><span class="sc-val">${fmt(st.itemsSold)}</span><div class="sc-lbl">Items Sold</div></div>
+    <div class="stat-card"><span class="sc-val">${fmt(st.craftsDone)}</span><div class="sc-lbl">Items Crafted</div></div>
+    <div class="stat-card"><span class="sc-val">${fmt(st.highestValue)}</span><div class="sc-lbl">Best Item Value 💎</div></div>
+    <div class="stat-card"><span class="sc-val">${S.level}</span><div class="sc-lbl">Current Level</div></div>
+    <div class="stat-card"><span class="sc-val">${S.rebirths}</span><div class="sc-lbl">Rebirths</div></div>
+    <div class="stat-card"><span class="sc-val">${S.daily.maxStreak}</span><div class="sc-lbl">Best Daily Streak</div></div>
+    <div class="stat-card"><span class="sc-val">${S.season.tier}/${SEASON_TIERS}</span><div class="sc-lbl">Season Tier</div></div>
+  </div>
+  <p class="sec-title">Most Opened</p>
+  <div class="shop-list">
+    ${CASES.filter(c=>(S.opened[c.id]||0)>0).sort((a,b)=>(S.opened[b.id]||0)-(S.opened[a.id]||0)).map(c=>`
+      <div class="shop-row">
+        <div class="shop-icon">${c.icon}</div>
+        <div class="shop-info"><div class="shop-name">${esc(c.name)}</div>
+        <div class="shop-desc">Found ${(S.found[c.id]||[]).length}/${c.items.length} items</div></div>
+        <div class="shop-cost">${S.opened[c.id]||0} opens</div>
+      </div>`).join('')||'<div style="color:#555;padding:10px">No cases opened yet</div>'}
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MAIN RENDER
+// ═══════════════════════════════════════════════════════════════
+let activeTab='cases'; let activeCaseId=null; let reelBusy=false;
+function render() {
+  updateHeader();
+  const content=document.getElementById('content'); if(!content) return;
+  if(activeCaseId){ content.innerHTML=renderOpener(activeCaseId);bindOpener();return; }
+  switch(activeTab){
+    case 'cases':        content.innerHTML=renderCases();       bindCases();       break;
+    case 'inventory':    content.innerHTML=renderInventory();   bindInventory();   break;
+    case 'daily':        content.innerHTML=renderDaily();       bindDaily();       break;
+    case 'quests':       content.innerHTML=renderQuests();      bindQuests();      break;
+    case 'shop':         content.innerHTML=renderShop();        bindShop();        break;
+    case 'crafting':     content.innerHTML=renderCrafting();    bindCrafting();    break;
+    case 'season':       content.innerHTML=renderSeason();      bindSeason();      break;
+    case 'rebirth':      content.innerHTML=renderRebirth();     bindRebirth();     break;
+    case 'achievements': content.innerHTML=renderAchievements();                   break;
+    case 'stats':        content.innerHTML=renderStats();                          break;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+function init() {
+  load();
+  ensureDailyQuests();
+
+  document.querySelectorAll('.tab').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      activeTab=btn.dataset.tab; activeCaseId=null;
+      document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b===btn));
+      render();
+    });
+  });
+
+  document.getElementById('hdr-mute').addEventListener('click',()=>{
+    muted=!muted; save(); updateHeader();
+  });
+
+  if(S.upgrades['autoopen']) startAutoOpener();
+  checkAch();
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  CASE DATA
+// ═══════════════════════════════════════════════════════════════
+const CASES = [
+  {id:'starter',  name:'Starter Case',    img:'textures/block/crafting_table_top.png',  price:10,  pity:60, lockLevel:0,  lockRebirth:0,
+   items:[
+    {id:'stick',       name:'Stick',           img:'textures/item/stick.png',             r:0,w:1000,v:[2,8]},
+    {id:'gravel',      name:'Gravel',          img:'textures/block/gravel.png',           r:0,w:900, v:[3,10]},
+    {id:'bread',       name:'Bread',           img:'textures/item/bread.png',             r:0,w:850, v:[5,12]},
+    {id:'bone',        name:'Bone',            img:'textures/item/bone.png',              r:0,w:800, v:[4,10]},
+    {id:'coal',        name:'Coal',            img:'textures/item/coal.png',              r:1,w:450, v:[15,28]},
+    {id:'iron',        name:'Iron Ingot',      img:'textures/item/iron_ingot.png',        r:1,w:420, v:[20,35]},
+    {id:'wood_sw',     name:'Wood Sword',      img:'textures/item/wooden_sword.png',      r:1,w:380, v:[18,32]},
+    {id:'gold_nug',    name:'Gold Nugget',     img:'textures/item/gold_nugget.png',       r:2,w:180, v:[60,110]},
+    {id:'redstone',    name:'Redstone',        img:'textures/item/redstone.png',          r:2,w:155, v:[75,130]},
+    {id:'diamond',     name:'Diamond',         img:'textures/item/diamond.png',           r:3,w:65,  v:[350,620]},
+    {id:'gold_sw',     name:'Golden Sword',    img:'textures/item/golden_sword.png',      r:3,w:50,  v:[400,700]},
+    {id:'neth_star',   name:'Nether Star',     img:'textures/item/nether_star.png',       r:4,w:15,  v:[2500,4500]},
+    {id:'notch_head',  name:"Notch's Apple",   img:'textures/item/golden_apple.png',      r:4,w:10,  v:[4000,7000]},
+  ]},
+  {id:'forest',   name:'Forest Case',     img:'textures/block/oak_leaves.png',           price:20,  pity:55, lockLevel:3,  lockRebirth:0,
+   items:[
+    {id:'oak_log',     name:'Oak Log',         img:'textures/block/oak_log.png',          r:0,w:950, v:[4,12]},
+    {id:'apple',       name:'Apple',           img:'textures/item/apple.png',             r:0,w:900, v:[5,14]},
+    {id:'vine',        name:'Vine',            img:'textures/block/vine.png',             r:0,w:850, v:[3,10]},
+    {id:'flower',      name:'Dandelion',       img:'textures/block/dandelion.png',        r:0,w:820, v:[4,11]},
+    {id:'mushroom',    name:'Mushroom',        img:'textures/block/brown_mushroom.png',   r:1,w:430, v:[22,40]},
+    {id:'sapling',     name:'Oak Sapling',     img:'textures/block/oak_sapling.png',      r:1,w:400, v:[25,45]},
+    {id:'cocoa',       name:'Cocoa Beans',     img:'textures/item/cocoa_beans.png',       r:1,w:370, v:[28,48]},
+    {id:'bee_nest',    name:'Bee Nest',        img:'textures/block/bee_nest_front.png',   r:2,w:170, v:[85,145]},
+    {id:'pumpkin',     name:'Pumpkin',         img:'textures/block/pumpkin_top.png',      r:2,w:150, v:[90,160]},
+    {id:'gold_apple',  name:'Golden Apple',    img:'textures/item/golden_apple.png',      r:3,w:62,  v:[380,660]},
+    {id:'emerald',     name:'Emerald',         img:'textures/item/emerald.png',           r:3,w:48,  v:[420,720]},
+    {id:'anc_seed',    name:'Torchflower Seed',img:'textures/item/torchflower_seeds.png', r:4,w:14,  v:[2800,5000]},
+    {id:'sac_flower',  name:'Torchflower',     img:'textures/block/torchflower.png',      r:4,w:9,   v:[4500,8000]},
+  ]},
+  {id:'nether',   name:'Nether Case',     img:'textures/block/netherrack.png',           price:30,  pity:50, lockLevel:5,  lockRebirth:0,
+   items:[
+    {id:'netherrack',  name:'Netherrack',      img:'textures/block/netherrack.png',       r:0,w:900, v:[5,15]},
+    {id:'soul_sand',   name:'Soul Sand',       img:'textures/block/soul_sand.png',        r:0,w:850, v:[8,18]},
+    {id:'n_quartz',    name:'Nether Quartz',   img:'textures/item/quartz.png',            r:0,w:750, v:[10,22]},
+    {id:'n_gravel',    name:'Gravel',          img:'textures/block/gravel.png',           r:0,w:680, v:[5,12]},
+    {id:'n_brick',     name:'Nether Brick',    img:'textures/item/nether_brick.png',      r:1,w:440, v:[25,48]},
+    {id:'basalt',      name:'Basalt',          img:'textures/block/basalt_side.png',      r:1,w:400, v:[30,52]},
+    {id:'n_wart',      name:'Nether Wart',     img:'textures/item/nether_wart.png',       r:1,w:340, v:[35,62]},
+    {id:'blaze_pwd',   name:'Blaze Powder',    img:'textures/item/blaze_powder.png',      r:2,w:175, v:[80,150]},
+    {id:'magma_cream', name:'Magma Cream',     img:'textures/item/magma_cream.png',       r:2,w:145, v:[100,185]},
+    {id:'n_gold_ore',  name:'Nether Gold Ore', img:'textures/block/nether_gold_ore.png',  r:2,w:115, v:[150,260]},
+    {id:'ghast_tear',  name:'Ghast Tear',      img:'textures/item/ghast_tear.png',        r:3,w:58,  v:[400,720]},
+    {id:'blaze_rod',   name:'Blaze Rod',       img:'textures/item/blaze_rod.png',         r:3,w:48,  v:[500,920]},
+    {id:'with_skull',  name:'Wither Skull',    img:'textures/item/skull_banner_pattern.png',r:4,w:20,v:[2000,3600]},
+    {id:'netherite',   name:'Netherite Ingot', img:'textures/item/netherite_ingot.png',   r:4,w:11,  v:[4000,7200]},
+  ]},
+  {id:'ocean',    name:'Ocean Case',      img:'textures/block/prismarine.png',           price:35,  pity:50, lockLevel:7,  lockRebirth:0,
+   items:[
+    {id:'seagrass',    name:'Seagrass',        img:'textures/block/seagrass.png',         r:0,w:920, v:[4,12]},
+    {id:'oc_sand',     name:'Sand',            img:'textures/block/sand.png',             r:0,w:880, v:[3,10]},
+    {id:'dead_coral',  name:'Dead Coral',      img:'textures/block/dead_brain_coral.png', r:0,w:850, v:[5,14]},
+    {id:'oc_clay',     name:'Clay',            img:'textures/block/clay.png',             r:0,w:820, v:[6,14]},
+    {id:'kelp',        name:'Kelp',            img:'textures/block/kelp.png',             r:1,w:420, v:[24,44]},
+    {id:'trop_fish',   name:'Tropical Fish',   img:'textures/item/tropical_fish.png',     r:1,w:390, v:[28,50]},
+    {id:'sea_pickle',  name:'Sea Pickle',      img:'textures/item/sea_pickle.png',        r:1,w:360, v:[30,52]},
+    {id:'prismarine',  name:'Prismarine',      img:'textures/block/prismarine.png',       r:2,w:165, v:[90,160]},
+    {id:'sponge',      name:'Sponge',          img:'textures/block/sponge.png',           r:2,w:140, v:[110,190]},
+    {id:'heart_sea',   name:'Heart of the Sea',img:'textures/item/heart_of_the_sea.png',  r:3,w:60,  v:[420,740]},
+    {id:'naut_shell',  name:'Nautilus Shell',  img:'textures/item/nautilus_shell.png',    r:3,w:50,  v:[480,820]},
+    {id:'trident',     name:'Trident',         img:'textures/item/trident.png',           r:4,w:18,  v:[2200,3800]},
+    {id:'conduit',     name:'Conduit',         img:'textures/block/conduit.png',          r:4,w:10,  v:[4500,7800]},
+  ]},
+  {id:'mine',     name:'Mine Case',       img:'textures/block/iron_ore.png',             price:40,  pity:45, lockLevel:10, lockRebirth:0,
+   items:[
+    {id:'oc_stone',    name:'Stone',           img:'textures/block/stone.png',            r:0,w:950, v:[4,12]},
+    {id:'oc_gravel',   name:'Gravel',          img:'textures/block/gravel.png',           r:0,w:900, v:[3,10]},
+    {id:'coal_ore',    name:'Coal Ore',        img:'textures/block/coal_ore.png',         r:0,w:860, v:[6,15]},
+    {id:'dirt',        name:'Dirt',            img:'textures/block/dirt.png',             r:0,w:830, v:[2,8]},
+    {id:'iron_ore',    name:'Iron Ore',        img:'textures/block/iron_ore.png',         r:1,w:440, v:[25,45]},
+    {id:'copper_ore',  name:'Copper Ore',      img:'textures/block/copper_ore.png',       r:1,w:410, v:[28,50]},
+    {id:'lapis_ore',   name:'Lapis Ore',       img:'textures/block/lapis_ore.png',        r:1,w:380, v:[32,55]},
+    {id:'gold_ore',    name:'Gold Ore',        img:'textures/block/gold_ore.png',         r:2,w:168, v:[95,165]},
+    {id:'redst_ore',   name:'Redstone Ore',    img:'textures/block/redstone_ore.png',     r:2,w:148, v:[110,185]},
+    {id:'diam_ore',    name:'Diamond Ore',     img:'textures/block/diamond_ore.png',      r:3,w:63,  v:[450,780]},
+    {id:'em_ore',      name:'Emerald Ore',     img:'textures/block/emerald_ore.png',      r:3,w:50,  v:[500,870]},
+    {id:'deepsl_diam', name:'Deepslate Diamond',img:'textures/block/deepslate_diamond_ore.png',r:4,w:17,v:[2500,4300]},
+    {id:'anc_debris',  name:'Ancient Debris',  img:'textures/block/ancient_debris_side.png',r:4,w:11,v:[4000,7000]},
+  ]},
+  {id:'end',      name:'End Case',        img:'textures/block/end_stone.png',            price:50,  pity:40, lockLevel:15, lockRebirth:0,
+   items:[
+    {id:'end_stone',   name:'End Stone',       img:'textures/block/end_stone.png',        r:0,w:900, v:[10,22]},
+    {id:'purpur',      name:'Purpur Block',    img:'textures/block/purpur_block.png',     r:0,w:800, v:[15,26]},
+    {id:'chorus_fl',   name:'Chorus Flower',   img:'textures/block/chorus_flower.png',    r:0,w:740, v:[12,24]},
+    {id:'end_rod',     name:'End Rod',         img:'textures/block/end_rod.png',          r:1,w:450, v:[35,68]},
+    {id:'end_pearl',   name:'Ender Pearl',     img:'textures/item/ender_pearl.png',       r:1,w:400, v:[40,72]},
+    {id:'chorus_fr',   name:'Chorus Fruit',    img:'textures/item/chorus_fruit.png',      r:1,w:370, v:[36,62]},
+    {id:'shulk_sh',    name:'Shulker Shell',   img:'textures/item/shulker_shell.png',     r:2,w:148, v:[180,330]},
+    {id:'end_cryst',   name:'End Crystal',     img:'textures/item/end_crystal.png',       r:2,w:98,  v:[300,520]},
+    {id:'shulk_box',   name:'Shulker Box',     img:'textures/block/purple_shulker_box.png',r:3,w:54,v:[600,1050]},
+    {id:'drag_head',   name:'Dragon Breath',   img:'textures/item/dragon_breath.png',     r:3,w:38,  v:[1200,2100]},
+    {id:'elytra',      name:'Elytra',          img:'textures/item/elytra.png',            r:4,w:17,  v:[4500,7800]},
+    {id:'drag_egg',    name:'Dragon Egg',      img:'textures/block/dragon_egg.png',       r:4,w:9,   v:[9000,16000]},
+  ]},
+  {id:'combat',   name:'Combat Case',     img:'textures/item/diamond_sword.png',         price:60,  pity:40, lockLevel:20, lockRebirth:0,
+   items:[
+    {id:'arrow',       name:'Arrow',           img:'textures/item/arrow.png',             r:0,w:880, v:[5,14]},
+    {id:'wood_shield', name:'Wood Sword',      img:'textures/item/wooden_sword.png',      r:0,w:840, v:[6,16]},
+    {id:'cb_wood_sw',  name:'Wood Sword II',   img:'textures/item/wooden_sword.png',      r:0,w:810, v:[5,15]},
+    {id:'iron_sw',     name:'Iron Sword',      img:'textures/item/iron_sword.png',        r:1,w:430, v:[30,55]},
+    {id:'gold_bow',    name:'Bow',             img:'textures/item/bow.png',               r:1,w:400, v:[35,60]},
+    {id:'iron_axe',    name:'Iron Axe',        img:'textures/item/iron_axe.png',          r:1,w:370, v:[32,58]},
+    {id:'diam_sw',     name:'Diamond Sword',   img:'textures/item/diamond_sword.png',     r:2,w:162, v:[120,210]},
+    {id:'crossbow',    name:'Crossbow',        img:'textures/item/crossbow_standby.png',  r:2,w:140, v:[130,225]},
+    {id:'nth_sw',      name:'Netherite Sword', img:'textures/item/netherite_sword.png',   r:3,w:58,  v:[550,960]},
+    {id:'ench_shield', name:'Enchanted Book',  img:'textures/item/enchanted_book.png',    r:3,w:45,  v:[700,1200]},
+    {id:'leg_blade',   name:'Legendary Blade', img:'textures/item/golden_sword.png',      r:4,w:16,  v:[3500,6000]},
+    {id:'drag_slay',   name:'Dragon Slayer',   img:'textures/item/netherite_sword.png',   r:4,w:10,  v:[5500,9500]},
+  ]},
+  {id:'enchanted',name:'Enchanted Case',  img:'textures/item/enchanted_book.png',        price:80,  pity:35, lockLevel:25, lockRebirth:0,
+   items:[
+    {id:'ff1',         name:'Feather Falling I', img:'textures/item/feather.png',         r:0,w:900, v:[10,22]},
+    {id:'kb1',         name:'Knockback I',       img:'textures/item/enchanted_book.png',  r:0,w:880, v:[8,20]},
+    {id:'sm2',         name:'Smite II',          img:'textures/item/enchanted_book.png',  r:0,w:860, v:[10,22]},
+    {id:'pow2',        name:'Power II',          img:'textures/item/bow.png',             r:1,w:445, v:[35,62]},
+    {id:'eff3',        name:'Efficiency III',    img:'textures/item/iron_pickaxe.png',    r:1,w:395, v:[40,68]},
+    {id:'fa1',         name:'Fire Aspect I',     img:'textures/item/fire_charge.png',     r:1,w:375, v:[35,62]},
+    {id:'prot3',       name:'Protection III',    img:'textures/item/iron_chestplate.png', r:2,w:178, v:[100,185]},
+    {id:'unbr3',       name:'Unbreaking III',    img:'textures/item/enchanted_book.png',  r:2,w:155, v:[120,205]},
+    {id:'loot3',       name:'Looting III',       img:'textures/item/enchanted_book.png',  r:3,w:68,  v:[450,820]},
+    {id:'fort3',       name:'Fortune III',       img:'textures/item/diamond_pickaxe.png', r:3,w:53,  v:[600,1050]},
+    {id:'silk',        name:'Silk Touch',        img:'textures/item/shears.png',          r:3,w:48,  v:[700,1250]},
+    {id:'mending',     name:'Mending',           img:'textures/item/experience_bottle.png',r:4,w:19,v:[3000,5800]},
+    {id:'sharp5',      name:'Sharpness V',       img:'textures/item/diamond_sword.png',   r:4,w:14,  v:[3500,6200]},
+  ]},
+  {id:'prestige', name:'Prestige Case',   img:'textures/item/nether_star.png',           price:120, pity:30, lockLevel:0,  lockRebirth:1,
+   items:[
+    {id:'p_enc_apl',   name:'Enchanted Apple',   img:'textures/item/golden_apple.png',    r:0,w:800, v:[80,155]},
+    {id:'p_anc_deb',   name:'Ancient Debris',    img:'textures/block/ancient_debris_side.png',r:0,w:740,v:[100,210]},
+    {id:'p_diam_ore',  name:'Diamond Ore',       img:'textures/block/diamond_ore.png',    r:1,w:395, v:[200,360]},
+    {id:'p_nth_scrap', name:'Netherite Scrap',   img:'textures/item/netherite_scrap.png', r:1,w:345, v:[250,420]},
+    {id:'p_ench_nth',  name:'Ench. Netherite Sw.',img:'textures/item/netherite_sword.png',r:2,w:148, v:[600,1050]},
+    {id:'p_ench_ely',  name:'Ench. Elytra',      img:'textures/item/elytra.png',          r:2,w:118, v:[800,1450]},
+    {id:'p_drag_sw',   name:'Dragon Sword',      img:'textures/item/netherite_sword.png', r:3,w:53,  v:[2000,3600]},
+    {id:'p_rainbow',   name:'Rainbow Beacon',    img:'textures/block/beacon.png',         r:3,w:38,  v:[3000,5200]},
+    {id:'p_notch_apl', name:"Notch's Apple",     img:'textures/item/golden_apple.png',    r:4,w:14,  v:[8000,15500]},
+    {id:'p_dev_key',   name:"Trial Key",         img:'textures/item/trial_key.png',       r:4,w:9,   v:[12000,21000]},
+    {id:'p_herobrine', name:"Herobrine's Sword", img:'textures/item/netherite_sword.png', r:5,w:3,   v:[25000,50000]},
+  ]},
+  {id:'mythiccase',name:'Mythic Case',    img:'textures/block/amethyst_block.png',       price:250, pity:25, lockLevel:0,  lockRebirth:3,
+   items:[
+    {id:'m_stone',     name:'Amethyst Block',    img:'textures/block/amethyst_block.png',       r:0,w:700, v:[200,400]},
+    {id:'m_crystal',   name:'Budding Amethyst',  img:'textures/block/budding_amethyst.png',     r:0,w:650, v:[250,450]},
+    {id:'m_void_ing',  name:'Netherite Ingot',   img:'textures/item/netherite_ingot.png',       r:1,w:380, v:[600,1000]},
+    {id:'m_rift',      name:'Echo Shard',        img:'textures/item/echo_shard.png',            r:1,w:340, v:[700,1200]},
+    {id:'m_cosmic',    name:'Amethyst Cluster',  img:'textures/block/amethyst_cluster.png',     r:2,w:165, v:[2000,3500]},
+    {id:'m_dimkey',    name:'Ominous Trial Key', img:'textures/item/ominous_trial_key.png',     r:2,w:140, v:[2500,4000]},
+    {id:'m_world',     name:'Grass Block',       img:'textures/block/grass_block_side.png',     r:3,w:60,  v:[8000,14000]},
+    {id:'m_void_crown',name:'Netherite Helmet',  img:'textures/item/netherite_helmet.png',      r:3,w:45,  v:[11000,19000]},
+    {id:'m_inf_gem',   name:'Nether Star',       img:'textures/item/nether_star.png',           r:4,w:15,  v:[30000,55000]},
+    {id:'m_cos_drag',  name:'Dragon Egg',        img:'textures/block/dragon_egg.png',           r:4,w:8,   v:[50000,90000]},
+    {id:'m_one_block', name:'The One Block',     img:'textures/block/emerald_block.png',        r:5,w:3,   v:[100000,200000]},
+  ]},
+];
+
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+else init();
+</script>
+</body>
+</html>

@@ -1,0 +1,532 @@
+/* ================================================================
+   Minecraft Case Simulator — Mod Overlay CSS
+   ================================================================ */
+
+:root {
+  --mc-bg:       #1d1d1d;
+  --mc-card:     #252525;
+  --mc-card2:    #2e2e2e;
+  --mc-border:   #3a3a3a;
+  --mc-text:     #e8e8e8;
+  --mc-muted:    #888;
+  --mc-green:    #55cc55;
+  --mc-gold:     #ffaa00;
+  --mc-red:      #cc3333;
+  --mc-purple:   #aa44ff;
+  --r0: #999;
+  --r1: #55ff55;
+  --r2: #5599ff;
+  --r3: #cc44ff;
+  --r4: #ffaa00;
+}
+
+/* ── Floating Action Button ───────────────────────────────────── */
+#mcmod-fab {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 9998;
+  background: #2a6e2a;
+  color: #fff;
+  border: none;
+  border-bottom: 4px solid #1a4e1a;
+  border-right:  4px solid #1a4e1a;
+  padding: 9px 15px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: 'Exo2', 'Courier New', monospace;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  user-select: none;
+  line-height: 1;
+}
+#mcmod-fab:hover  { background: #3a8e3a; }
+#mcmod-fab:active { transform: translateY(2px); border-bottom-width: 2px; border-right-width: 2px; }
+
+/* ── Modal Backdrop ───────────────────────────────────────────── */
+#mcmod-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  box-sizing: border-box;
+}
+#mcmod-backdrop.hidden { display: none; }
+
+/* ── Modal Window ─────────────────────────────────────────────── */
+#mcmod-win {
+  background: var(--mc-bg);
+  border: 3px solid #555;
+  border-bottom-color: #222;
+  border-right-color:  #222;
+  width: 100%;
+  max-width: 620px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  font-family: 'Exo2', 'Courier New', monospace;
+  color: var(--mc-text);
+}
+
+/* ── Header ───────────────────────────────────────────────────── */
+#mcmod-hdr {
+  background: #111;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 3px solid #333;
+  flex-shrink: 0;
+}
+#mcmod-hdr h2 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--mc-green);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  flex: 1;
+}
+#mcmod-hdr-stats {
+  display: flex;
+  gap: 14px;
+  font-size: 13px;
+  font-weight: bold;
+}
+.mcmod-stat-gems    { color: var(--mc-gold); }
+.mcmod-stat-rebirth { color: var(--mc-purple); }
+#mcmod-close-btn {
+  background: var(--mc-red);
+  color: #fff;
+  border: none;
+  width: 26px; height: 26px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+#mcmod-close-btn:hover { background: #ee4444; }
+
+/* ── Tabs ─────────────────────────────────────────────────────── */
+#mcmod-tabs {
+  display: flex;
+  background: #111;
+  border-bottom: 3px solid #333;
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+#mcmod-tabs::-webkit-scrollbar { height: 3px; }
+#mcmod-tabs::-webkit-scrollbar-thumb { background: #444; }
+
+.mctab {
+  padding: 8px 13px;
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--mc-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  font-family: inherit;
+  border-bottom: 3px solid transparent;
+  transition: color .12s;
+  margin-bottom: -3px;
+}
+.mctab:hover { color: #ccc; }
+.mctab.active { color: var(--mc-green); border-bottom-color: var(--mc-green); }
+
+/* ── Content Pane ─────────────────────────────────────────────── */
+#mcmod-content {
+  overflow-y: auto;
+  flex: 1;
+  padding: 14px;
+  box-sizing: border-box;
+}
+#mcmod-content::-webkit-scrollbar { width: 6px; }
+#mcmod-content::-webkit-scrollbar-track { background: #111; }
+#mcmod-content::-webkit-scrollbar-thumb { background: #444; }
+
+/* ── Generic Buttons ──────────────────────────────────────────── */
+.mc-btn {
+  border: none;
+  padding: 9px 18px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+.mc-btn-green  { background: #2a6e2a; color: #fff; border-bottom: 3px solid #1a4e1a; }
+.mc-btn-green:hover { background: #3a8e3a; }
+.mc-btn-gold   { background: #7a5500; color: var(--mc-gold); border-bottom: 3px solid #4a3500; }
+.mc-btn-gold:hover { background: #8a6500; }
+.mc-btn-purple { background: #4a0088; color: #e0aaff; border-bottom: 3px solid #2a0055; }
+.mc-btn-purple:hover { background: #6000aa; }
+.mc-btn-muted  { background: #333; color: #888; border-bottom: 3px solid #222; cursor: not-allowed; }
+
+/* ── Section Header ───────────────────────────────────────────── */
+.mc-section-title {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--mc-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0 0 10px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #333;
+}
+
+/* ── Cases Grid ───────────────────────────────────────────────── */
+.mcmod-cases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+.mcmod-case-card {
+  background: var(--mc-card);
+  border: 2px solid var(--mc-border);
+  padding: 16px 10px 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color .15s, transform .1s;
+  user-select: none;
+}
+.mcmod-case-card:hover:not(.mc-locked) { border-color: #777; transform: translateY(-2px); }
+.mcmod-case-card:active:not(.mc-locked) { transform: translateY(1px); }
+.mcmod-case-card.mc-locked { opacity: .45; cursor: not-allowed; }
+.mcmod-case-icon  { font-size: 38px; display: block; margin-bottom: 8px; }
+.mcmod-case-name  { font-size: 11px; font-weight: bold; color: #ddd; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.mcmod-case-price { font-size: 14px; color: var(--mc-gold); font-weight: bold; }
+.mcmod-case-lock  { font-size: 10px; color: var(--mc-red); margin-top: 4px; }
+
+/* ── Case Opener ──────────────────────────────────────────────── */
+.mcmod-back-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.mcmod-back-btn {
+  background: #333;
+  color: #aaa;
+  border: 2px solid #555;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  text-transform: uppercase;
+}
+.mcmod-back-btn:hover { background: #444; color: #ccc; }
+.mcmod-opener-title { font-size: 16px; font-weight: bold; }
+.mcmod-opener-price { font-size: 13px; color: var(--mc-gold); font-weight: bold; margin-left: auto; }
+
+.mcmod-open-btns { display: flex; gap: 8px; margin-bottom: 10px; }
+.mcmod-open-btn  { flex: 1; }
+.mcmod-open-btn:disabled { opacity: .45; cursor: not-allowed; pointer-events: none; }
+
+/* ── Reel ─────────────────────────────────────────────────────── */
+#mcmod-reel-wrap {
+  width: 100%;
+  height: 84px;
+  overflow: hidden;
+  position: relative;
+  border: 3px solid #555;
+  background: #0d0d0d;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+#mcmod-reel-wrap::before,
+#mcmod-reel-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 70px;
+  z-index: 2;
+  pointer-events: none;
+}
+#mcmod-reel-wrap::before { left: 0;  background: linear-gradient(to right, #0d0d0d, transparent); }
+#mcmod-reel-wrap::after  { right: 0; background: linear-gradient(to left,  #0d0d0d, transparent); }
+.mcmod-reel-line {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: var(--mc-green);
+  transform: translateX(-50%);
+  z-index: 3;
+  pointer-events: none;
+}
+#mcmod-reel-track {
+  display: flex;
+  gap: 4px;
+  padding: 0 4px;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  will-change: transform;
+}
+
+/* ── Item Tile (reel + inventory) ─────────────────────────────── */
+.mc-item-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border: 2px solid;
+  background: var(--mc-card);
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 2px;
+}
+.mc-item-tile .ti-icon  { font-size: 28px; line-height: 1; }
+.mc-item-tile .ti-name  { font-size: 8px; color: #bbb; text-align: center; line-height: 1.2; margin-top: 2px; word-break: break-word; }
+.mc-item-tile.r0 { border-color: var(--r0); }
+.mc-item-tile.r1 { border-color: var(--r1); }
+.mc-item-tile.r2 { border-color: var(--r2); }
+.mc-item-tile.r3 { border-color: var(--r3); }
+.mc-item-tile.r4 { border-color: var(--r4); box-shadow: 0 0 8px var(--r4); }
+
+/* ── Result Banner ────────────────────────────────────────────── */
+#mcmod-result-area {
+  text-align: center;
+  padding: 10px 0;
+  min-height: 120px;
+}
+.mcmod-result-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  animation: mc-pop .35s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes mc-pop {
+  from { opacity: 0; transform: scale(.7); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.mcmod-res-icon  { font-size: 56px; line-height: 1; }
+.mcmod-res-name  { font-size: 18px; font-weight: bold; }
+.mcmod-res-rar   { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; }
+.mcmod-res-val   { font-size: 13px; color: var(--mc-gold); }
+.mcmod-res-btns  { display: flex; gap: 8px; margin-top: 6px; }
+
+/* ── Preview of items in case ─────────────────────────────────── */
+.mcmod-preview-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 12px;
+}
+
+/* ── Inventory ────────────────────────────────────────────────── */
+.mcmod-inv-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  background: var(--mc-card);
+  border: 2px solid var(--mc-border);
+}
+.mcmod-inv-bar span { font-size: 12px; color: var(--mc-muted); }
+.mcmod-inv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 6px;
+}
+.mcmod-inv-tile {
+  background: var(--mc-card2);
+  border: 2px solid;
+  padding: 8px 4px 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: filter .1s;
+}
+.mcmod-inv-tile:hover { filter: brightness(1.35); }
+.mcmod-inv-tile .ti-icon  { font-size: 26px; }
+.mcmod-inv-tile .ti-name  { font-size: 9px; color: #bbb; margin: 3px 0; line-height: 1.2; }
+.mcmod-inv-tile .ti-val   { font-size: 11px; font-weight: bold; color: var(--mc-gold); }
+.mcmod-inv-tile.r0 { border-color: var(--r0); }
+.mcmod-inv-tile.r1 { border-color: var(--r1); }
+.mcmod-inv-tile.r2 { border-color: var(--r2); }
+.mcmod-inv-tile.r3 { border-color: var(--r3); }
+.mcmod-inv-tile.r4 { border-color: var(--r4); box-shadow: 0 0 6px var(--r4); }
+
+/* ── Daily Bonus ──────────────────────────────────────────────── */
+.mcmod-daily-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-bottom: 14px;
+}
+.mcmod-day {
+  background: var(--mc-card);
+  border: 2px solid var(--mc-border);
+  padding: 8px 3px;
+  text-align: center;
+  font-size: 10px;
+}
+.mcmod-day.today   { border-color: var(--mc-green); }
+.mcmod-day.claimed { opacity: .4; background: #111; }
+.mcmod-day .d-lbl  { font-size: 8px; color: var(--mc-muted); text-transform: uppercase; margin-bottom: 3px; }
+.mcmod-day .d-icon { font-size: 18px; margin-bottom: 3px; }
+.mcmod-day .d-val  { font-size: 11px; font-weight: bold; color: var(--mc-gold); }
+.mcmod-daily-info  { font-size: 12px; color: var(--mc-muted); margin-bottom: 12px; }
+.mcmod-daily-info strong { color: var(--mc-text); }
+
+/* ── Shop ─────────────────────────────────────────────────────── */
+.mcmod-shop-list { display: flex; flex-direction: column; gap: 6px; }
+.mcmod-shop-row {
+  background: var(--mc-card);
+  border: 2px solid var(--mc-border);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.mcmod-shop-row.owned   { border-color: var(--mc-green); opacity: .65; }
+.mcmod-shop-row.blocked { opacity: .35; }
+.shop-icon { font-size: 26px; width: 36px; text-align: center; flex-shrink: 0; }
+.shop-info { flex: 1; min-width: 0; }
+.shop-name { font-size: 12px; font-weight: bold; color: #ddd; }
+.shop-desc { font-size: 10px; color: var(--mc-muted); margin-top: 2px; }
+.shop-cost { font-size: 12px; color: var(--mc-gold); font-weight: bold; white-space: nowrap; }
+.shop-buy  { flex-shrink: 0; }
+.shop-buy button {
+  background: #2a6e2a;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  text-transform: uppercase;
+}
+.shop-buy button:hover:not(:disabled)  { background: #3a8e3a; }
+.shop-buy button:disabled { background: #333; color: #555; cursor: not-allowed; }
+
+/* ── Rebirth ──────────────────────────────────────────────────── */
+.mcmod-rebirth-card {
+  background: var(--mc-card);
+  border: 2px solid #4a0088;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+.mcmod-rebirth-card h3  { margin: 0 0 8px; font-size: 16px; color: var(--mc-purple); text-transform: uppercase; letter-spacing: 2px; }
+.mcmod-rebirth-card p   { font-size: 12px; color: var(--mc-muted); margin: 6px 0; }
+.mcmod-rebirth-card .rcount { font-size: 26px; font-weight: bold; color: var(--mc-purple); }
+.mcmod-prog-bar-wrap {
+  width: 100%;
+  height: 18px;
+  background: #111;
+  border: 2px solid #333;
+  margin: 10px 0;
+  overflow: hidden;
+}
+.mcmod-prog-bar {
+  height: 100%;
+  background: linear-gradient(to right, #8800cc, #ff44ff);
+  transition: width .5s;
+  min-width: 2px;
+}
+.mcmod-prog-label { font-size: 11px; color: var(--mc-muted); margin-bottom: 14px; }
+.mcmod-rebirth-bonuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+.mcmod-bonus-tag {
+  background: #1a001a;
+  border: 1px solid var(--mc-purple);
+  padding: 4px 10px;
+  font-size: 10px;
+  color: #cc88ff;
+  letter-spacing: 1px;
+}
+.mcmod-rebirth-warn {
+  font-size: 11px;
+  color: #cc6666;
+  margin-bottom: 14px;
+}
+
+/* ── Achievements ─────────────────────────────────────────────── */
+.mcmod-ach-list { display: flex; flex-direction: column; gap: 6px; }
+.mcmod-ach-row {
+  background: var(--mc-card);
+  border: 2px solid var(--mc-border);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: .4;
+  transition: opacity .2s;
+}
+.mcmod-ach-row.done    { opacity: 1; border-color: var(--mc-gold); }
+.ach-icon { font-size: 26px; width: 36px; text-align: center; flex-shrink: 0; }
+.ach-info { flex: 1; }
+.ach-name { font-size: 12px; font-weight: bold; color: #ddd; }
+.ach-desc { font-size: 10px; color: var(--mc-muted); margin-top: 2px; }
+.ach-reward { font-size: 11px; color: var(--mc-gold); font-weight: bold; margin-top: 2px; }
+
+/* ── Toast Notifications ──────────────────────────────────────── */
+#mcmod-toasts {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 20000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.mcmod-toast {
+  background: #162a16;
+  border: 2px solid var(--mc-green);
+  padding: 10px 14px;
+  max-width: 260px;
+  animation: mc-slide-in .3s ease, mc-fade-out .3s ease 3.7s forwards;
+  font-family: 'Exo2', 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--mc-text);
+}
+.mcmod-toast.toast-legendary {
+  border-color: var(--mc-gold);
+  background: #2a1a00;
+}
+@keyframes mc-slide-in {
+  from { transform: translateX(110%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes mc-fade-out {
+  to { transform: translateX(110%); opacity: 0; }
+}
+.toast-badge  { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--mc-green); font-weight: bold; margin-bottom: 3px; }
+.toast-name   { font-size: 13px; font-weight: bold; }
+.toast-reward { font-size: 11px; color: var(--mc-gold); margin-top: 2px; }
+.mcmod-toast.toast-legendary .toast-badge { color: var(--mc-gold); }
+
+/* ── Empty State ──────────────────────────────────────────────── */
+.mc-empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--mc-muted);
+  font-size: 13px;
+}
+.mc-empty .mc-empty-icon { font-size: 36px; display: block; margin-bottom: 10px; }
