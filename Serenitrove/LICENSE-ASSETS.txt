@@ -1,0 +1,16 @@
+Creative Commons Attribution NoDerivatives 4.0 International
+
+Copyright © 2026 itch.io user: alfredncy
+
+All visual, audio, and narrative assets included with this game are licensed under the Creative Commons Attribution NoDerivatives 4.0 International License.
+
+You are permitted to copy and redistribute these assets in unmodified form only, for any purpose, provided that:
+- Proper attribution is given to the original author
+- A visible link to the original itch.io page is included
+
+You may not modify, remix, transform, translate, extract, or create derivative works from these assets.
+
+This license applies only to assets. It does not apply to any source code, scripts, or executable logic.
+
+A copy of the full license text can be found at:
+https://creativecommons.org/licenses/by-nd/4.0/

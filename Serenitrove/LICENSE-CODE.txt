@@ -1,0 +1,11 @@
+All Rights Reserved
+
+Copyright © 2026 itch.io user: alfredncy
+
+All source code, scripts, and executable logic included with this game are proprietary.
+
+No permission is granted to copy, modify, redistribute, sublicense, reverse engineer, or create derivative works from the code, in whole or in part, without prior written permission from the copyright holder.
+
+This notice applies to all source files, scripts, and build related code, regardless of language or format.
+
+This license does not restrict redistribution of the unmodified game build when such redistribution is explicitly permitted elsewhere by the author.
