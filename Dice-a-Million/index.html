@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+<base href="https://cdn.jsdelivr.net/gh/NotRexed/Unblocked-Games@b9a2b9ea0b5b99ebfa122155993cb62922b6250b/diceamillion/">
+<!-- ubg-add-game: https://github.com/NotRexed/Unblocked-Games/tree/b9a2b9ea0b5b99ebfa122155993cb62922b6250b/diceamillion -->
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
+    <title></title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      canvas.emscripten {
+        display: none;
+        border: 0px none;
+        background-color: black;
+        image-rendering: optimizeQuality;
+        image-rendering: auto;
+        -ms-interpolation-mode: bicubic;
+      }
+      @keyframes rotation {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      div.loading {
+        position: absolute;
+        top: 0; bottom: 0; left: 0; right: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        pointer-events: none;
+        color: white;
+        font-family: arial;
+      }
+      .spinner {
+        height: 30px;
+        width: 30px;
+        animation: rotation 0.8s linear infinite;
+        border: 5px solid #bdff00;
+        border-top: 5px solid #719900;
+        border-radius: 100%;
+        margin: 10px;
+      }
+      #progress {
+        width: 250px;
+        height: 10px;
+        appearance: none;
+        -webkit-appearance: none;
+        padding: 5px;
+      }
+      progress[value]::-webkit-progress-bar {
+        background-color: #8492a6;
+        height: 10px;
+        border-radius: 15px;
+      }
+      progress[value]::-webkit-progress-value {
+        background-image: -webkit-linear-gradient(left, #719900, #bdff00);
+        height: 10px;
+        border-radius: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+    <div class="loading">
+      <div class="spinner" id="spinner"></div>
+      <div id="status">Downloading...</div>
+      <progress value="0" max="100" id="progress" hidden="1"></progress>
+    </div>
+    <script id="tick-worker" type="javascript/worker">
+      let running = false;
+      let stop_called = false;
+      let intervalMs = 16;
+      onmessage = (e) => {
+        if (e.data.run) {
+          intervalMs = Math.floor(1000 / e.data.fps);
+          if (!running) { running = true; setTimeout(tick, intervalMs); }
+        } else { stop_called = true; }
+      }
+      const tick = () => {
+        if (stop_called) { stop_called = false; running = false; return; }
+        const start = new Date().getTime();
+        postMessage('');
+        const end = new Date().getTime();
+        setTimeout(tick, Math.max(start + intervalMs - end, 0));
+      }
+    </script>
+    <script type="text/javascript">
+      const blob = new Blob([document.querySelector('#tick-worker').textContent]);
+      const worker = new Worker(window.URL.createObjectURL(blob));
+      worker.onmessage = function () { GM_tick(performance.now()); }
+      const isMultiplayer = function () {
+        if (typeof GM_is_multiplayer !== 'function') return false;
+        return GM_is_multiplayer() !== 0;
+      }
+      document.addEventListener('visibilitychange', function () {
+        if (!isMultiplayer()) return;
+        if (document.visibilityState === 'hidden') { worker.postMessage({run: true, fps: 60}); }
+        else { worker.postMessage({run: false}); }
+      });
+    </script>
+    <script type="text/javascript">
+      var statusElement = document.getElementById("status");
+      var progressElement = document.getElementById("progress");
+      var spinnerElement = document.getElementById("spinner");
+      var canvasElement = document.getElementById("canvas");
+      canvasElement.addEventListener("click", function() { canvasElement.focus(); });
+      var startingHeight, startingWidth, startingAspect;
+      var Module = {
+        preRun: [], postRun: [],
+        print: (function () {
+          return function (text) {
+            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(" ");
+            console.log(text);
+            if (text === "Entering main loop.") ensureAspectRatio();
+          };
+        })(),
+        printErr: function (text) {
+          if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(" ");
+          console.error(text);
+        },
+        canvas: document.getElementById("canvas"),
+        setStatus: function (text) {
+          if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: "" };
+          if (text === Module.setStatus.last.text) return;
+          var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+          var now = Date.now();
+          if (m && now - Module.setStatus.last.time < 30) return;
+          Module.setStatus.last.time = now;
+          Module.setStatus.last.text = text;
+          if (m) {
+            text = m[1];
+            progressElement.value = parseInt(m[2]) * 100;
+            progressElement.max = parseInt(m[4]) * 100;
+            progressElement.hidden = false;
+            spinnerElement.hidden = false;
+          } else {
+            progressElement.value = null; progressElement.max = null; progressElement.hidden = true;
+            if (!text) { spinnerElement.style.display = "none"; canvasElement.style.display = "block"; ensureAspectRatio(); }
+          }
+          statusElement.innerHTML = text;
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function (left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ? "Preparing... (" + (this.totalDependencies - left) + "/" + this.totalDependencies + ")" : "All downloads complete.");
+        },
+      };
+      Module.setStatus("Downloading...");
+      window.onerror = function () {
+        Module.setStatus("Exception thrown, see JavaScript console");
+        spinnerElement.style.display = "none";
+        Module.setStatus = function (text) { if (text) Module.printErr("[post-exception status] " + text); };
+      };
+      if (typeof window === "object") {
+        Module['arguments'] = window.location.search.substr(1).trim().split('&');
+        if (!Module['arguments'][0]) Module['arguments'] = [];
+      }
+      var g_pWadLoadCallback = undefined;
+      function setWadLoadCallback(cb) { g_pWadLoadCallback = cb; }
+      var g_pAddAsyncMethod = -1;
+      function setAddAsyncMethod(m) { g_pAddAsyncMethod = m; }
+      var g_pJSExceptionHandler = undefined;
+      function setJSExceptionHandler(h) { if (typeof h == "function") g_pJSExceptionHandler = h; }
+      function hasJSExceptionHandler() { return (g_pJSExceptionHandler != undefined) && (typeof g_pJSExceptionHandler == "function"); }
+      function doJSExceptionHandler(j) { if (typeof g_pJSExceptionHandler == "function") g_pJSExceptionHandler(JSON.parse(j)); }
+      function manifestFiles() {
+        return ["runner.data","runner.js","runner.wasm","audio-worklet.js","game.unx","mus.dat","snd.dat","resources/eb.mp4"].join(";");
+      }
+      function manifestFilesMD5() {
+        return ["48b661db86717d6a17ca2360b5f5fe01","9ea38b2c465024d351bcd10d0021e2de","e33507c4aefd19d28c5da8f149fcfbb2","e8f1e8db8cf996f8715a6f2164c2e44e","804d2a4f6648703b68f2ec1077b8f0f3","48d4f0d2c6d41ff77166028cf5cd0447","0e648dc17529bd2dcd011b106c3af2e4","df927c8b5ff0d54d9460330091b5b0ba"];
+      }
+      function onFirstFrameRendered() {}
+      function onGameSetWindowSize(width, height) {
+        startingHeight = height; startingWidth = width;
+        startingAspect = startingWidth / startingHeight;
+        ensureAspectRatio();
+      }
+      function ensureAspectRatio() {
+        if (!canvasElement || startingHeight === undefined || startingWidth === undefined) return;
+        const maxWidth = window.innerWidth;
+        const maxHeight = window.innerHeight;
+        var newHeight, newWidth;
+        if (startingHeight / maxHeight > startingWidth / maxWidth) {
+          newHeight = maxHeight; newWidth = newHeight * startingAspect;
+        } else {
+          newWidth = maxWidth; newHeight = newWidth / startingAspect;
+        }
+        canvasElement.style.height = newHeight + "px";
+        canvasElement.style.width = newWidth + "px";
+      }
+      const resizeObserver = new ResizeObserver(() => {
+        window.requestAnimationFrame(ensureAspectRatio);
+        setTimeout(() => window.requestAnimationFrame(ensureAspectRatio), 100);
+      });
+      resizeObserver.observe(document.body);
+      setWadLoadCallback(() => {});
+      var read_ptr = 0;
+      read_int = () => {
+        var heap_slice = Module["HEAPU8"].subarray(read_ptr, read_ptr + 4);
+        var buffer = new ArrayBuffer(4);
+        var barray = new Uint8Array(buffer);
+        for (var i = 0; i < 4; i++) barray[i] = heap_slice[i];
+        var int = new Int32Array(buffer)[0];
+        read_ptr += 4;
+        return int;
+      };
+      read_pointer = () => {
+        var ptr = Module.getValue(read_ptr, "*");
+        read_ptr += 8;
+        return ptr;
+      };
+    </script>
+    <script async type="text/javascript" src="runner.js"></script>
+  </body>
+</html>

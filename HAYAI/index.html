@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base href="https://cdn.jsdelivr.net/gh/degloved-net/HAYAI@c15a6c1f89a3c99c3daf6100f00295c012338b4d/">
+<!-- ubg-add-game: https://github.com/degloved-net/HAYAI/tree/c15a6c1f89a3c99c3daf6100f00295c012338b4d -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <title>HAYAI</title>
+  <link rel="icon" type="image/png" href="index.icon.png">
+  <link rel="apple-touch-icon" href="index.apple-touch-icon.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #000;
+      touch-action: none;
+      overflow: hidden;
+    }
+
+    #canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      outline: none;
+    }
+
+    #overlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      cursor: pointer;
+    }
+
+    #overlay.hidden { display: none; }
+
+    #start-text {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #e0e0e0;
+      background: linear-gradient(to bottom, #403e48, #35333c);
+      border: 1px solid #45434e;
+      box-shadow: 0 0 4px rgba(0,0,0,.6);
+      padding: 12px 28px;
+      font-size: 1.4em;
+      border-radius: 3px;
+      user-select: none;
+    }
+
+    #progress {
+      width: 360px;
+      height: 7px;
+      background: #38363a;
+      border: 1px solid #444246;
+      border-radius: 2px;
+      padding: 1px;
+      box-shadow: 0 0 2px 1px #1b1c22;
+      display: none;
+    }
+
+    #progress-fill {
+      height: 100%;
+      width: 0;
+      background: #202020;
+      border: 1px solid #222223;
+      border-radius: 3px;
+      box-shadow: 0 0 1px 1px #27282e;
+      transition: width .5s linear;
+    }
+
+    @media (orientation: portrait) {
+      #progress { width: 62%; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" tabindex="0">
+    Your browser does not support HTML5 canvas.
+  </canvas>
+
+  <div id="overlay">
+    <span id="start-text">Click to Start</span>
+    <div id="progress"><div id="progress-fill"></div></div>
+  </div>
+
+  <script src="index.js"></script>
+  <script>
+    (function () {
+      var engine = new Engine({
+        args: [],
+        canvasResizePolicy: 2,
+        executable: "index",
+        experimentalVK: false,
+        fileSizes: { "index.pck": 16401888, "index.wasm": 13351459 },
+        focusCanvas: true,
+        gdnativeLibs: []
+      });
+
+      var overlay = document.getElementById("overlay");
+      var startText = document.getElementById("start-text");
+      var progress = document.getElementById("progress");
+      var progressFill = document.getElementById("progress-fill");
+      var started = false;
+
+      function hide(el) { el.style.display = "none"; }
+      function show(el) { el.style.display = "block"; }
+
+      if (!Engine.isWebGLAvailable()) {
+        startText.textContent = "WebGL is not available in this browser.";
+        overlay.style.cursor = "default";
+      } else {
+        overlay.addEventListener("click", function () {
+          if (started) return;
+          started = true;
+          hide(startText);
+          show(progress);
+          overlay.style.cursor = "default";
+
+          engine.startGame({
+            onProgress: function (current, total) {
+              if (total > 0) {
+                progressFill.style.width = (current / total * 100) + "%";
+              }
+            }
+          }).then(function () {
+            overlay.classList.add("hidden");
+          }, function (err) {
+            hide(progress);
+            show(startText);
+            startText.textContent = err.message || err;
+            overlay.style.cursor = "default";
+            console.error(err);
+          });
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
+
