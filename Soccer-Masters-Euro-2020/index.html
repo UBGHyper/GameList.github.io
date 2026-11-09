@@ -14,7 +14,7 @@
     <div id="content"></div>
     <div id="orientation"></div>
     <div id="loader">Loading ...</div>
-    
+    <script type="text/javascript" src="patch/js/null.js?imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
     <script type="text/javascript" src="assets/lib/nape.min.js">
         var nape = "nape.min.js";
     </script>
@@ -26,8 +26,7 @@
     <script type="text/javascript" src="assets/lib/phaser-super-storage.min.js"></script>
     <script type="text/javascript" src="assets/lib/dragonBones.min.js"></script>
   
-    <script>/* ad SDK removed - harmless offline stand-in */
-(function(w){function mk(){var f=function(){};return new Proxy(f,{get:function(t,k){if(k==="then")return undefined;if(k===Symbol.toPrimitive)return function(){return ""};if(k==="init"||k==="initialize")return function(){return Promise.resolve(true)};return mk()},apply:function(t,th,a){for(var i=0;i<a.length;i++){var x=a[i];if(typeof x==="function"){try{x(true)}catch(e){}}else if(x&&typeof x==="object"){["adFinished","adComplete","onFinished","finished","onSuccess","success","onComplete","resolve"].forEach(function(n){if(typeof x[n]==="function"){try{x[n](true)}catch(e){}}})}}return Promise.resolve(true)},construct:function(){return mk()}})}["PokiSDK","CrazyGames","GameDistribution","gdsdk","GamePix","GamePush","gamepix","kongregateAPI","kongregate"].forEach(function(n){if(!w[n])try{w[n]=mk()}catch(e){}});if(!w.sdk)try{w.sdk=mk()}catch(e){}})(window);</script>
+    <script src="patch/js/crazygames-sdk-v1.js"></script>
 
     <script type="text/javascript">
     var useEvents = (typeof(Event) === 'function');
