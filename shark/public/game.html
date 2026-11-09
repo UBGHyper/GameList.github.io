@@ -1,0 +1,2214 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <script src="save-fix.js"></script>
+
+  <style>
+    #load-log {
+      position: fixed;
+      left: 50%;
+      bottom: 3.5rem;
+      transform: translateX(-50%);
+      width: min(94vw, 900px);
+      height: 35vh;
+      overflow-y: auto;
+      box-sizing: border-box;
+      padding: .5em .75em;
+      text-align: left;
+      background: #1d2021;
+      border: 1px solid #3c3836;
+      border-radius: 4px;
+      font: 400 13px/1.4 var(--font-mono);
+      color: #a89984;
+      z-index: 10;
+    }
+
+    #load-log div {
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    #load-log .warn {
+      color: #fabd2f;
+    }
+
+    #load-log .error {
+      color: #fb4934;
+    }
+  </style>
+  <script>
+    (function () {
+      var buf = [], box = null, MAX = 5000;
+      function fmt(a) {
+        return Array.prototype.map.call(a, function (x) {
+          if (x instanceof Error) return x.message;
+          if (typeof x === "object") {try {return JSON.stringify(x);} catch (e) {return String(x);} }
+          return String(x);
+        }).join(" ");
+      }
+      function add(level, text) {
+        var line = {level: level, text: text}; if (text.indexOf("Game Ready") !== -1 && !window.__gameReady) window.__gameReady = Date.now();
+        if (!box) {buf.push(line); if (buf.length > MAX) buf.shift(); return;}
+        draw(line);
+      }
+      function stick() {
+        if (!box) return;
+        box.scrollTop = box.scrollHeight;
+        requestAnimationFrame(function () {box.scrollTop = box.scrollHeight;});
+      }
+      function draw(line) {
+        var d = document.createElement("div");
+        d.className = line.level;
+        d.textContent = line.text;
+        box.appendChild(d);
+        while (box.children.length > MAX) box.removeChild(box.firstChild);
+        stick();
+      }
+      ["log", "info", "warn", "error", "debug", "trace", "dir", "table"].forEach(function (lv) {
+        var orig = console[lv];
+        console[lv] = function () {
+          try {add((lv === "warn" || lv === "error") ? lv : "log", fmt(arguments));} catch (e) { }
+          return orig.apply(console, arguments);
+        };
+      });
+      window.addEventListener("error", function (e) {add("error", "ERR " + e.message);});
+      window.addEventListener("unhandledrejection", function (e) {
+        add("error", "REJECT " + (e.reason && e.reason.message || e.reason));
+      });
+      window.addEventListener("error", function (e) {
+        var t = e.target;
+        if (t && t !== window && (t.src || t.href)) add("error", "LOAD FAIL " + (t.src || t.href));
+      }, true);
+      var ofetch = window.fetch;
+      if (ofetch) window.fetch = function (u) {
+        var url = ((u && u.url) || String(u)).slice(0, 120);
+        return ofetch.apply(this, arguments).then(function (r) {
+          add(r.ok ? "log" : "error", "fetch " + r.status + " " + url);
+          return r;
+        }, function (e) {
+          add("error", "fetch FAILED " + url);
+          throw e;
+        });
+      };
+      function mount() {
+        var host = document.getElementById("loading-cover") || document.body;
+        if (!host) return;
+        box = document.createElement("div");
+        box.id = "load-log";
+        host.appendChild(box);
+        if (window.ResizeObserver) new ResizeObserver(stick).observe(box);
+        buf.forEach(draw);
+        buf = [];
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount);
+      else mount();
+    })();
+  </script>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ertemr33/heyenarge@1ba676d/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="site.css" />
+  <style>
+    canvas:focus {
+      outline: none;
+    }
+
+    html,
+    body {
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      height: 100%;
+      background: #000;
+    }
+
+    #unity-container {
+      width: 100%;
+      height: 100%;
+    }
+
+    #unity-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  </style>
+  <style>
+    #ad-container {
+      display: none !important
+    }
+  </style>
+  <style>
+    #loading-cover {
+      background: #282828 !important;
+      color: #ebdbb2;
+      font-family: var(--font-mono);
+    }
+
+    #unity-logo {
+      text-align: center;
+    }
+
+    #game-title {
+      margin: 0 0 .5em;
+      font-size: 2rem;
+      font-weight: normal;
+      letter-spacing: .1em;
+      color: #fabd2f;
+    }
+
+    #load-pct {
+      color: #a89984;
+      margin-bottom: .5em;
+    }
+
+    #load-hint {
+      color: #fe8019;
+      font-size: 1.25em;
+      font-weight: bold;
+      letter-spacing: .05em;
+      margin-top: .85em;
+    }
+
+    #unity-progress-bar-empty {
+      background: #3c3836 !important;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    #unity-progress-bar-full {
+      background: #fe8019 !important;
+    }
+  </style>
+  <style>
+    /* Site chrome floating over the Unity canvas */
+    .site-header.overlay,
+    .site-footer.overlay {
+      position: fixed;
+      left: 0;
+      right: 0;
+      margin: 0;
+      padding: .5rem 1rem;
+      z-index: 30;
+      pointer-events: none;
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      transition: transform .3s ease, opacity .3s ease;
+      will-change: transform, opacity;
+    }
+
+    .site-header.overlay {
+      top: 0;
+      transform: translateY(-100%);
+      background: linear-gradient(rgba(40, 40, 40, .92), rgba(40, 40, 40, .5));
+    }
+
+    .site-footer.overlay {
+      bottom: 0;
+      transform: translateY(100%);
+      background: linear-gradient(rgba(40, 40, 40, .5), rgba(40, 40, 40, .92));
+    }
+
+    .site-header.overlay.is-visible,
+    .site-footer.overlay.is-visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .site-header.overlay a,
+    .site-footer.overlay a {
+      pointer-events: auto;
+    }
+
+    /* while the game is actually running the header shrinks out of the way */
+    body.is-playing .site-header.overlay {
+      padding: .2rem .75rem;
+    }
+
+    body.is-playing .site-header.overlay .site-nav {
+      font-size: .72rem;
+      gap: .15rem .85rem;
+    }
+
+    body.is-playing .site-header.overlay .site-nav .brand {
+      letter-spacing: .05em;
+    }
+
+    /* ...and the footer stays out of the way entirely during play */
+    body.is-playing .site-footer.overlay {
+      opacity: 0;
+      transform: translateY(100%);
+      pointer-events: none;
+    }
+  </style>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <title>Shrek Neighbor</title>
+</head>
+
+<body class="dark">
+  <header class="site-header overlay is-visible">
+    <nav class="site-nav">
+      <a class="brand" href="./">shrek neighbor</a>
+      <a href="game.html" aria-current="page">play</a>
+      <a href="saves.html">saves</a>
+      <a href="about.html">about</a>
+    </nav>
+  </header>
+
+  <div id="unity-container" class="unity-desktop">
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+  </div>
+  <div id="loading-cover" style="display:none;">
+    <div id="unity-loading-bar">
+      <div id="unity-logo">
+        <h1 id="game-title">Shrek Neighbor</h1>
+        <div id="load-pct"></div>
+        <div id="load-hint">press Shift+M to open the mod menu</div>
+      </div>
+      <div id="unity-progress-bar-empty" style="display: none;">
+        <div id="unity-progress-bar-full"></div>
+      </div>
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+  <script>
+    window.GAME_CFG = {
+      BUILD_CDN: "https://cdn.jsdelivr.net/gh/ertemr33/heyenarge@1ba676d/Build/",
+      LOADER: "ShrekNeighbor.loader.js",
+      FRAMEWORK: "ShrekNeighbor.framework.js",
+      DATA: "ShrekNeighbor.data.gz",
+      WASM: "ShrekNeighbor.wasm.gz",
+      DATA_PARTS: 6,
+      WASM_PARTS: 4,
+      LANG: "en"
+    };
+    window.GAME_FILES = {
+      STYLE: "https://cdn.jsdelivr.net/gh/ertemr33/heyenarge@1ba676d/style.css",
+      LOGO: "https://cdn.jsdelivr.net/gh/ertemr33/heyenarge@1ba676d/logo.png",
+      BACKGROUND: "https://cdn.jsdelivr.net/gh/ertemr33/heyenarge@1ba676d/background.jpg",
+      STREAMING: "https://cdn.jsdelivr.net/gh/ertemr33/heyenarge@1ba676d/StreamingAssets"
+    };
+    window.GAME_B = function (name) {
+      var base = String(window.GAME_CFG.BUILD_CDN || "").replace(/\/+$/, "");
+      return base ? base + "/" + name : name;
+    };
+  </script>
+
+  <script>
+    (function () {
+      var LANG = window.GAME_CFG.LANG;
+      function noop() { }
+      function res(v) {return Promise.resolve(v);}
+
+      function deep() {
+        var f = function () {return res(deep());};
+        return new Proxy(f, {
+          get: function (t, p) {
+            if (p === "then" || p === "catch" || p === "finally") return undefined;
+            if (typeof p === "symbol") return undefined;
+            return deep();
+          },
+          apply: function () {return res(undefined);}
+        });
+      }
+
+      var store = {};
+      var stats = {};
+      try {store = JSON.parse(localStorage.getItem("yg_saves") || "{}") || {};} catch (e) {store = {};}
+      try {stats = JSON.parse(localStorage.getItem("yg_stats") || "{}") || {};} catch (e) {stats = {};}
+      function persist() {
+        try {localStorage.setItem("yg_saves", JSON.stringify(store));} catch (e) { }
+        try {localStorage.setItem("yg_stats", JSON.stringify(stats));} catch (e) { }
+      }
+
+      var playerObj = {
+        getData: function (keys) {
+          if (!keys || !keys.length) return res(store);
+          var o = {};
+          for (var i = 0; i < keys.length; i++) if (store[keys[i]] !== undefined) o[keys[i]] = store[keys[i]];
+          return res(o);
+        },
+        setData: function (d) {for (var k in d) store[k] = d[k]; persist(); return res(true);},
+        getStats: function () {return res(stats);},
+        setStats: function (s) {for (var k in s) stats[k] = s[k]; persist(); return res(true);},
+        incrementStats: function (s) {for (var k in s) stats[k] = (stats[k] || 0) + s[k]; persist(); return res(stats);},
+        getName: function () {return "Player";},
+        getPhoto: function () {return "unknown";},
+        getUniqueID: function () {return "local-player";},
+        getMode: function () {return "lite";},
+        isAuthorized: function () {return false;},
+        getPayingStatus: function () {return "unknown";},
+        signature: "",
+        scopePermissions: {avatar: "not_set", public_name: "not_set"}
+      };
+
+      var lbObj = {
+        setLeaderboardScore: function () {return res(true);},
+        getLeaderboardDescription: function (n) {
+          return res({
+            appID: "0", default: true, title: {en: n},
+            description: {
+              invert_sort_order: false,
+              score_format: {options: {decimal_offset: 0}},
+              type: "numeric"
+            }
+          });
+        },
+        getLeaderboardEntries: function () {return res({leaderboard: {}, ranges: [], userRank: 0, entries: []});},
+        getLeaderboardPlayerEntry: function () {
+          var e = new Error("no entry");
+          e.code = "LEADERBOARD_PLAYER_NOT_PRESENT";
+          return Promise.reject(e);
+        }
+      };
+
+      var fullscreenState = {status: "off"};
+
+      var base = {
+        environment: {
+          app: {id: "0"},
+          browser: {lang: LANG},
+          i18n: {lang: LANG, tld: "com"},
+          payload: null
+        },
+        deviceInfo: {
+          type: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? "mobile" : "desktop",
+          isMobile: function () {return /iPhone|iPod|Android/i.test(navigator.userAgent);},
+          isDesktop: function () {return !/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);},
+          isTablet: function () {return /iPad/i.test(navigator.userAgent);},
+          isTV: function () {return false;}
+        },
+        adv: {
+          showFullscreenAdv: function (o) {
+            var c = (o && o.callbacks) || {};
+            setTimeout(function () {try {c.onClose && c.onClose(false);} catch (e) { } }, 0);
+          },
+          showRewardedVideo: function (o) {
+            var c = (o && o.callbacks) || {};
+            setTimeout(function () {
+              try {c.onOpen && c.onOpen();} catch (e) { }
+              try {c.onRewarded && c.onRewarded();} catch (e) { }
+              try {c.onClose && c.onClose();} catch (e) { }
+            }, 0);
+          },
+          showBannerAdv: function () {return res({stickyAdvIsShowing: false, reason: "adv_is_not_connected"});},
+          hideBannerAdv: function () {return res({stickyAdvIsShowing: false});},
+          getBannerAdvStatus: function () {return res({stickyAdvIsShowing: false, reason: "adv_is_not_connected"});}
+        },
+        features: {
+          LoadingAPI: {ready: noop},
+          GameplayAPI: {start: noop, stop: noop},
+          GamesAPI: {getAllGames: function () {return res({games: [], developerURL: ""});}}
+        },
+        leaderboards: {
+          setScore: function () {return res(true);},
+          getDescription: lbObj.getLeaderboardDescription,
+          getEntries: lbObj.getLeaderboardEntries,
+          getPlayerEntry: lbObj.getLeaderboardPlayerEntry
+        },
+        getLeaderboards: function () {return res(lbObj);},
+        getPlayer: function () {return res(playerObj);},
+        getPayments: function () {return Promise.reject(new Error("payments unavailable"));},
+        getStorage: function () {return res(window.localStorage);},
+        getFlags: function () {return res({});},
+        feedback: {
+          canReview: function () {return res({value: false, reason: "NO_AUTH"});},
+          requestReview: function () {return res({feedbackSent: false});}
+        },
+        shortcut: {
+          canShowPrompt: function () {return res({canShow: false});},
+          showPrompt: function () {return res({outcome: "dismissed"});}
+        },
+        screen: {
+          fullscreen: {
+            get status() {return fullscreenState.status;},
+            request: function () {
+              try {
+                var el = document.documentElement;
+                if (el.requestFullscreen) {
+                  var r = el.requestFullscreen();
+                  if (r && r.catch) r.catch(function () { });
+                }
+              } catch (e) { }
+              fullscreenState.status = "on";
+              return res(true);
+            },
+            exit: function () {
+              try {if (document.exitFullscreen) {var r = document.exitFullscreen(); if (r && r.catch) r.catch(function () { });} } catch (e) { }
+              fullscreenState.status = "off";
+              return res(true);
+            }
+          }
+        },
+        auth: {openAuthDialog: function () {return Promise.reject(new Error("no auth"));}},
+        isAvailableMethod: function () {return res(false);},
+        dispatchEvent: function () {return res(true);},
+        on: function () {return noop;},
+        off: function () {return true;},
+        EVENT_HISTORY_BACK: "HISTORY_BACK",
+        EVENT_GAME_API_PAUSE: "game_api_pause",
+        EVENT_GAME_API_RESUME: "game_api_resume"
+      };
+
+      document.addEventListener("fullscreenchange", function () {
+        fullscreenState.status = document.fullscreenElement ? "on" : "off";
+      });
+
+      var proxied = new Proxy(base, {
+        get: function (t, p) {
+          if (p === "then" || p === "catch" || p === "finally") return undefined;
+          if (p in t) return t[p];
+          if (typeof p === "symbol") return undefined;
+          return deep();
+        }
+      });
+
+      window.YaGames = {init: function () {return res(proxied);}};
+    })();
+  </script>
+
+  <script>
+    window.hideFullScreenButton = "";
+    window.myGameInstance = null;
+    window.ysdk = null;
+    window.player = null;
+    window.payments = null;
+    window.leaderboard = null;
+    window.initGame = false;
+    window.nowFullAdOpen = false;
+    window.cloudSaves = "noData";
+    window.paymentsData = "none";
+    window.environmentData = "null";
+    window.playerData = "noData";
+
+    (function () {
+      var C = window.GAME_CFG;
+      var F = window.GAME_FILES;
+      var B = window.GAME_B;
+
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingCover = document.querySelector("#loading-cover");
+      var progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+      var spinner = document.querySelector(".spinner");
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) container.className = "unity-mobile";
+      loadingCover.style.background = "#282828";
+      loadingCover.style.display = "";
+
+      document.addEventListener("contextmenu", function (e) {e.preventDefault();});
+
+      window.FocusGame = function () {
+        try {window.focus(); canvas.focus();} catch (e) { }
+      };
+      window.addEventListener("pointerdown", function () {window.FocusGame();});
+      window.addEventListener("touchstart", function () {window.FocusGame();});
+
+      document.addEventListener("visibilitychange", function () {
+        if (window.ysdk !== null && window.initGame === true && window.myGameInstance) {
+          if (document.hidden) {
+            window.myGameInstance.SendMessage("YandexGame", "OnVisibilityGameWindow", "false");
+          } else {
+            window.myGameInstance.SendMessage("YandexGame", "OnVisibilityGameWindow", "true");
+            try {
+              if ((window.ysdk.deviceInfo.isMobile() || window.ysdk.deviceInfo.isTablet()) &&
+                window.ysdk.screen.fullscreen.status === "off") {
+                window.ysdk.screen.fullscreen.request();
+              }
+            } catch (e) { }
+          }
+        }
+      });
+
+      window.ResumeGame = function () {
+        if (window.myGameInstance && window.myGameInstance.Module) {
+          try {window.myGameInstance.Module.resumeMainLoop();} catch (e) { }
+        }
+        var els = document.querySelectorAll("audio, video");
+        for (var i = 0; i < els.length; i++) els[i].muted = false;
+      };
+
+      try {
+        var rpl = Element.prototype.requestPointerLock;
+        Element.prototype.requestPointerLock = function () {
+          try {var r = rpl.apply(this, arguments); if (r && r.catch) r.catch(function () { }); return r;} catch (e) { }
+        };
+        var rfs = Element.prototype.requestFullscreen;
+        if (rfs) {
+          Element.prototype.requestFullscreen = function () {
+            try {var r = rfs.apply(this, arguments); if (r && r.catch) r.catch(function () { }); return r;}
+            catch (e) {return Promise.resolve();}
+          };
+        }
+      } catch (e) { }
+
+      window.addEventListener("error", function (ev) {
+        var m = ev && ev.message ? String(ev.message) : "";
+        if (m.indexOf("pointer lock") !== -1 || m.indexOf("Fullscreen") !== -1) ev.preventDefault();
+      }, true);
+
+      function Gunzip(bytes) {
+        if (!(bytes.length > 2 && bytes[0] === 0x1f && bytes[1] === 0x8b)) return Promise.resolve(bytes);
+        if (typeof DecompressionStream === "undefined") return Promise.resolve(bytes);
+        try {
+          var stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
+          return new Response(stream).arrayBuffer().then(function (buf) {
+            var out = new Uint8Array(buf);
+            return out.length ? out : bytes;
+          }).catch(function () {return bytes;});
+        } catch (e) {return Promise.resolve(bytes);}
+      }
+
+      function FetchBytes(url) {
+        return fetch(url, {cache: "force-cache"}).then(function (r) {
+          if (!r.ok) throw new Error(url + " -> " + r.status);
+          return r.arrayBuffer();
+        }).then(function (b) {return new Uint8Array(b);});
+      }
+
+      function ToBlobUrl(u8) {
+        return URL.createObjectURL(new Blob([u8], {type: "application/octet-stream"}));
+      }
+
+      function FetchSingle(name) {
+        return FetchBytes(B(name)).then(Gunzip).then(ToBlobUrl);
+      }
+
+      function FetchParts(name, count) {
+        var jobs = [];
+        for (var i = 0; i < count; i++) jobs.push(FetchBytes(B(name + ".part" + i)));
+        return Promise.all(jobs).then(function (chunks) {
+          var total = 0, i;
+          for (i = 0; i < chunks.length; i++) total += chunks[i].length;
+          var merged = new Uint8Array(total), off = 0;
+          for (i = 0; i < chunks.length; i++) {merged.set(chunks[i], off); off += chunks[i].length;}
+          return Gunzip(merged);
+        }).then(ToBlobUrl);
+      }
+
+      var config = null;
+      var loaderReady = false;
+      var filesReady = false;
+      var started = false;
+
+      window.StartUnityInstance = function () {
+        if (started || !loaderReady || !filesReady || !config) return;
+        if (typeof createUnityInstance !== "function") return;
+        started = true;
+        createUnityInstance(canvas, config, function (progress) {
+          spinner.style.display = "none";
+          progressBarEmpty.style.display = "";
+          progressBarFull.style.width = (100 * progress) + "%"; var pc = document.getElementById("load-pct"); if (pc) pc.textContent = Math.round(100 * progress) + "%";
+        }).then(function (unityInstance) {
+          window.myGameInstance = unityInstance;
+          (function () {var t0 = Date.now(); (function chk() {if ((window.__gameReady && Date.now() - window.__gameReady > 1500) || Date.now() - t0 > 20000) {loadingCover.style.background = ""; loadingCover.style.display = "none"; document.body.classList.add("is-playing");} else setTimeout(chk, 250);})();})();
+          window.FocusGame();
+        }).catch(function (message) {
+          console.error(message);
+        });
+      };
+      window.StartUnityInstance_IfUnloaded = window.StartUnityInstance;
+
+      window.InitGame = function () {
+        window.initGame = true;
+        if (window.nowFullAdOpen === true && window.myGameInstance != null) {
+          window.myGameInstance.SendMessage("YandexGame", "OpenFullAd");
+        }
+      };
+
+      window.FullAdShow = function () {
+        try {
+          if (window.nowFullAdOpen !== true && window.ysdk !== null) {
+            window.ysdk.adv.showFullscreenAdv({
+              callbacks: {
+                onOpen: function () {
+                  window.nowFullAdOpen = true;
+                  if (window.initGame === true) window.myGameInstance.SendMessage("YandexGame", "OpenFullAd");
+                },
+                onClose: function (wasShown) {
+                  window.nowFullAdOpen = false;
+                  if (window.initGame === true) {
+                    window.myGameInstance.SendMessage("YandexGame", "CloseFullAd", wasShown ? "true" : "false");
+                  }
+                  window.FocusGame();
+                },
+                onError: function () {
+                  window.nowFullAdOpen = false;
+                  if (window.initGame === true) window.myGameInstance.SendMessage("YandexGame", "ErrorFullAd");
+                  window.FocusGame();
+                }
+              }
+            });
+          }
+        } catch (e) { }
+      };
+
+      window.RewardedShow = function (id) {
+        try {
+          window.ysdk.adv.showRewardedVideo({
+            callbacks: {
+              onOpen: function () {window.myGameInstance.SendMessage("YandexGame", "OpenVideo");},
+              onClose: function () {window.myGameInstance.SendMessage("YandexGame", "CloseVideo"); window.FocusGame();},
+              onRewarded: function () {window.myGameInstance.SendMessage("YandexGame", "RewardVideo", id);},
+              onError: function () {window.myGameInstance.SendMessage("YandexGame", "ErrorVideo");}
+            }
+          });
+        } catch (e) { }
+      };
+
+      window.StickyAdActivity = function (show) {
+        try {
+          window.ysdk.adv.getBannerAdvStatus().then(function (s) {
+            if (s.stickyAdvIsShowing) {if (!show) window.ysdk.adv.hideBannerAdv();}
+            else if (show) window.ysdk.adv.showBannerAdv();
+          });
+        } catch (e) { }
+      };
+
+      window.Review = function () {
+        try {
+          window.ysdk.feedback.canReview().then(function (a) {
+            if (a.value) {
+              window.ysdk.feedback.requestReview().then(function (x) {
+                window.myGameInstance.SendMessage("YandexGame", "ReviewSent", x.feedbackSent ? "true" : "false");
+                window.FocusGame();
+              });
+            } else window.FocusGame();
+          });
+        } catch (e) {window.FocusGame();}
+      };
+
+      window.PromptShow = function () {
+        try {
+          window.ysdk.shortcut.showPrompt().then(function (r) {
+            window.myGameInstance.SendMessage("YandexGame", r.outcome === "accepted" ? "OnPromptSuccess" : "OnPromptFail");
+            window.FocusGame();
+          });
+        } catch (e) {window.FocusGame();}
+      };
+
+      window.SaveCloud = function (jsonData, flush) {
+        if (window.player == null) return;
+        try {window.player.setData({saves: [jsonData]}, flush);} catch (e) { }
+      };
+
+      window.LoadCloud = function (sendback) {
+        return new Promise(function (resolve) {
+          function fail() {
+            if (sendback && window.myGameInstance) window.myGameInstance.SendMessage("YandexGame", "SetLoadSaves", "noData");
+            resolve("noData");
+          }
+          if (window.ysdk == null) return fail();
+          try {
+            window.ysdk.getPlayer({scopes: false}).then(function (p) {
+              p.getData(["saves"]).then(function (data) {
+                if (data && data.saves) {
+                  var s = JSON.stringify(data.saves);
+                  if (sendback && window.myGameInstance) window.myGameInstance.SendMessage("YandexGame", "SetLoadSaves", s);
+                  resolve(s);
+                } else fail();
+              }).catch(fail);
+            }).catch(fail);
+          } catch (e) {fail();}
+        });
+      };
+
+      window.GetPayments = function (sendback) {
+        return new Promise(function (resolve) {
+          try {
+            if (window.ysdk == null) return resolve("none");
+            window.ysdk.getPayments().then(function (p) {
+              window.payments = p;
+              p.getCatalog().then(function (products) {
+                p.getPurchases().then(function (purchases) {
+                  var productID = [], title = [], description = [], imageURI = [], price = [];
+                  var priceValue = [], priceCurrencyCode = [], currencyImageURL = [], consumed = [];
+                  for (var i = 0; i < products.length; i++) {
+                    productID[i] = products[i].id;
+                    title[i] = products[i].title;
+                    description[i] = products[i].description;
+                    imageURI[i] = products[i].imageURI;
+                    price[i] = products[i].price;
+                    priceValue[i] = products[i].priceValue;
+                    priceCurrencyCode[i] = products[i].priceCurrencyCode;
+                    currencyImageURL[i] = products[i].getPriceCurrencyImage("medium");
+                    consumed[i] = true;
+                    for (var j = 0; j < purchases.length; j++) {
+                      if (purchases[j].productID === productID[i]) {consumed[i] = false; break;}
+                    }
+                  }
+                  var s = JSON.stringify({
+                    id: productID, title: title, description: description, imageURI: imageURI,
+                    price: price, priceValue: priceValue, priceCurrencyCode: priceCurrencyCode,
+                    currencyImageURL: currencyImageURL, consumed: consumed,
+                    language: window.ysdk.environment.i18n.lang
+                  });
+                  if (sendback && window.myGameInstance) window.myGameInstance.SendMessage("YandexGame", "PaymentsEntries", s);
+                  resolve(s);
+                }).catch(function () {resolve("none");});
+              }).catch(function () {resolve("none");});
+            }).catch(function () {resolve("none");});
+          } catch (e) {resolve("none");}
+        });
+      };
+
+      window.BuyPayments = function (id) {
+        try {
+          if (window.payments != null) {
+            window.payments.purchase(id).then(function () {
+              window.ConsumePurchase(id);
+              window.FocusGame();
+            }).catch(function () {
+              window.myGameInstance.SendMessage("YandexGame", "OnPurchaseFailed", id);
+              window.FocusGame();
+            });
+          } else {
+            window.myGameInstance.SendMessage("YandexGame", "OnPurchaseFailed", id);
+          }
+        } catch (e) {window.FocusGame();}
+      };
+
+      window.ConsumePurchase = function (id) {
+        try {
+          if (window.payments == null) return;
+          window.payments.getPurchases().then(function (purchases) {
+            for (var i = 0; i < purchases.length; i++) {
+              if (purchases[i].productID === id) {
+                window.payments.consumePurchase(purchases[i].purchaseToken);
+                window.myGameInstance.SendMessage("YandexGame", "OnPurchaseSuccess", id);
+              }
+            }
+          });
+        } catch (e) { }
+      };
+
+      window.ConsumePurchases = function () {
+        try {
+          if (window.payments == null) return;
+          window.payments.getPurchases().then(function (purchases) {
+            for (var i = 0; i < purchases.length; i++) {
+              window.payments.consumePurchase(purchases[i].purchaseToken);
+              window.myGameInstance.SendMessage("YandexGame", "OnPurchaseSuccess", purchases[i].productID);
+            }
+          });
+        } catch (e) { }
+      };
+
+      window.InitLeaderboards = function () {
+        if (window.ysdk == null) return;
+        try {
+          window.ysdk.getLeaderboards().then(function (lb) {window.leaderboard = lb;});
+        } catch (e) { }
+      };
+
+      window.WaitForLeaderboard = function () {
+        return new Promise(function (resolve, reject) {
+          var timeout;
+          var interval = setInterval(function () {
+            if (window.leaderboard !== null) {
+              clearInterval(interval);
+              clearTimeout(timeout);
+              resolve();
+            }
+          }, 100);
+          timeout = setTimeout(function () {
+            clearInterval(interval);
+            reject(new Error("Leaderboard initialization timeout"));
+          }, 5000);
+        });
+      };
+
+      window.GetLeaderboardScores = function (nameLB, maxPlayers, quantityTop, quantityAround, photoSize, auth) {
+        function run() {
+          var jsonEntries = {technoName: "", isDefault: false, isInvertSortOrder: false, decimalOffset: 0, type: ""};
+          window.ysdk.getLeaderboards()
+            .then(function (lb) {
+              return lb.getLeaderboardDescription(nameLB).then(function (r) {
+                jsonEntries.technoName = nameLB;
+                jsonEntries.isDefault = r.default;
+                jsonEntries.isInvertSortOrder = r.description.invert_sort_order;
+                jsonEntries.decimalOffset = r.description.score_format.options.decimal_offset;
+                jsonEntries.type = r.description.type;
+                return lb.getLeaderboardEntries(nameLB, {
+                  quantityTop: quantityTop, includeUser: auth, quantityAround: quantityAround
+                });
+              });
+            })
+            .then(function (r) {
+              var jsonPlayers = window.EntriesLB(r, maxPlayers, photoSize);
+              var combined = {}, k;
+              for (k in jsonEntries) combined[k] = jsonEntries[k];
+              for (k in jsonPlayers) combined[k] = jsonPlayers[k];
+              window.myGameInstance.SendMessage("YandexGame", "LeaderboardEntries", JSON.stringify(combined));
+            })
+            .catch(function () { });
+        }
+        if (window.ysdk == null) return;
+        if (window.leaderboard === null) window.WaitForLeaderboard().then(run).catch(function () {run();});
+        else run();
+      };
+
+      window.SetLeaderboardScores = function (_name, score) {
+        function run() {
+          try {
+            window.ysdk.getLeaderboards().then(function (lb) {lb.setLeaderboardScore(_name, score);});
+          } catch (e) { }
+        }
+        if (window.ysdk == null) return;
+        if (window.leaderboard === null) window.WaitForLeaderboard().then(run).catch(function () {run();});
+        else run();
+      };
+
+      window.EntriesLB = function (r, maxPlayers, photoSize) {
+        var text = "";
+        var count = r.entries.length < maxPlayers ? r.entries.length : maxPlayers;
+        var ranks = new Array(count), photos = new Array(count), names = new Array(count);
+        var scores = new Array(count), uniqueIDs = new Array(count);
+
+        for (var i = 0; i < count; i++) {
+          ranks[i] = r.entries[i].rank;
+          scores[i] = r.entries[i].score;
+          uniqueIDs[i] = r.entries[i].player.uniqueID;
+          photos[i] = r.entries[i].player.getAvatarSrc(photoSize);
+
+          if (r.entries[i].player.scopePermissions.public_name !== "allow") names[i] = "anonymous";
+          else names[i] = r.entries[i].player.publicName;
+
+          text += ranks[i] + ". " + names[i] + ": " + scores[i] + "\n";
+        }
+        if (count === 0) text = "no data";
+
+        return {entries: text, ranks: ranks, photos: photos, names: names, scores: scores, uniqueIDs: uniqueIDs};
+      };
+
+      window.RequestingEnvironmentData = function (sendback) {
+        return new Promise(function (resolve) {
+          if (window.ysdk == null) return resolve("null");
+          try {
+            window.ysdk.feedback.canReview().then(function (a) {
+              var reviewCanShow = !!a.value;
+              window.ysdk.shortcut.canShowPrompt().then(function (prompt) {
+                var promptCanShow = !!(prompt && prompt.canShow);
+                var ua = navigator.userAgent, browser;
+                if (ua.indexOf("YaBrowser") !== -1 || ua.indexOf("YaSearchBrowser") !== -1) browser = "Yandex";
+                else if (ua.indexOf("Opera") !== -1 || ua.indexOf("OPR") !== -1) browser = "Opera";
+                else if (ua.indexOf("Firefox") !== -1) browser = "Firefox";
+                else if (ua.indexOf("MSIE") !== -1) browser = "IE";
+                else if (ua.indexOf("Edge") !== -1) browser = "Edge";
+                else if (ua.indexOf("Chrome") !== -1) browser = "Chrome";
+                else if (ua.indexOf("Safari") !== -1) browser = "Safari";
+                else browser = "Other";
+
+                var s = JSON.stringify({
+                  language: window.ysdk.environment.i18n.lang,
+                  domain: window.ysdk.environment.i18n.tld,
+                  deviceType: window.ysdk.deviceInfo.type,
+                  isMobile: window.ysdk.deviceInfo.isMobile(),
+                  isDesktop: window.ysdk.deviceInfo.isDesktop(),
+                  isTablet: window.ysdk.deviceInfo.isTablet(),
+                  isTV: window.ysdk.deviceInfo.isTV(),
+                  appID: window.ysdk.environment.app.id,
+                  browserLang: window.ysdk.environment.browser.lang,
+                  payload: window.ysdk.environment.payload,
+                  promptCanShow: promptCanShow,
+                  reviewCanShow: reviewCanShow,
+                  platform: navigator.platform,
+                  browser: browser
+                });
+                if (sendback && window.myGameInstance) window.myGameInstance.SendMessage("YandexGame", "SetEnvirData", s);
+                resolve(s);
+              });
+            });
+          } catch (e) {resolve("null");}
+        });
+      };
+
+      window.NotAuthorized = function () {
+        var paying = "unknown";
+        try {if (window.player) paying = window.player.getPayingStatus();} catch (e) { }
+        return JSON.stringify({
+          playerAuth: "rejected",
+          playerName: "unauthorized",
+          playerId: "unauthorized",
+          playerPhoto: "unknown",
+          payingStatus: paying
+        });
+      };
+
+      window.InitPlayer = function (sendback) {
+        return new Promise(function (resolve) {
+          function fail() {
+            var s = window.NotAuthorized();
+            if (sendback && window.myGameInstance) {
+              window.myGameInstance.SendMessage("YandexGame", "SetInitializationSDK", s);
+            }
+            resolve(s);
+          }
+          try {
+            if (window.ysdk == null) return fail();
+            window.ysdk.getPlayer({scopes: true}).then(function (p) {
+              window.player = p;
+              if (p.getMode() === "lite") return fail();
+              var s = JSON.stringify({
+                playerAuth: "resolved",
+                playerName: p.getName(),
+                playerId: p.getUniqueID(),
+                playerPhoto: p.getPhoto("small"),
+                payingStatus: p.getPayingStatus()
+              });
+              if (sendback && window.myGameInstance) {
+                window.myGameInstance.SendMessage("YandexGame", "SetInitializationSDK", s);
+              }
+              resolve(s);
+            }).catch(fail);
+          } catch (e) {fail();}
+        });
+      };
+
+      window.OpenAuthDialog = function () {
+        if (window.ysdk == null) return;
+        try {
+          window.ysdk.auth.openAuthDialog().then(function () {
+            window.InitPlayer(true).then(function () {
+              window.myGameInstance.SendMessage("YandexGame", "GetDataInvoke");
+            });
+          }).catch(function () { });
+        } catch (e) { }
+      };
+
+      window.InitYSDK = function () {
+        return window.YaGames.init().then(function (sdk) {
+          window.ysdk = sdk;
+          window.FullAdShow();
+          return window.LoadCloud();
+        }).then(function (v) {
+          window.cloudSaves = v;
+          return window.GetPayments();
+        }).then(function (v) {
+          window.paymentsData = v;
+          window.InitLeaderboards();
+          return window.RequestingEnvironmentData();
+        }).then(function (v) {
+          window.environmentData = v;
+          return window.InitPlayer();
+        }).then(function (v) {
+          window.playerData = v;
+        }).catch(function (e) {
+          console.error("CRASH Initialization SDK: ", e);
+        }).then(function () {
+          window.StartUnityInstance();
+        });
+      };
+
+      Promise.all([
+        FetchSingle(C.FRAMEWORK),
+        FetchParts(C.WASM, C.WASM_PARTS),
+        FetchParts(C.DATA, C.DATA_PARTS)
+      ]).then(function (u) {
+        config = {
+          dataUrl: u[2],
+          frameworkUrl: u[0],
+          codeUrl: u[1],
+          streamingAssetsUrl: F.STREAMING,
+          companyName: "DefaultCompany",
+          productName: "Shrek Scool Escape",
+          productVersion: "1.0.2"
+        };
+        filesReady = true;
+        window.StartUnityInstance();
+      }).catch(function (e) {
+        console.error("asset load failed", e);
+      });
+
+      var script = document.createElement("script");
+      script.src = B(C.LOADER);
+      script.onload = function () {
+        loaderReady = true;
+        window.InitYSDK();
+      };
+      script.onerror = function () {console.error("loader failed");};
+      document.body.appendChild(script);
+    })();
+  </script>
+  <!-- Sticky Bottom Center Ad (728x90) with Smooth Slide-Out and Reappearance -->
+  <style>
+    /* Container: Bottom center, fixed, with overflow hidden */
+    #ad-container {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(728px, calc(100% - 20px));
+      /* 728px, 10px margin on mobile */
+      height: 90px;
+      background: rgba(0, 0, 0, 0.90);
+      display: none;
+      z-index: 99999;
+      border-radius: 0;
+      /* Sharp corners */
+      overflow: hidden;
+      box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.45);
+      box-sizing: border-box;
+      transition: transform 0.5s ease-in-out;
+      /* Smooth slide-in/out animation */
+    }
+
+    /* Slide-out animation */
+    #ad-container.hidden {
+      transform: translate(-50%, 100%);
+      /* Slide down out of view */
+    }
+
+    #ad-iframe {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 745px;
+      /* Updated width */
+      height: 90px;
+      /* Updated height */
+      border: 0;
+      display: block;
+      overflow: hidden;
+      pointer-events: auto;
+      box-sizing: content-box;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    #ad-iframe::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    /* Close button with arrow */
+    #close-ad {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      background: #ff4d4d;
+      color: #fff;
+      border: none;
+      padding: 5px 9px;
+      font-size: 13px;
+      border-radius: 4px;
+      cursor: not-allowed;
+      opacity: 0.72;
+      z-index: 100000;
+      display: flex;
+      align-items: center;
+    }
+
+    #close-ad.enabled {
+      cursor: pointer;
+      opacity: 1;
+    }
+
+    #close-ad::before {
+      content: '↓';
+      /* Down arrow for bottom ad */
+      margin-right: 4px;
+    }
+
+    /* Right mask for scrollbar */
+    #ad-right-mask {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 12px;
+      height: 100%;
+      pointer-events: none;
+      background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9));
+      z-index: 99999;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 440px) {
+      #ad-container {
+        width: calc(100% - 12px);
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 0;
+        /* Sharp corners on mobile */
+      }
+
+      #ad-iframe {
+        width: 728px;
+      }
+    }
+  </style>
+
+  <div id="ad-container" aria-hidden="true" role="dialog" aria-label="Advertisement">
+    <iframe id="ad-iframe"
+      src="https://script.google.com/macros/s/AKfycbw60Tp6nuqThxAuU8ZN1JIuPtjHoW2Uqq3fQy0CvrycN0O2AQwhRT5EDv73hh2FhXEF/exec"
+      width="768px" height="95px" scrolling="no" frameborder="0"
+      sandbox="allow-scripts allow-popups allow-same-origin"></iframe>
+    <button id="close-ad" disabled>Close (12)</button>
+    <div id="ad-right-mask"></div>
+  </div>
+
+  <script>
+    (function () {
+      const showDelay = 2000; // 2 seconds delay before first show
+      const countdownStart = 12; // 12 seconds countdown
+      const reappearDelay = 150000; // 25 seconds before reappearance
+      const adContainer = document.getElementById('ad-container');
+      const closeBtn = document.getElementById('close-ad');
+
+      function showAd() {
+        // Show ad with smooth slide-in
+        adContainer.style.display = 'block';
+        adContainer.classList.remove('hidden');
+        adContainer.setAttribute('aria-hidden', 'false');
+
+        // Start countdown
+        let timeLeft = countdownStart;
+        closeBtn.textContent = `Close (${timeLeft})`;
+        closeBtn.disabled = true;
+        closeBtn.classList.remove('enabled');
+
+        const t = setInterval(() => {
+          timeLeft--;
+          if (timeLeft > 0) {
+            closeBtn.textContent = `Close (${timeLeft})`;
+          } else {
+            clearInterval(t);
+            closeBtn.disabled = false;
+            closeBtn.classList.add('enabled');
+            closeBtn.textContent = 'Close ↓';
+          }
+        }, 1000);
+      }
+
+      // Initial ad show
+      // ad popup disabled
+
+      // Close with animation and schedule reappearance
+      closeBtn.addEventListener('click', () => {
+        if (closeBtn.disabled) return;
+        adContainer.classList.add('hidden');
+        adContainer.setAttribute('aria-hidden', 'true');
+        // Schedule reappearance without removing or reloading iframe
+        setTimeout(showAd, reappearDelay);
+      });
+    })();
+  </script>
+  <script>
+    (function () {
+      function lock() {
+        if (navigator.keyboard && navigator.keyboard.lock && document.fullscreenElement) {
+          // no args = lock every key
+          navigator.keyboard.lock().catch(function (e) {console.warn("keyboard lock failed", e);});
+        }
+      }
+      function unlock() {
+        if (navigator.keyboard && navigator.keyboard.unlock) navigator.keyboard.unlock();
+      }
+      document.addEventListener("fullscreenchange", function () {
+        document.fullscreenElement ? lock() : unlock();
+      });
+
+      // safety net: if a close shortcut still gets through, ask first
+      window.addEventListener("beforeunload", function (e) {
+        e.preventDefault();
+        e.returnValue = "";
+      });
+    })();
+  </script>
+
+  <footer class="site-footer overlay is-visible">
+    <span>&copy; 2026 Bowie Luckie</span>
+    <span class="dot">·</span>
+    <span>MIT licensed</span>
+    <span class="spacer"></span>
+    <a class="gh" href="https://github.com/BowLuckie" target="_blank" rel="noopener">
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path
+          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+      </svg>
+      @BowLuckie
+    </a>
+    <span class="dot">·</span>
+    <a href="https://github.com/BowLuckie/shark" target="_blank" rel="noopener">source</a>
+  </footer>
+
+  <script>
+    (function () {
+      var header = document.querySelector(".site-header.overlay");
+      var footer = document.querySelector(".site-footer.overlay");
+      if (!header && !footer) return;
+
+      var EDGE_TOP = 80;      // reveal zone at the top (px)
+      var EDGE_BOTTOM = 120;  // reveal zone at the bottom (px)
+      var HIDE_DELAY = 450;   // ms before a bar slides back out
+      var timers = new WeakMap();
+
+      function show(el) {
+        if (!el) return;
+        var t = timers.get(el);
+        if (t) {clearTimeout(t); timers.delete(el);}
+        el.classList.add("is-visible");
+      }
+
+      function hide(el) {
+        if (!el || timers.get(el)) return;
+        timers.set(el, setTimeout(function () {
+          el.classList.remove("is-visible");
+          timers.delete(el);
+        }, HIDE_DELAY));
+      }
+
+      function hideNow(el) {
+        if (!el) return;
+        var t = timers.get(el);
+        if (t) {clearTimeout(t); timers.delete(el);}
+        el.classList.remove("is-visible");
+      }
+
+      // the game hides the cursor (pointer lock or cursor: none) while you play
+      function cursorHidden(x, y) {
+        if (document.pointerLockElement) return true;
+        if (x == null || y == null) return false;
+        var el = document.elementFromPoint(x, y);
+        return !!el && getComputedStyle(el).cursor === "none";
+      }
+
+      function playing() {
+        return document.body.classList.contains("is-playing");
+      }
+
+      function onPoint(x, y) {
+        var hidden = cursorHidden(x, y);
+
+        // header: top edge, but never while the cursor is hidden
+        if (!hidden && y <= EDGE_TOP) show(header);
+        else hide(header);
+
+        // footer: bottom edge, but never during gameplay
+        if (!playing() && y >= window.innerHeight - EDGE_BOTTOM) show(footer);
+        else hide(footer);
+      }
+
+      window.addEventListener("pointermove", function (e) {
+        if (e.pointerType === "touch") return; // touch never hovers
+        onPoint(e.clientX, e.clientY);
+      }, {passive: true});
+
+      window.addEventListener("touchstart", function (e) {
+        if (e.touches.length) onPoint(e.touches[0].clientX, e.touches[0].clientY);
+      }, {passive: true});
+
+      // stay put while a bar's own link is hovered or focused
+      [header, footer].forEach(function (bar) {
+        if (!bar) return;
+        Array.prototype.forEach.call(bar.querySelectorAll("a"), function (a) {
+          a.addEventListener("pointerenter", function () {show(bar);});
+          a.addEventListener("focus", function () {show(bar);});
+        });
+      });
+
+      // locked pointer = hidden cursor, so drop the header immediately
+      document.addEventListener("pointerlockchange", function () {
+        if (document.pointerLockElement) {
+          hideNow(header);
+          if (playing()) hideNow(footer);
+        }
+      });
+
+      // the moment gameplay starts, pull the footer away for good
+      if (window.MutationObserver) {
+        new MutationObserver(function () {
+          if (playing()) hideNow(footer);
+        }).observe(document.body, {attributes: true, attributeFilter: ["class"]});
+      }
+
+      // they start shown, then the first cursor move settles them
+      show(header);
+      if (!playing()) show(footer);
+    })();
+  </script>
+  <div id="pt" style="position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:50;
+  font:bold 28px monospace;color:rgba(235,219,178,.85);text-shadow:0 1px 4px rgba(0,0,0,.9);
+  pointer-events:none;"></div>
+  <div id="vd" style="position:fixed;bottom:8px;right:8px;z-index:50;width:10px;height:10px;
+  border-radius:50%;background:#39ff14;opacity:1;"></div>
+  <script>
+    (function () {
+      var el = document.getElementById("pt");
+      var canvas = document.querySelector("canvas");
+      var shown = 0, running = false, last = performance.now(), lastSave = null, pending = null;
+
+      function fmt(s) {
+        s = Math.max(0, Math.floor(+s || 0));
+        var h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60;
+        var p = function (n) {return (n < 10 ? "0" : "") + n;};
+        return (h ? h + ":" + p(m) : m) + ":" + p(x);
+      }
+      function obj(v) {
+        if (typeof v === "string") {try {return JSON.parse(v);} catch (e) {return null;} }
+        return v;
+      }
+
+      function cursorStyle() {
+        if (!canvas) canvas = document.querySelector("canvas");
+        return canvas ? getComputedStyle(canvas).cursor : "no canvas";
+      }
+      function mouseHidden() {
+        return !!document.pointerLockElement || cursorStyle() === "none";
+      }
+      function active() {
+        return !document.hidden && document.hasFocus() && mouseHidden();
+      }
+
+      function readSave() {
+        var s = null;
+        try {s = JSON.parse(localStorage.getItem("savesData"));} catch (e) { }
+        var g = s && obj(s.GameSave);
+        return (g && typeof g.playTime === "number") ? g.playTime : null;
+      }
+
+      function tick() {
+        var n = performance.now(), dt = (n - last) / 1000;
+        last = n;
+
+        var pt = readSave();
+        var hidden = mouseHidden();
+
+        // first read: show the saved value, frozen
+        if (!running && pt > 0) {shown = pt; running = true; lastSave = pt;}
+
+        // remember the newest write, but only apply it while the cursor is hidden
+        if (running && pt !== lastSave) {lastSave = pt; pending = pt;}
+        if (running && pending !== null && hidden) {
+          var err = pending - shown;
+          if (Math.abs(err) > 5) shown = pending; else shown += err * 0.15;
+          pending = null;
+        }
+
+        if (running && active()) shown += dt;
+        el.textContent = running ? fmt(shown) : "";
+      }
+
+      tick();
+      setInterval(tick, 100);
+    })();
+  </script>
+  <style>
+    #mm-btn {
+      position: fixed;
+      left: 10px;
+      bottom: 70%;
+      z-index: 90;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #3c3836;
+      color: #fabd2f;
+      border: 1px solid #a89984;
+      font: bold 16px monospace;
+      display: none;
+    }
+
+    @media (pointer: coarse) {
+      #mm-btn {
+        display: block;
+      }
+    }
+
+    #mm {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      background: rgba(0, 0, 0, .55);
+      align-items: center;
+      justify-content: center;
+      font: 16px/1.5 monospace;
+      color: #ebdbb2;
+    }
+
+    #mm.open {
+      display: flex;
+    }
+
+    #mm-panel {
+      background: #282828;
+      border: 1px solid #a89984;
+      border-radius: 6px;
+      width: min(94vw, 560px);
+      max-height: 88vh;
+      overflow-y: auto;
+      padding: 1rem 1.25rem 1.25rem;
+      box-shadow: 0 14px 48px rgba(0, 0, 0, .6);
+    }
+
+    #mm-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: .75rem;
+    }
+
+    #mm-head b {
+      color: #fabd2f;
+      font-weight: normal;
+      letter-spacing: .1em;
+      font-size: 18px;
+    }
+
+    #mm-tabs {
+      display: flex;
+      gap: .5rem;
+      margin-bottom: .5rem;
+      padding-bottom: .75rem;
+      border-bottom: 1px solid #3c3836;
+    }
+
+    #mm-tabs .tab {
+      flex: 1;
+      background: #3c3836;
+      color: #a89984;
+      border: 1px solid #3c3836;
+      border-radius: 4px;
+      padding: .5em .5em;
+      font: inherit;
+      letter-spacing: .06em;
+      cursor: pointer;
+    }
+
+    #mm-tabs .tab:hover {
+      color: #ebdbb2;
+      border-color: #a89984;
+    }
+
+    #mm-tabs .tab.on {
+      color: #fabd2f;
+      border-color: #fe8019;
+      background: #32302f;
+    }
+
+    #mm-panel .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: .75rem;
+      padding: .55rem 0;
+    }
+
+    #mm-panel .row + .row {
+      border-top: 1px solid #3c3836;
+    }
+
+    #mm-panel .sec {
+      color: #a89984;
+      font-size: 12px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      margin: .9rem 0 0;
+      padding-bottom: .25rem;
+      border-bottom: 1px solid #3c3836;
+    }
+
+    #mm-panel .sec:first-child {
+      margin-top: 0;
+    }
+
+    #mm-panel .soon {
+      border: 1px dashed #504945;
+      border-radius: 4px;
+      padding: 2.5rem 1rem;
+      text-align: center;
+      color: #a89984;
+      font-size: 18px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      margin-top: .5rem;
+    }
+
+    #mm-panel button {
+      background: #3c3836;
+      color: #ebdbb2;
+      border: 1px solid #a89984;
+      border-radius: 3px;
+      padding: .3em .8em;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    #mm-panel button:hover {
+      border-color: #fe8019;
+    }
+
+    #mm-panel input[type=range] {
+      width: 50%;
+      accent-color: #fe8019;
+    }
+
+    #mm-panel input[type=checkbox] {
+      width: 20px;
+      height: 20px;
+      accent-color: #fe8019;
+    }
+
+    #mm-panel input[type=color] {
+      width: 52px;
+      height: 28px;
+      padding: 2px;
+      background: #3c3836;
+      border: 1px solid #a89984;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    #mm-hint {
+      color: #a89984;
+      font-size: 12px;
+      margin-top: .5rem;
+    }
+
+    #mm-movebar {
+      display: none;
+      position: fixed;
+      left: 50%;
+      bottom: 14px;
+      transform: translateX(-50%);
+      z-index: 101;
+      align-items: center;
+      gap: .75rem;
+      background: #282828;
+      border: 1px solid #fe8019;
+      border-radius: 4px;
+      padding: .4rem .5rem .4rem .9rem;
+      font: 14px/1.4 monospace;
+      color: #ebdbb2;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .55);
+    }
+
+    body.hud-moving #mm-movebar {
+      display: flex;
+    }
+
+    body.hud-moving {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body.hud-moving #pt,
+    body.hud-moving #vd,
+    body.hud-moving #sp,
+    body.hud-moving #il {
+      pointer-events: auto !important;
+      cursor: grab;
+      touch-action: none;
+      z-index: 95 !important;
+      outline: 1px dashed #fe8019;
+      outline-offset: 4px;
+    }
+
+    body.hud-moving #pt:active,
+    body.hud-moving #vd:active,
+    body.hud-moving #sp:active,
+    body.hud-moving #il:active {
+      cursor: grabbing;
+    }
+
+    /* the key rows/boxes are decoration: clicks must reach #il itself so it drags */
+    body.hud-moving #il .r,
+    body.hud-moving #il .k {
+      pointer-events: none !important;
+    }
+
+    /* fat hit area for the 10px save dot, without changing its layout size */
+    body.hud-moving #vd::before {
+      content: "";
+      position: absolute;
+      inset: -14px;
+      border-radius: 50%;
+    }
+
+    #mm-done {
+      background: #fe8019;
+      color: #282828;
+      border: 1px solid #fe8019;
+      border-radius: 3px;
+      padding: .25em 1em;
+      font: inherit;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #mm-done:hover {
+      background: #fabd2f;
+      border-color: #fabd2f;
+    }
+
+    /* resize corner, shown on each movable hud element while reorganizing */
+    .mm-h {
+      position: fixed;
+      display: none;
+      z-index: 96;
+      width: 14px;
+      height: 14px;
+      background: #fabd2f;
+      border: 1px solid #282828;
+      border-radius: 3px;
+      cursor: nwse-resize;
+      touch-action: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .6);
+    }
+
+    .mm-h:hover {
+      background: #fe8019;
+    }
+
+    /* input display: wasd / e / lmb key boxes */
+    #il {
+      font: bold 14px/1 monospace;
+      letter-spacing: .05em;
+      color: var(--ic, #ebdbb2);
+    }
+
+    #il .r {
+      display: flex;
+      gap: 3px;
+      margin-top: 3px;
+    }
+
+    #il .r:first-child {
+      margin-top: 0;
+    }
+
+    #il .k {
+      min-width: 1.7em;
+      height: 1.7em;
+      padding: 0 .3em;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--ic, #ebdbb2);
+      border-radius: 3px;
+      opacity: .38;
+    }
+
+    #il .k.ph {          /* invisible spacer keeps W centred over S */
+      border: none;
+      opacity: 0;
+    }
+
+    #il .k.gap {
+      margin-left: .7em;
+    }
+
+    #il .k.wide {        /* space bar: stretched across the row */
+      min-width: 5.4em;
+    }
+
+    #il .k.on {
+      opacity: 1;
+      background: var(--ic, #ebdbb2);
+      color: #282828;
+    }
+  </style>
+  <button id="mm-btn" aria-label="Mod menu">M</button>
+  <div id="mm">
+    <div id="mm-panel">
+      <div id="mm-head"><b>MODS</b><button id="mm-x">close</button></div>
+      <div id="mm-tabs"></div>
+      <div id="mm-items"></div>
+      <div id="mm-hint">Shift+M or Esc to close</div>
+    </div>
+  </div>
+  <div id="mm-movebar">
+    <span>drag to move &middot; corner handle resizes</span>
+    <button id="mm-done" type="button">done</button>
+  </div>
+  <script>
+    (function () {
+      var KEY = "modmenu:settings", items = [], saved = {};
+      try {saved = JSON.parse(localStorage.getItem(KEY)) || {};} catch (e) { }
+      function persist() {try {localStorage.setItem(KEY, JSON.stringify(saved));} catch (e) { } }
+
+      var root = document.getElementById("mm"), list = document.getElementById("mm-items"),
+        tabs = document.getElementById("mm-tabs"), btn = document.getElementById("mm-btn");
+
+      var TABS = [
+        {id: "game", label: "game"},
+        {id: "hud", label: "hud"},
+        {id: "cheats", label: "cheats", soon: true}
+      ];
+      var curTab = TABS.some(function (t) {return t.id === saved.__tab;}) ? saved.__tab : "game";
+
+      function value(it) {return saved[it.id] !== undefined ? saved[it.id] : it.def;}
+
+      function drawTabs() {
+        tabs.textContent = "";
+        TABS.forEach(function (t) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.className = "tab" + (t.id === curTab ? " on" : "");
+          b.textContent = t.label;
+          b.onclick = function () {curTab = t.id; saved.__tab = t.id; persist(); render();};
+          tabs.appendChild(b);
+        });
+      }
+
+      function render() {
+        drawTabs();
+        list.textContent = "";
+        var cur = TABS.filter(function (t) {return t.id === curTab;})[0] || TABS[0];
+
+        if (cur.soon) {
+          var soon = document.createElement("div");
+          soon.className = "soon";
+          soon.textContent = "coming soon";
+          list.appendChild(soon);
+          return;
+        }
+
+        var sec = "";
+        items.forEach(function (it) {
+          if ((it.tab || "game") !== curTab) return;
+          if ((it.section || "") !== sec) {
+            sec = it.section || "";
+            if (sec) {
+              var h = document.createElement("div");
+              h.className = "sec";
+              h.textContent = sec;
+              list.appendChild(h);
+            }
+          }
+          var row = document.createElement("div"); row.className = "row";
+          var lab = document.createElement("span"); lab.textContent = it.label; row.appendChild(lab);
+          var c;
+          if (it.type === "toggle") {
+            c = document.createElement("input"); c.type = "checkbox"; c.checked = !!value(it);
+            c.onchange = function () {saved[it.id] = c.checked; persist(); it.apply(c.checked);};
+          } else if (it.type === "range") {
+            c = document.createElement("input"); c.type = "range"; c.min = it.min; c.max = it.max; c.value = value(it);
+            c.oninput = function () {saved[it.id] = +c.value; persist(); it.apply(+c.value);};
+          } else if (it.type === "color") {
+            c = document.createElement("input"); c.type = "color"; c.value = value(it);
+            c.oninput = function () {saved[it.id] = c.value; persist(); it.apply(c.value);};
+          } else {
+            c = document.createElement("button"); c.textContent = it.action || "run";
+            c.onclick = function () {it.apply();};
+          }
+          row.appendChild(c); list.appendChild(row);
+        });
+      }
+
+      window.ModMenu = {
+        render: render,
+        add: function (it) {
+          items.push(it);
+          if (it.type !== "button") {try {it.apply(value(it));} catch (e) { } }   // restore saved value on load
+          render();
+        },
+        // set an item's value from code (used by "reset" buttons), then redraw
+        set: function (id, v) {
+          var it = items.filter(function (x) {return x.id === id;})[0];
+          if (!it) return;
+          saved[id] = v; persist();
+          try {it.apply(v);} catch (e) { }
+          render();
+        },
+        open: function () {if (document.exitPointerLock) document.exitPointerLock(); root.classList.add("open");},
+        close: function () {root.classList.remove("open");},
+        toggle: function () {root.classList.contains("open") ? this.close() : this.open();}
+      };
+
+      // desktop: Shift+M. capture phase so Unity doesn't swallow it
+      window.addEventListener("keydown", function (e) {
+        if (e.shiftKey && e.code === "KeyM" && !e.ctrlKey && !e.altKey) {
+          e.preventDefault(); e.stopPropagation(); ModMenu.toggle();
+        } else if (e.key === "Escape" && (moving || root.classList.contains("open"))) {
+          if (moving) {setMoving(false); moveItem.action = "start"; ModMenu.render();}
+          ModMenu.close();
+        }
+      }, true);
+      btn.onclick = function () {ModMenu.open();};
+      document.getElementById("mm-x").onclick = function () {ModMenu.close();};
+      root.addEventListener("click", function (e) {if (e.target === root) ModMenu.close();});
+
+      // ---- built-in entries ----
+      var pt = document.getElementById("pt"), vd = document.getElementById("vd");
+
+      // ---- move / resize HUD mode ----
+      var POSKEY = "modmenu:hudpos", MOVABLE = ["pt", "vd", "sp", "il"], HS = 14;
+      var pos = {}, moving = false, originals = {}, handles = {};
+      try {pos = JSON.parse(localStorage.getItem(POSKEY)) || {};} catch (e) {}
+
+      function place(el, x, y) {
+        el.style.left = Math.round(x) + "px";
+        el.style.top = Math.round(y) + "px";
+        el.style.right = "auto";
+        el.style.bottom = "auto";
+        el.style.transform = "none";
+      }
+
+      function clampN(v, lo, hi) {return Math.max(lo, Math.min(v, hi));}
+
+      function savePos() {try {localStorage.setItem(POSKEY, JSON.stringify(pos));} catch (e) {} }
+
+      // keep the markup's own style attribute so "reset layout" can put it back
+      function remember(el) {
+        if (originals[el.id] === undefined) originals[el.id] = el.getAttribute("style") || "";
+      }
+
+      function restorePos() {
+        MOVABLE.forEach(function (id) {
+          var el = document.getElementById(id), p = pos[id];
+          if (!el) return;
+          remember(el);
+          if (!p) return;
+          if (p.x !== undefined && p.y !== undefined) {
+            place(el, clampN(+p.x, 0, innerWidth - 4), clampN(+p.y, 0, innerHeight - 4));
+          }
+          if (id === "vd") {
+            if (p.w) {el.style.width = Math.round(p.w) + "px"; el.style.height = Math.round(p.h || p.w) + "px";}
+          } else if (p.fs) {
+            el.style.fontSize = Math.round(p.fs) + "px";
+          }
+        });
+      }
+
+      // one handle per movable element, parked at its bottom-right corner
+      MOVABLE.forEach(function (id) {
+        var h = document.createElement("div");
+        h.className = "mm-h";
+        h.setAttribute("data-for", id);
+        document.body.appendChild(h);
+        handles[id] = h;
+      });
+
+      function tickHandles() {
+        if (!moving) return;
+        MOVABLE.forEach(function (id) {
+          var el = document.getElementById(id), h = handles[id];
+          if (!el || !h) return;
+          var r = el.getBoundingClientRect();
+          var vis = r.width > 0 && r.height > 0;
+          h.style.display = vis ? "block" : "none";
+          if (vis) {
+            h.style.left = Math.min(r.right - HS / 2, innerWidth - HS) + "px";
+            h.style.top = Math.min(r.bottom - HS / 2, innerHeight - HS) + "px";
+          }
+        });
+        requestAnimationFrame(tickHandles);
+      }
+
+      restorePos();
+      // #sp is markup further down the page, so re-run once everything is parsed
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", restorePos);
+
+      function setMoving(on) {
+        moving = on;
+        document.body.classList.toggle("hud-moving", on);
+        if (on) {
+          requestAnimationFrame(tickHandles);
+        } else {
+          MOVABLE.forEach(function (id) {if (handles[id]) handles[id].style.display = "";});
+          savePos();
+        }
+      }
+
+      // keeps the size sliders and the corner handle telling the same story
+      ModMenu.hudSize = function (id, v) {
+        var p = pos[id] || (pos[id] = {});
+        if (id === "vd") {p.w = +v; p.h = +v;} else {p.fs = +v;}
+        savePos();
+      };
+
+      function resetHud() {
+        MOVABLE.forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el && originals[id] !== undefined) el.setAttribute("style", originals[id]);
+        });
+        pos = {};
+        saved.timerSize = 28;
+        saved.spottedSize = 16;
+        items.forEach(function (it) {                       // re-apply sizes/toggles from saved
+          if (it.type !== "button") {try {it.apply(value(it));} catch (e) { } }
+        });
+        persist(); savePos();
+        ModMenu.render();
+      }
+
+      // capture phase so the Unity canvas never sees the drag
+      document.addEventListener("pointerdown", function (e) {
+        if (!moving) return;
+        var el = null, sizing = false;
+        if (e.target.classList && e.target.classList.contains("mm-h")) {
+          el = document.getElementById(e.target.getAttribute("data-for"));
+          sizing = true;
+        } else {
+          // walk up: hud elements may contain children (the input display's rows/keys)
+          var t = e.target;
+          while (t && t !== document.body && MOVABLE.indexOf(t.id) < 0) t = t.parentNode;
+          if (t && t !== document.body) el = t;
+        }
+        if (!el) return;
+        e.preventDefault(); e.stopPropagation();
+        try {el.setPointerCapture(e.pointerId);} catch (err) {}
+        if (sizing) startResize(el, e); else startMove(el, e);
+      }, true);
+
+      function startMove(el, e) {
+        var r = el.getBoundingClientRect(), ox = r.left - e.clientX, oy = r.top - e.clientY;
+        function move(ev) {
+          var x = clampN(ox + ev.clientX, 0, innerWidth - r.width);
+          var y = clampN(oy + ev.clientY, 0, innerHeight - r.height);
+          place(el, x, y);
+          var p = pos[el.id] || (pos[el.id] = {});
+          p.x = x; p.y = y;
+        }
+        function up() {
+          document.removeEventListener("pointermove", move);
+          document.removeEventListener("pointerup", up);
+          document.removeEventListener("pointercancel", up);
+          savePos();
+        }
+        document.addEventListener("pointermove", move);
+        document.addEventListener("pointerup", up);
+        document.addEventListener("pointercancel", up);
+      }
+
+      function startResize(el, e) {
+        var id = el.id;
+        var f0 = parseFloat(getComputedStyle(el).fontSize) || 16;
+        var w0 = el.getBoundingClientRect().width;
+        var x0 = e.clientX, y0 = e.clientY;
+        var p = pos[id] || (pos[id] = {});
+        function move(ev) {
+          var scale = clampN(1 + ((ev.clientX - x0) + (ev.clientY - y0)) / 140, .25, 6);
+          if (id === "vd") {
+            p.w = clampN(Math.round(w0 * scale), 4, 96);
+            p.h = p.w;
+            el.style.width = p.w + "px";
+            el.style.height = p.h + "px";
+          } else {
+            p.fs = clampN(Math.round(f0 * scale), 8, 96);
+            el.style.fontSize = p.fs + "px";
+            if (id === "pt") saved.timerSize = p.fs;
+            if (id === "sp") saved.spottedSize = p.fs;
+          }
+        }
+        function up() {
+          document.removeEventListener("pointermove", move);
+          document.removeEventListener("pointerup", up);
+          document.removeEventListener("pointercancel", up);
+          savePos(); persist();
+          ModMenu.render();   // move the size sliders to match
+        }
+        document.addEventListener("pointermove", move);
+        document.addEventListener("pointerup", up);
+        document.addEventListener("pointercancel", up);
+      }
+
+      var moveItem = {
+        id: "movehud", label: "Move HUD", type: "button", tab: "hud", section: "layout", action: "start",
+        apply: function () {
+          setMoving(!moving);
+          moveItem.action = moving ? "stop" : "start";
+          if (moving) ModMenu.close();     // close so you can see what you're dragging
+          ModMenu.render();
+        }
+      };
+      ModMenu.add(moveItem);
+      ModMenu.add({
+        id: "resethud", label: "Reset layout", type: "button", tab: "hud", section: "layout",
+        action: "reset", apply: resetHud
+      });
+
+      document.getElementById("mm-done").onclick = function () {
+        if (!moving) return;
+        setMoving(false);
+        moveItem.action = "start";
+        ModMenu.render();
+      };
+
+      ModMenu.add({
+        id: "timer", label: "Show timer", type: "toggle", tab: "hud", section: "timer", def: true,
+        apply: function (v) {if (pt) pt.style.display = v ? "" : "none";}
+      });
+      ModMenu.add({
+        id: "timerSize", label: "Timer size", type: "range", tab: "hud", section: "timer", min: 12, max: 60, def: 28,
+        apply: function (v) {if (pt) pt.style.fontSize = v + "px"; ModMenu.hudSize("pt", v);}
+      });
+      ModMenu.add({
+        id: "timerOpacity", label: "Timer opacity", type: "range", tab: "hud", section: "timer", min: 20, max: 100, def: 85,
+        apply: function (v) {if (pt) pt.style.opacity = v / 100;}
+      });
+      ModMenu.add({
+        id: "dot", label: "Save indicator", type: "toggle", tab: "hud", section: "indicator", def: true,
+        apply: function (v) {if (vd) vd.style.display = v ? "" : "none";}
+      });
+
+      ModMenu.add({
+        id: "export", label: "Export save", type: "button", tab: "game", action: "download",
+        apply: function () {
+          var cur = localStorage.getItem("savesData");
+          if (!cur) return alert("No save to export");
+          var dump = {savesData: cur, yg_saves: localStorage.getItem("yg_saves")};
+          var a = document.createElement("a");
+          a.href = URL.createObjectURL(new Blob([JSON.stringify(dump)], {type: "text/plain"}));
+          a.download = "game-save-" + new Date().toISOString().slice(0, 10) + ".txt";
+          a.click();
+          setTimeout(function () {URL.revokeObjectURL(a.href);}, 5000);
+        }
+      });
+      ModMenu.add({
+        id: "saves", label: "Save manager", type: "button", tab: "game", action: "open",
+        apply: function () {location.href = "saves.html";}
+      });
+      ModMenu.add({
+        id: "adtime", label: "Reset ad timer (broken)", type: "button", tab: "game", action: "set",
+        apply: function () {
+          var V = 16666666.66;
+          try {
+            var s = JSON.parse(localStorage.getItem("savesData"));
+            s.ADS_OFF = true;
+            s.OFF_ADS_TIME = V;
+            s.idSave = (+s.idSave || 0) + 1;      // the game prefers the higher id
+            var str = JSON.stringify(s);
+            localStorage.setItem("modmenu:adtime", String(V));
+            localStorage.setItem("savesData", str);
+            localStorage.setItem("yg_saves", JSON.stringify({saves: [str]}));
+            window.myGameInstance.SendMessage("YandexGame", "METHOD", str);
+          } catch (e) {alert("Failed: " + e.message);}
+        }
+      });
+      ModMenu.add({
+        id: "home", label: "Main menu", type: "button", tab: "game", action: "go",
+        apply: function () {location.href = "./";}
+      });
+    })();
+  </script>
+  <div id="sp" style="position:fixed;bottom:34px;left:10px;z-index:50;display:none;
+  font:bold 16px monospace;color:rgba(235,219,178,.85);text-shadow:0 1px 4px rgba(0,0,0,.9);
+  pointer-events:none;white-space:pre;"></div>
+  <div id="il" style="position:fixed;left:10px;bottom:10px;z-index:50;pointer-events:none;display:none;">
+    <div class="r"><span class="k ph"></span><span class="k" data-k="KeyW">W</span></div>
+    <div class="r"><span class="k" data-k="KeyA">A</span><span class="k" data-k="KeyS">S</span><span class="k" data-k="KeyD">D</span></div>
+    <div class="r"><span class="k gap" data-k="KeyE">E</span><span class="k" data-k="KeyC">C</span></div>
+    <div class="r"><span class="k wide" data-k="Space">SPACE</span></div>
+  </div>
+<script>
+(function () {
+  var il = document.getElementById("il");
+  var CODES = ["KeyW", "KeyA", "KeyS", "KeyD", "KeyE", "KeyC", "Space"];
+  var spans = il.querySelectorAll(".k"), active = {};
+
+  function paint() {
+    for (var i = 0; i < spans.length; i++) {
+      var k = spans[i].getAttribute("data-k");
+      if (k) spans[i].classList.toggle("on", !!active[k]);
+    }
+  }
+  function set(k, on) {
+    if (!k || !!active[k] === on) return;
+    active[k] = on;
+    paint();
+  }
+  function clear() {active = {}; paint();}
+
+  // observe only: never preventDefault/stopPropagation, the game still needs these keys
+  window.addEventListener("keydown", function (e) {
+    if (CODES.indexOf(e.code) >= 0) set(e.code, true);
+  });
+  window.addEventListener("keyup", function (e) {
+    if (CODES.indexOf(e.code) >= 0) set(e.code, false);
+  });
+  window.addEventListener("blur", clear);   // no stuck keys after alt-tab
+
+  ModMenu.add({
+    id: "input", label: "Input display", type: "toggle", tab: "hud", section: "input", def: true,
+    apply: function (on) {il.style.display = on ? "" : "none";}
+  });
+  ModMenu.add({
+    id: "inputColor", label: "Input color", type: "color", tab: "hud", section: "input", def: "#ebdbb2",
+    apply: function (v) {il.style.setProperty("--ic", v);}
+  });
+  ModMenu.add({
+    id: "resetInputColor", label: "Reset color", type: "button", tab: "hud", section: "input",
+    action: "reset", apply: function () {ModMenu.set("inputColor", "#ebdbb2");}
+  });
+})();
+</script>
+<script>
+(function () {
+  var el = document.getElementById("sp"), timer = null;
+  var WANT = ["замечен_shrek", "замечен_fion", "замечен_pino"];
+  var SHORT = { "замечен_shrek": "shrek", "замечен_fion": "fion", "замечен_pino": "pino" };
+
+  function parse(v) {
+    if (typeof v === "string") { try { return JSON.parse(v); } catch (e) { return v; } }
+    return v;
+  }
+
+  function findStats(o, depth) {
+    o = parse(o);
+    if (!o || typeof o !== "object" || depth > 5) return null;
+    if (Array.isArray(o)) {
+      if (o.length && o[0] && o[0].StatNameUnicode !== undefined) return o;
+      for (var i = 0; i < o.length; i++) { var r = findStats(o[i], depth + 1); if (r) return r; }
+      return null;
+    }
+    if (o.Statistics) { var s = findStats(o.Statistics, depth + 1); if (s) return s; }
+    for (var k in o) { var r2 = findStats(o[k], depth + 1); if (r2) return r2; }
+    return null;
+  }
+
+  function update() {
+    var save = null, stats = null;
+    try { save = JSON.parse(localStorage.getItem("savesData")); } catch (e) {}
+    if (save) stats = findStats(save, 0);
+    if (!stats) { el.textContent = "spotted 0"; return; }
+    var by = {}, total = 0;
+    stats.forEach(function (s) { by[s.StatNameUnicode] = +s.Number || 0; });
+    var parts = WANT.map(function (n) { var v = by[n] || 0; total += v; return SHORT[n] + " " + v; });
+    el.textContent = "spotted  " + total;
+    if (total > 0) {
+      el.style.color = "#fb4934"
+    } else {
+      el.style.color = "#ffffff"
+    }
+  }
+
+  ModMenu.add({ id: "spotted", label: "Spotted counter", type: "toggle", tab: "hud", section: "spotted", def: false,
+    apply: function (on) {
+      clearInterval(timer);
+      el.style.display = on ? "" : "none";
+      if (on) { update(); timer = setInterval(update, 1000); }
+      
+    } });
+  ModMenu.add({ id: "spottedSize", label: "Spotted size", type: "range", tab: "hud", section: "spotted",
+    min: 10, max: 48, def: 16,
+    apply: function (v) { el.style.fontSize = v + "px"; ModMenu.hudSize("sp", v); } });
+  ModMenu.add({ id: "spottedOpacity", label: "Spotted opacity", type: "range", tab: "hud", section: "spotted",
+    min: 20, max: 100, def: 100,
+    apply: function (v) { el.style.opacity = v / 100; } });
+})();
+</script>
+</body>
+</html>
+
