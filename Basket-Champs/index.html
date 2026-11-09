@@ -65,7 +65,8 @@
    
     </style>
 
-    <script src="patch/js/poki-sdk.js"></script>
+    <script>/* ad SDK removed - harmless offline stand-in */
+(function(w){function mk(){var f=function(){};return new Proxy(f,{get:function(t,k){if(k==="then")return undefined;if(k===Symbol.toPrimitive)return function(){return ""};if(k==="init"||k==="initialize")return function(){return Promise.resolve(true)};return mk()},apply:function(t,th,a){for(var i=0;i<a.length;i++){var x=a[i];if(typeof x==="function"){try{x(true)}catch(e){}}else if(x&&typeof x==="object"){["adFinished","adComplete","onFinished","finished","onSuccess","success","onComplete","resolve"].forEach(function(n){if(typeof x[n]==="function"){try{x[n](true)}catch(e){}}})}}return Promise.resolve(true)},construct:function(){return mk()}})}["PokiSDK","CrazyGames","GameDistribution","gdsdk","GamePix","GamePush","gamepix","kongregateAPI","kongregate"].forEach(function(n){if(!w[n])try{w[n]=mk()}catch(e){}});if(!w.sdk)try{w.sdk=mk()}catch(e){}})(window);</script>
     <script src="js/phaser.min.js"></script>
     <script src="js/box2d-plugin-full.min.js"></script>
     <script src="js/basket-champs.min.js?v=1.4"></script>
@@ -76,7 +77,7 @@
 
 <div id="content"></div>
 <div id="orientation"></div>
-  <script src="js/analytics_ubg_v1_4.js"></script>
-  <script src="js/ubg235_client_v1_2.js"></script>
+  
+  
 </body>
 </html>

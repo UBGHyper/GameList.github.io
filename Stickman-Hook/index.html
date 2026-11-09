@@ -28,10 +28,11 @@
         </style>
 
         <!-- Poki SDK -->
-        <script src="patch/js/poki-sdk.js"></script>
+        <script>/* ad SDK removed - harmless offline stand-in */
+(function(w){function mk(){var f=function(){};return new Proxy(f,{get:function(t,k){if(k==="then")return undefined;if(k===Symbol.toPrimitive)return function(){return ""};if(k==="init"||k==="initialize")return function(){return Promise.resolve(true)};return mk()},apply:function(t,th,a){for(var i=0;i<a.length;i++){var x=a[i];if(typeof x==="function"){try{x(true)}catch(e){}}else if(x&&typeof x==="object"){["adFinished","adComplete","onFinished","finished","onSuccess","success","onComplete","resolve"].forEach(function(n){if(typeof x[n]==="function"){try{x[n](true)}catch(e){}}})}}return Promise.resolve(true)},construct:function(){return mk()}})}["PokiSDK","CrazyGames","GameDistribution","gdsdk","GamePix","GamePush","gamepix","kongregateAPI","kongregate"].forEach(function(n){if(!w[n])try{w[n]=mk()}catch(e){}});if(!w.sdk)try{w.sdk=mk()}catch(e){}})(window);</script>
     </head>
     <body>
         <script src="bundle.js"></script>
-        <script src="js/analytics_ubg_v1_4.js"></script>
+        
     </body>
 </html>
