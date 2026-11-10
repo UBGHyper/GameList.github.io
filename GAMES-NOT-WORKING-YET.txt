@@ -1,0 +1,82 @@
+GAMES NOT WORKING YET
+Updated: 2026-11-09
+
+=== CONFIRMED INCOMPLETE / UNRESOLVED ===
+
+Sonic-Robo-Blast-2
+  Missing SRB2SDL2.data package. Game currently returns HTTP 404 for it.
+
+WeBecomeWhatWeBehold
+  Missing sprites and background assets.
+
+Magic-Tiles-3
+  Missing resource manifests and assets.
+
+Cannon-Basketball-4
+  Missing image atlases, backgrounds, and audio.
+
+Bloodmoney
+  Missing RPG Maker database files. Working replacement files are expected.
+
+FNAE
+  Missing images and sound files. Replacement files are expected.
+
+Aviamasters
+  Requires live BGaming API, WebSocket, and session services.
+  Static offline copy is insufficient.
+
+The-Binding-Of-Isaac
+  Unresolved SWF reference mismatch. Original reference points to
+  super-smash-flash-2.swf.
+
+=== LAUNCHERS CREATED, BUT OFFLINE PLAYABILITY NOT YET VERIFIED ===
+
+Friday-Night-Funkin
+Hotline-Miami
+Friday-Night-Funkin-AKAGE
+Heartbreak-Havoc
+Friday-Night-Funkin-Psych-Engine
+FNF-VS-Shaggy
+Friday-Night-Funkin-Lullaby
+Bobs-Onslaught
+Friday-Night-Funkin-Vs-Nonsense
+Friday-Night-Funkin-Plus-Hatsune-Miku
+Dead-Plate
+Bouncemasters
+Unicycle-Heroes
+BERGENTRUCK-201X
+Chiikawa-Puzzle
+Bottle-Jump-3D
+Maze-Speedrun
+Harvestio
+AttackHole
+Ball-Blast-HTML5
+Thats-Not-My-Neighbor
+Subway-Surfers
+WebGL-Fluid-Simulation
+Driven-Wild
+CrazyKitty3D
+Jelly-Mario
+Laceys-Flash-Games
+Sonic-3-AIR
+CrazyChicken3D
+FNAF-UCN
+FNAF-World
+FNAF-Pizzeria-Simulator
+Boxing-Random
+Ultrapool
+Doom-3
+Dreadhead-Parkour
+The-Deadseat
+
+=== NOT PROMOTED IN THIS BATCH ===
+
+Minecraft-1.21
+  Special Eaglercraft build; needs separate testing.
+
+Melon-Playground
+  Scanner result was a false positive involving a blob URL; needs testing.
+
+NOTE:
+A launcher or a successful local asset scan does not prove a game
+works offline. Do not classify untested games as broken.
