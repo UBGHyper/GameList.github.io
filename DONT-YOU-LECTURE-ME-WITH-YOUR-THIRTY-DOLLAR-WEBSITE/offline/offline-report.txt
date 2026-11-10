@@ -1,0 +1,15 @@
+Game: DONT-YOU-LECTURE-ME-WITH-YOUR-THIRTY-DOLLAR-WEBSITE
+Source: https://freeonlinewebtools.github.io/gamelist12.github.io/DONT-YOU-LECTURE-ME-WITH-YOUR-THIRTY-DOLLAR-WEBSITE/
+Files: 23
+Warnings: 5
+
+https://freeonlinewebtools.github.io/gamelist12.github.io/DONT-YOU-LECTURE-ME-WITH-YOUR-THIRTY-DOLLAR-WEBSITE/🎨.css?v=8a
+  'ascii' codec can't encode character '\U0001f3a8' in position 78: ordinal not in range(128)
+https://freeonlinewebtools.github.io/gamelist12.github.io/DONT-YOU-LECTURE-ME-WITH-YOUR-THIRTY-DOLLAR-WEBSITE/▶.js?v=8a
+  'ascii' codec can't encode character '\u25b6' in position 78: ordinal not in range(128)
+https://freeonlinewebtools.github.io/gamelist12.github.io/DONT-YOU-LECTURE-ME-WITH-YOUR-THIRTY-DOLLAR-WEBSITE/🗿.js?v=8a
+  'ascii' codec can't encode character '\U0001f5ff' in position 78: ordinal not in range(128)
+https://freeonlinewebtools.github.io/gamelist12.github.io/DONT-YOU-LECTURE-ME-WITH-YOUR-THIRTY-DOLLAR-WEBSITE/💾.js?v=8a
+  'ascii' codec can't encode character '\U0001f4be' in position 78: ordinal not in range(128)
+https://freeonlinewebtools.github.io/gamelist12.github.io/DONT-YOU-LECTURE-ME-WITH-YOUR-THIRTY-DOLLAR-WEBSITE/assets/🗿.png
+  'ascii' codec can't encode character '\U0001f5ff' in position 85: ordinal not in range(128)

@@ -1,0 +1,5 @@
+Game: Stick-With-It
+Source: https://freeonlinewebtools.github.io/gamelist10.github.io/Stick-With-It/
+Files: 2
+Warnings: 0
+

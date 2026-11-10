@@ -1,0 +1,5 @@
+Game: Kindergarten
+Source: https://freeonlinewebtools.github.io/gamelist6.github.io/Kindergarten/
+Files: 1
+Warnings: 0
+

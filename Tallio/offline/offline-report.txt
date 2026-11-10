@@ -1,0 +1,5 @@
+Game: Tallio
+Source: https://freeonlinewebtools.github.io/gamelist4.github.io/Tallio/
+Files: 2
+Warnings: 0
+

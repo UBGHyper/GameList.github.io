@@ -1,0 +1,351 @@
+@import url('../../../fonts.googleapis.com/css2-9786b7c2ca');
+@import url('../../../fonts.googleapis.com/css2-2487b6b6ed');
+@import url('../../../fonts.googleapis.com/css2-86f576c890');
+@import url('../../../fonts.googleapis.com/css2-6f5338c4ef');
+
+:root {
+  box-sizing: border-box;
+}
+body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: aliceblue;
+  font-size: medium;
+  background-color: rgba(0, 0, 0, 0.904);
+  margin: 0;
+  -webkit-user-select: none;
+  user-select: none;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: rgba(0, 0, 0, 0.781);
+  margin: 0px;
+  width: 100vw;
+  border-bottom: rgba(0, 0, 0, 0.801) solid 2px;
+  z-index: 10;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 20px 21px,
+    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  position: fixed;
+  height: 14vh;
+  padding: 0 0 0 1%;
+  box-sizing: border-box;
+}
+
+h1 {
+  font-family: Poppins, Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#rules,
+#stats,
+#bank {
+  margin: auto;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+#rules {
+  color: aliceblue;
+}
+
+#bank {
+  margin-right: 160px;
+  color: rgb(3, 255, 3);
+  font-family: Roboto Mono, monospace;
+}
+
+svg {
+  margin: 0px 0px 2px 7px;
+  width: 5vw;
+  enable-background:new 0 0 24 30;
+}
+
+h1 {
+  margin: auto auto auto 0px;
+  color: aliceblue;
+}
+
+#name,
+#plate {
+  font-size: 3rem;
+  margin-left: 5px;
+}
+
+#name {
+  color: #ffbd08;
+}
+
+#you {
+  color: rgb(3, 255, 3);
+}
+
+#plate, #dealer {
+  color: #ff1100;
+}
+
+footer {
+  width: 100vw;
+  text-align: center;
+  height: 45px;
+  padding: auto;
+  background-color: rgba(0, 0, 0, 0.918);
+  padding: 0;
+  border-top: black 3px solid;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 20px 21px,
+    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  font-family: Kanit, Verdana, Geneva, Tahoma, sans-serif;
+  position: fixed;
+  bottom: 0;
+  font-size: medium;
+}
+
+.st0{fill:#FFFFFF;}
+
+main {
+  width: 100vw;
+  height: 77vh;
+  display: flex;
+  justify-content: space-around;
+  font-family: Anta, Verdana, Geneva, Tahoma, sans-serif;
+  letter-spacing: 2px;
+  position: absolute;
+  top: 15%;
+  box-sizing: border-box;
+}
+
+#left {
+  float: left;
+  margin: 20px auto auto auto;
+}
+
+#right {
+  float: right;
+  margin: 3% 5% 3% auto;
+}
+
+#buttons {
+  display: flex;
+  flex-direction: column;
+}
+
+#right,
+#left {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+#textleft {
+    margin: 15% 0;
+}
+
+#dealercard, #yourcard {
+  margin: 10% 0;
+}
+
+#dealercard, #yourcard {
+    display: 15% 0;
+}
+
+button {
+  width: 200px;
+  margin: 20px;
+  height: 50px;
+  border-radius: 20px;
+  text-align: center;
+  font-size: 1.3rem;
+  background-color: #347a38;
+  padding: 10px;
+  color: aliceblue;
+  border: solid 1px #347a38;
+  border-style: outset;
+  font-family: Roboto Mono, monospace;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 20px 21px,
+    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+button:hover {
+  background-color: #1f4621;
+  border: solid 1px black;
+  color: black;
+}
+
+button:active {
+  background-color: yellowgreen;
+  color: aliceblue;
+}
+
+a:link {
+  color: aliceblue;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ffbd08;
+}
+
+a:visited {
+  color: #ffbd08;
+}
+
+a:visited:hover {
+  color: #99740e;
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+  
+@keyframes blink-cursor {
+    from, to { border-color: transparent }
+    50% { border-color: orange; }
+}
+  
+#textleft {
+    border-right: .15em solid orange;
+    white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 0;
+    animation: typing 1s steps(40, end),
+    blink-cursor .75s step-end infinite;
+}
+  
+#dealercard {
+    white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 0 .5em;
+    animation: typing 0.5s steps(40, end);
+}
+  
+#yourcard {
+    white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 0 .5em;
+    animation: typing 0.5s steps(40, end);
+}
+
+@-webkit-keyframes slide-left {
+    0% {
+        -webkit-transform: translateX(60px);
+                transform: translateX(60px);
+    }
+    100% {
+        -webkit-transform: translateX(0);
+                transform: translateX(0);
+    }
+}
+
+@keyframes slide-left {
+    0% {
+        -webkit-transform: translateX(60px);
+                transform: translateX(60px);
+    }
+    100% {
+        -webkit-transform: translateX(0);
+                transform: translateX(0);
+    }
+}
+
+/* Responsiveness */ 
+
+@media only screen and (max-width: 1000px) {
+  /*Tablets*/
+  #play, svg {
+    display: none;
+  }
+
+  #name, #plate {
+    font-size: 2.5rem;
+  }
+  
+  #bank, #rules {
+    margin: auto 4vw;
+  }
+
+  main {
+    flex-direction: column;
+  }
+
+  #yourcard, #textleft {
+    margin-bottom: 5px;
+  }
+
+  #buttons {
+    flex-direction: row;
+  }
+
+  button {
+    width: 25vw;
+    height: 50px;
+  }
+
+  #javascript {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  /* Phones */
+
+  #bank, #rules {
+    margin: auto 2vw auto 2vw;
+  }
+
+  #name, #plate {
+    font-size: 1.5rem;
+  }
+}
+
+cite {
+    text-decoration: none;
+    text-transform: capitalize;
+}
+
+#suitU, #suitD {
+  text-transform: uppercase;
+}
+
+#suitU, #suitD, #typeU, #typeD {
+  font-size: 1.2rem;
+  font-weight: 1000;
+}
+
+#valueU, #valueD {
+  font-size: 2rem;
+  font-weight: 1000;
+}
+
+#you, #dealer {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+#footertext {
+  margin: 10px;
+}
+
+cite {
+  font-style: normal;
+  margin: 0;
+  padding: 0;
+}
+
+#orglink {
+  margin: 0;
+  padding: 0;
+  text-transform: uppercase;
+}

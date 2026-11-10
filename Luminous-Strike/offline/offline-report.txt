@@ -1,0 +1,5 @@
+Game: Luminous-Strike
+Source: https://freeonlinewebtools.github.io/gamelist3.github.io/Luminous-Strike/
+Files: 2
+Warnings: 0
+
