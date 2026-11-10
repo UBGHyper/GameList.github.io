@@ -1,12 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Friday Night Funkin': Psych Engine</title>
-<style>body,html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{width:100vw;height:100vh;border:none;display:block}</style>
+	
+	<meta charset="utf-8">
+	
+	<title>Friday Night Funkin': Psych Engine</title>
+	
+	<meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	
+	
+	<link rel="shortcut icon" type="image/png" href="favicon.png">
+	
+	
+	<script type="text/javascript" src="PsychEngine.js"></script>
+	
+	<script>
+		window.addEventListener ("touchmove", function (event) { event.preventDefault (); }, { capture: false, passive: false });
+		if (typeof window.devicePixelRatio != 'undefined' && window.devicePixelRatio > 2) {
+			var meta = document.getElementById ("viewport");
+			meta.setAttribute ('content', 'width=device-width, initial-scale=' + (2 / window.devicePixelRatio) + ', user-scalable=no');
+		}
+	</script>
+	
+	<style>
+		html,body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+		#openfl-content { background: #000000; width: 100%; height: 100%; }
+		@font-face {
+			font-family: 'DS-Digital';
+			src: url('assets/fonts/DS-DIGI.eot%3F') format('embedded-opentype'),
+			url('assets/fonts/DS-DIGI.TTF') format('truetype');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Edgar No 9 W01 Regular';
+			src: url('assets/fonts/edgar.eot%3F') format('embedded-opentype'),
+			url('assets/fonts/edgar.woff') format('woff'),
+			url('assets/fonts/edgar.ttf') format('truetype'),
+			url('assets/fonts/edgar.svg') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Eina 01 SemiBold';
+			src: url('assets/fonts/Eina01-SemiBold.eot%3F') format('embedded-opentype'),
+			url('assets/fonts/Eina01-SemiBold.woff') format('woff'),
+			url('assets/fonts/Eina01-SemiBold.otf') format('truetype');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Inconsolata Black';
+			src: url('assets/fonts/Inconsolata-Black.eot%3F') format('embedded-opentype'),
+			url('assets/fonts/Inconsolata-Black.woff') format('woff'),
+			url('assets/fonts/Inconsolata-Black.ttf') format('truetype'),
+			url('assets/fonts/Inconsolata-Black.svg') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Inconsolata Bold';
+			src: url('assets/fonts/Inconsolata-Bold.eot%3F') format('embedded-opentype'),
+			url('assets/fonts/Inconsolata-Bold.woff') format('woff'),
+			url('assets/fonts/Inconsolata-Bold.ttf') format('truetype'),
+			url('assets/fonts/Inconsolata-Bold.svg') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Neo-Syber Italic';
+			src: url('assets/fonts/Neo-Syber-Italic.eot%3F') format('embedded-opentype'),
+			url('assets/fonts/Neo-Syber-Italic.woff') format('woff'),
+			url('assets/fonts/Neo-Syber-Italic.ttf') format('truetype'),
+			url('assets/fonts/Neo-Syber-Italic.svg') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Planet-Joy';
+			src: url('assets/fonts/Planet-Joy.eot%3F') format('embedded-opentype'),
+			url('assets/fonts/Planet-Joy.woff') format('woff'),
+			url('assets/fonts/Planet-Joy.ttf') format('truetype'),
+			url('assets/fonts/Planet-Joy.svg') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Quantico';
+			src: url('assets/fonts/Quantico-Regular.eot%3F') format('embedded-opentype'),
+			url('assets/fonts/Quantico-Regular.woff') format('woff'),
+			url('assets/fonts/Quantico-Regular.ttf') format('truetype'),
+			url('assets/fonts/Quantico-Regular.svg') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Quantico';
+			src: url('assets/fonts/quantico.eot%3F') format('embedded-opentype'),
+			url('assets/fonts/quantico.woff') format('woff'),
+			url('assets/fonts/quantico.ttf') format('truetype'),
+			url('assets/fonts/quantico.svg') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Quantico-Bold';
+			src: url('assets/fonts/quanticob.eot%3F') format('embedded-opentype'),
+			url('assets/fonts/quanticob.woff') format('woff'),
+			url('assets/fonts/quanticob.ttf') format('truetype'),
+			url('assets/fonts/quanticob.svg') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: '02.10 fenotype';
+			src: url('assets/fonts/sky.eot%3F') format('embedded-opentype'),
+			url('assets/fonts/sky.woff') format('woff'),
+			url('assets/fonts/sky.ttf') format('truetype'),
+			url('assets/fonts/sky.svg') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Krabby Patty';
+			src: url('assets/fonts/spog.eot%3F') format('embedded-opentype'),
+			url('assets/fonts/spog.woff') format('woff'),
+			url('assets/fonts/spog.ttf') format('truetype'),
+			url('assets/fonts/spog.svg') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'VCR OSD Mono';
+			src: url('assets/fonts/vcr.eot%3F') format('embedded-opentype'),
+			url('assets/fonts/vcr.woff') format('woff'),
+			url('assets/fonts/vcr.ttf') format('truetype'),
+			url('assets/fonts/vcr.svg') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'VCR OSD Mono';
+			src: url('assets/fonts/vcr2.eot%3F') format('embedded-opentype'),
+			url('assets/fonts/vcr2.woff') format('woff'),
+			url('assets/fonts/vcr2.ttf') format('truetype'),
+			url('assets/fonts/vcr2.svg') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Nokia Cellphone FC Small';
+			src: url('flixel/fonts/nokiafc22.eot%3F') format('embedded-opentype'),
+			url('flixel/fonts/nokiafc22.woff') format('woff'),
+			url('flixel/fonts/nokiafc22.ttf') format('truetype'),
+			url('flixel/fonts/nokiafc22.svg') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Monsterrat';
+			src: url('flixel/fonts/monsterrat.eot%3F') format('embedded-opentype'),
+			url('flixel/fonts/monsterrat.woff') format('woff'),
+			url('flixel/fonts/monsterrat.ttf') format('truetype'),
+			url('flixel/fonts/monsterrat.svg') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+
+	</style>
+	
 </head>
 <body>
-<iframe src="https://freeonlinewebtools.github.io/gamelist3.github.io/Heartbreak-Havoc/" allow="autoplay; fullscreen" allowfullscreen></iframe>
+	
+	<noscript>This webpage makes extensive use of JavaScript. Please enable JavaScript in your web browser to view this page.</noscript>
+	
+	<div id="openfl-content"></div>
+	
+	<script type="text/javascript">
+		lime.embed ("PsychEngine", "openfl-content", 1280, 720, { parameters: {} });
+	</script>
+	
 </body>
 </html>
